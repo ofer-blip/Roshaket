@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>עוזר משימות תואר שני | בית ברל</title>
+    
+    <!-- PWA & Mobile Meta -->
+    <meta name="theme-color" content="#1e1b4b">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="עוזר אקדמי">
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            
+            /* Course 1: ישי מור (Purple) */
+            --c-mor-primary: #6366f1;
+            --c-mor-dark: #4338ca;
+            --c-mor-bg: #f5f3ff;
+            --c-mor-border: #c4b5fd;
+            --c-mor-badge: #ede9fe;
+            --c-mor-text: #4c1d95;
+
+            /* Course 2: ואסל (Sky Blue) */
+            --c-wassel-primary: #0284c7;
+            --c-wassel-dark: #0369a1;
+            --c-wassel-bg: #f0f9ff;
+            --c-wassel-border: #7dd3fc;
+            --c-wassel-badge: #e0f2fe;
+            --c-wassel-text: #075985;
+
+            /* Course 3: עדי לוי-ורד (Emerald Green) */
+            --c-levy-primary: #059669;
+            --c-levy-dark: #047857;
+            --c-levy-bg: #f0fdf4;
+            --c-levy-border: #86efac;
+            --c-levy-badge: #dcfce7;
+            --c-levy-text: #14532d;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Assistant', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 16px;
+            padding-bottom: 80px; /* Space for mobile floating bar */
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Top Header */
+        header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 60%, #312e81 100%);
+            color: white;
+            padding: 24px 28px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.25);
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            top: -50px;
+            left: -50px;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-title h1 {
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-title p {
+            color: #cbd5e1;
+            font-size: 15px;
+            margin-top: 4px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: rgba(255, 255, 255, 0.14);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            padding: 10px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            min-height: 44px;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background: #ffffff;
+            color: #1e1b4b;
+            border: none;
+        }
+
+        /* 3 Course Strips */
+        .course-strip {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .course-card-badge {
+            padding: 12px 16px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 700;
+            font-size: 14px;
+            border-width: 2px;
+            border-style: solid;
+        }
+
+        .badge-mor { background: var(--c-mor-bg); color: var(--c-mor-text); border-color: var(--c-mor-border); }
+        .badge-wassel { background: var(--c-wassel-bg); color: var(--c-wassel-text); border-color: var(--c-wassel-border); }
+        .badge-levy { background: var(--c-levy-bg); color: var(--c-levy-text); border-color: var(--c-levy-border); }
+
+        .btn-cal-mini {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 5px 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: white;
+            color: var(--text-main);
+            cursor: pointer;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 14px 16px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .stat-info h4 {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .stat-info .stat-val {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        /* Progress Bar */
+        .progress-box {
+            background: var(--card-bg);
+            padding: 14px 20px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .progress-track {
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #059669);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        /* Controls & Filters (Scrollable on mobile) */
+        .controls-card {
+            background: var(--card-bg);
+            padding: 12px 16px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .filter-group {
+            display: inline-flex;
+            gap: 8px;
+        }
+
+        .filter-chip {
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            background: white;
+            color: var(--text-muted);
+            min-height: 40px;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .filter-chip.active { background: #0f172a; color: white; border-color: #0f172a; }
+        .filter-chip.chip-mor.active { background: var(--c-mor-primary); border-color: var(--c-mor-primary); }
+        .filter-chip.chip-wassel.active { background: var(--c-wassel-primary); border-color: var(--c-wassel-primary); }
+        .filter-chip.chip-levy.active { background: var(--c-levy-primary); border-color: var(--c-levy-primary); }
+
+        /* Weeks Timeline */
+        .weeks-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .week-card {
+            background: var(--card-bg);
+            border-radius: 18px;
+            border: 1px solid var(--border);
+            padding: 18px 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            position: relative;
+        }
+
+        .week-card.current-week {
+            border: 2px solid #4f46e5;
+            background: linear-gradient(to bottom, #ffffff, #fafafa);
+        }
+
+        .current-badge {
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            background: #4f46e5;
+            color: white;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 2px 12px;
+            border-radius: 20px;
+        }
+
+        .week-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 12px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .week-num-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .week-num {
+            background: #0f172a;
+            color: white;
+            font-weight: 800;
+            font-size: 15px;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .week-date {
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .mode-pill {
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+        .mode-campus { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+        .mode-zoom { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+
+        /* Tasks Grid */
+        .tasks-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+            gap: 12px;
+        }
+
+        /* Task Cards by Course Specific Theme */
+        .task-item {
+            border-radius: 14px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 12px;
+            position: relative;
+            border-width: 2px;
+            border-style: solid;
+        }
+
+        .task-mor { background: var(--c-mor-bg); border-color: var(--c-mor-border); }
+        .task-mor .task-course-pill { background: var(--c-mor-badge); color: var(--c-mor-text); }
+
+        .task-wassel { background: var(--c-wassel-bg); border-color: var(--c-wassel-border); }
+        .task-wassel .task-course-pill { background: var(--c-wassel-badge); color: var(--c-wassel-text); }
+
+        .task-levy { background: var(--c-levy-bg); border-color: var(--c-levy-border); }
+        .task-levy .task-course-pill { background: var(--c-levy-badge); color: var(--c-levy-text); }
+
+        .task-item.done {
+            background: #f1f5f9 !important;
+            border-color: #cbd5e1 !important;
+            opacity: 0.65;
+        }
+
+        .task-item.done .task-title {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+
+        .task-top {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        /* Big Touch Friendly Checkbox */
+        .task-checkbox-wrap {
+            padding: 4px;
+            margin: -4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .task-checkbox {
+            appearance: none;
+            width: 28px;
+            height: 28px;
+            border: 2px solid #94a3b8;
+            border-radius: 8px;
+            cursor: pointer;
+            outline: none;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            transition: all 0.2s;
+        }
+
+        .task-checkbox:checked {
+            background-color: #10b981;
+            border-color: #10b981;
+        }
+
+        .task-checkbox:checked::after {
+            content: '✓';
+            color: white;
+            font-size: 17px;
+            font-weight: 900;
+        }
+
+        .task-content {
+            flex-grow: 1;
+        }
+
+        .task-course-pill {
+            font-size: 11px;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 6px;
+            margin-bottom: 4px;
+            display: inline-block;
+        }
+
+        .task-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 4px;
+            line-height: 1.35;
+        }
+
+        .task-desc {
+            font-size: 12.5px;
+            color: #334155;
+            line-height: 1.4;
+        }
+
+        .task-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            border-top: 1px dashed rgba(0,0,0,0.1);
+            padding-top: 8px;
+            margin-top: 4px;
+        }
+
+        .tag-weight {
+            background: #fef3c7;
+            color: #92400e;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 6px;
+            border: 1px solid #fde68a;
+        }
+
+        .tag-penalty {
+            background: #fee2e2;
+            color: #991b1b;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 6px;
+            border: 1px solid #fecaca;
+        }
+
+        .tag-deliverable {
+            background: white;
+            color: #475569;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+        }
+
+        /* Mobile Bottom Nav Bar */
+        .mobile-bottom-bar {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid var(--border);
+            padding: 10px 16px;
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.06);
+            z-index: 99;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 12px; }
+            header { padding: 18px 20px; }
+            .header-title h1 { font-size: 22px; }
+            .tasks-container { grid-template-columns: 1fr; }
+            .mobile-bottom-bar { display: flex; }
+            .course-strip { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="header-title">
+                <h1>🎓 עוזר משימות תואר שני</h1>
+                <p>מכללת בית ברל | תוכנית המהפכה | שנה ב' תשפ"ז</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-primary" onclick="downloadICS('all')">
+                    📅 סנכרן הכל ל-Google Calendar
+                </button>
+                <button class="btn" onclick="resetAllProgress()">
+                    🔄 אפס סימונים
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 3 Course Strips -->
+    <div class="course-strip">
+        <div class="course-card-badge badge-mor">
+            <span>🟣 הערכת תוכניות – מור</span>
+            <button class="btn-cal-mini" onclick="downloadICS('mor')">הורד יומן לקורס</button>
+        </div>
+        <div class="course-card-badge badge-wassel">
+            <span>🔵 פיתוח חדשנות – ואסל</span>
+            <button class="btn-cal-mini" onclick="downloadICS('wassel')">הורד יומן לקורס</button>
+        </div>
+        <div class="course-card-badge badge-levy">
+            <span>🟢 סוגיות בהערכה – לוי-ורד</span>
+            <button class="btn-cal-mini" onclick="downloadICS('levy')">הורד יומן לקורס</button>
+        </div>
+    </div>
+
+    <!-- Top Stats -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: #eef2ff; color: #4f46e5;">🎯</div>
+            <div class="stat-info">
+                <h4>סה"כ משימות</h4>
+                <div class="stat-val" id="totalTasksCount">0</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background: #ecfdf5; color: #10b981;">✅</div>
+            <div class="stat-info">
+                <h4>בוצעו</h4>
+                <div class="stat-val" id="doneTasksCount">0</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background: #fffbeb; color: #f59e0b;">⏳</div>
+            <div class="stat-info">
+                <h4>נותרו</h4>
+                <div class="stat-val" id="pendingTasksCount">0</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background: #fdf2f8; color: #db2777;">📦</div>
+            <div class="stat-info">
+                <h4>יעד תלקיט ואסל</h4>
+                <div class="stat-val" style="font-size: 15px;">27 בינואר 2027</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-box">
+        <div class="progress-header">
+            <span>התקדמות סמסטריאלית כוללת</span>
+            <span id="progressPercent">0%</span>
+        </div>
+        <div class="progress-track">
+            <div class="progress-fill" id="progressBar"></div>
+        </div>
+    </div>
+
+    <!-- Controls & Filters -->
+    <div class="controls-card">
+        <div class="filter-group">
+            <button class="filter-chip active" onclick="setFilter('all', this)">כל השבועות</button>
+            <button class="filter-chip" onclick="setFilter('deliverables', this)">מטלות עם ציון בלבד 🎯</button>
+            <button class="filter-chip chip-mor" onclick="setFilter('mor', this)">🟣 הערכת תוכניות – מור</button>
+            <button class="filter-chip chip-wassel" onclick="setFilter('wassel', this)">🔵 פיתוח חדשנות – ואסל</button>
+            <button class="filter-chip chip-levy" onclick="setFilter('levy', this)">🟢 סוגיות בהערכה – לוי-ורד</button>
+        </div>
+    </div>
+
+    <!-- Weeks Timeline -->
+    <div class="weeks-list" id="weeksList">
+        <!-- Injected via JavaScript -->
+    </div>
+</div>
+
+<!-- Mobile Sticky Bottom Actions -->
+<div class="mobile-bottom-bar">
+    <button class="btn btn-primary" style="background: #1e1b4b; color: white; width: 100%; justify-content: center;" onclick="downloadICS('all')">
+        📅 הוסף את כל המשימות ליומן גוגל
+    </button>
+</div>
+
+<script>
+// Master Semester Database with Lecturer Names
+const semesterSchedule = [
+    {
+        weekNum: 1,
+        dateStr: "18.10.2026",
+        modeC1: "קמפוס (פנים אל פנים)",
+        modeClass: "mode-campus",
+        tasks: [
+            { id: "w1_c1", courseKey: "mor", course: "הערכת תוכניות – מור", courseClass: "task-mor", emoji: "🟣", title: "אתגר המגדל והגדרת מטרות", desc: "הכנה למפגש פנים אל פנים: קריאת נספח א' (אתגר המגדל) ורפלקציה קבוצתית בכיתה.", weight: "הכנה למפגש", tagType: "tag-deliverable" },
+            { id: "w1_c2", courseKey: "wassel", course: "פיתוח חדשנות – ואסל", courseClass: "task-wassel", emoji: "🔵", title: "שיעור 1 (א-סינכרוני): כובעי דה-בונו", desc: "למידה עצמית א-סינכרונית וביצוע משימת כרזה/מצגת על ששת כובעי החשיבה (לתלקיט).", weight: "תלקיט (27.01)", tagType: "tag-deliverable" },
+            { id: "w1_c3", courseKey: "levy", course: "סוגיות בהערכה – לוי-ורד", courseClass: "task-levy", emoji: "🟢", title: "שיעור 1: שיפור מתמיד בארגונים + רפלקציה", desc: "צפייה בסרטון, קריאת קורן (2015) וכתיבת רפלקציה שבועית בקיר השיתופי.", weight: "חובת שבוע (-8 נק')", tagType: "tag-penalty" }
+        ]
+    },
+    {
+        weekNum: 2,
+        dateStr: "25.10.2026",
+        modeC1: "מקוון (זום)",
+        modeClass: "mode-zoom",
+        tasks: [
+            { id: "w2_c1", courseKey: "mor", course: "הערכת תוכניות – מור", courseClass: "task-mor", emoji: "🟣", title: "חזון הפרויקט וגיבוש רעיון", desc: "אפיון דמות מוטב (Persona), הפקת סרטון קצר, ופתיחת רשומת יומן למידה מס' 1.", weight: "הכנה למפגש", tagType: "tag-deliverable" },
+            { id: "w2_c2", courseKey: "wassel", course: "פיתוח חדשנות – ואסל", courseClass: "task-wassel", emoji: "🔵", title: "שיעור 2: ניהול שינוי ותפקיד היוזם (חלק א')", desc: "קריאת חומר עזר על מטריצה לפרישת חזון ומעבר מתכנון ליישום.", weight: "תלקיט (27.01)", tagType: "tag-deliverable" },
+            { id: "w2_c3", courseKey: "levy", course: "סוגיות בהערכה – לוי-ורד", courseClass: "task-levy", emoji: "🟢", title: "שיעור 2: הערכה כדיאלוג + רפלקציה", desc: "למידת יחידה 2, קריאת נבו (2003) וכתיבת רפלקציה אישית בקיר השיתופי.", weight: "חובת שבוע (-8 נק')", tagType: "tag-penalty" }
+        ]
+    },
+    {
+        weekNum: 3,
+        dateStr: "01.11.2026",
+        modeC1: "קמפוס (פנים אל פנים)",
+        modeClass: "mode-campus",
+        tasks: [
+            { id: "w3_c1", courseKey: "mor", course: "הערכת תוכניות – מור", courseClass: "task-mor", emoji: "🟣", title: "תיאוריית השינוי (Theory of Change)", desc: "קריאת מאמר גינדי (2011) על מודל לוגי וסדנת ניתוח מקרים בכיתה.", weight: "הכנה למפגש", tagType: "tag-deliverable" },
+            { id: "w3_c2", courseKey: "wassel", course: "פיתוח חדשנות – ואסל", courseClass: "task-wassel", emoji: "🔵", title: "שיעור 2: ניהול שינוי ותפקיד היוזם (חלק ב')", desc: "השלמת 2 משימות להגשה על ניהול שינוי ארגוני חינוכי.", weight: "תלקיט (27.01)", tagType: "tag-deliverable" },
+            { id: "w3_c3", courseKey: "levy", course: "סוגיות בהערכה – לוי-ורד", courseClass: "task-levy", emoji: "🟢", title: "שיעור 3: יכולת פנימית ומנהיגות + רפלקציה", desc: "צפייה בשיחה עם פרופ' ריצ'רד אלמור ופרסום רפלקציה שבועית.", weight: "חובת שבוע (-8 נק')", tagType: "tag-penalty" }
+        ]
+    },
+    {
+        weekNum: 4,
+        dateStr: "08.11.2026",
+        modeC1: "מקוון (זום)",
+        modeClass: "mode-zoom",
+        tasks: [
+            { id: "w4_c1", courseKey: "mor", course: "הערכת תוכניות – מור", courseClass: "task-mor", emoji: "🟣", title: "🎯 הגשה: מפת מושגים אישית (10% מהציון)", desc: "מיפוי מושגי של עולם ההערכה וקישורו למיזם האישי + קריאת מור (תשנ\"ג).", weight: "10% מהציון", tagType: "tag-weight" },
+            { id: "w4_c2", courseKey: "wassel", course: "פיתוח חדשנות – ואסל", courseClass: "task-wassel", emoji: "🔵", title: "שיעור 3 (בקמפוס): מודלים לינאריים", desc: "מודל שלושת השלבים של לוין, מודל ליפיט, ומודל 8 השלבים של קוטר.", weight: "חומר רקע", tagType: "tag-deliverable" },
+            { id: "w4_c3", courseKey: "levy", course: "סוגיות בהערכה – לוי-ורד", courseClass: "task-levy", emoji: "🟢", title: "שיעור 4: סטנדרטים במערכות חינוך + רפלקציה", desc: "קריאת פרידמן ופילוסוף (2001) וכתיבת רפלקציה בקיר השיתופי.", weight: "חובת שבוע (-8 נק')", tagType: "tag-penalty" }
+        ]
+    },
+    {
+        weekNum: 5,
+        dateStr: "15.11.2026",
+        modeC1: "קמפוס (פנים אל פנים)",
+        modeClass: "mode-campus",
+        tasks: [
+            { id: "w5_c1", courseKey: "mor", course: "הערכת תוכניות – מור", courseClass: "task-mor", emoji: "🟣", title: "מודל ה-CIPP להערכה מערכתית", desc: "סדנת מיפוי רכיבי CIPP על המיזמים האישיים + קריאת Stufflebeam (2003).", weight: "הכנה למפגש", tagType: "tag-deliverable" },
+            { id: "w5_c2", courseKey: "wassel", course: "פיתוח חדשנות – ואסל", courseClass: "task-wassel", emoji: "🔵", title: "שיעור 3 (א-סינכרוני): כלי מארגן לשינוי", desc: "מילוי דף עבודה של כלי מארגן ריק וקריאה להעשרה (לתלקיט).", weight: "תלקיט (27.01)", tagType: "tag-deliverable" },
+            { id: "w5_c3", courseKey: "levy", course: "סוגיות בהערכה – לוי-ורד", courseClass: "task-levy", emoji: "🟢", title: "שיעור 5: מה מניע את השינוי שלך? (פולן) + רפלקציה", desc: "קריאת עיבוד פולן (2011) וכתיבת רפלקציה שבועית בקיר השיתופי.", weight: "חובת שבוע (-8 נק')", tagType: "tag-penalty" }
+        ]
+    },
+    {
+        weekNum: 6,
+        dateStr: "22.11.2026",
+        modeC1: "מקוון (זום)",
+        modeClass: "mode-zoom",
+        tasks: [
+            { id: "w6_c1", courseKey: "mor", course: "הערכת תוכניות – מור", courseClass: "task-mor", emoji: "🟣", title: "🎯 הגשה: פרויקט סיום – שלב א' (15% מהציון)", desc: "הצעה ראשונית לתוכנית ההערכה: תיאור המיזם, בחירת מודל ושאלות הערכה.", weight: "15% מהציון", tagType: "tag-weight" },
+            { id: "w6_c2", courseKey: "wassel", course: "פיתוח חדשנות – ואסל", courseClass: "task-wassel", emoji: "🔵", title: "שיעור 5 (בקמפוס): מעגלי שינוי ו-OD", desc: "פיתוח ארגוני (OD), מודל פרוצ'סקה ויישום מודל Nadler & Tushman.", weight: "חומר רקע", tagType: "tag-deliverable" },
+            { id: "w6_c3", courseKey: "levy", course: "סוגיות בהערכה – לוי-ורד", courseClass: "task-levy", emoji: "🟢", title: "שיעור 6: על מבחנים והשוואות בינלאומיות + רפלקציה", desc: "קריאת רובין (2012) ופרסום רפלקציה שבועית בקיר השיתופי.", weight: "חובת שבוע (-8 נק')", tagType: "tag-penalty" }
+        ]
+    },
+    {
+        weekNum: 7,
+        dateStr: "29.11.2026",
+        modeC1: "קמפוס (פנים אל פנים)",
+        modeClass: "mode-campus",
+        tasks: [
+            { id: "w7_c1", courseKey: "mor", course: "הערכת תוכניות – מור", courseClass: "task-mor", emoji: "🟣", title: "🎯 הגשה: פרויקט סיום – שלב ב' משוב עמיתים (10%)", desc: "מתן משוב עמיתים מעמיק ומובנה להצעה הראשונית (שלב א') של עמית/ה.", weight: "10% מהציון", tagType: "tag-weight" },
+            { id: "w7_c2", courseKey: "wassel", course: "פיתוח חדשנות – ואסל", courseClass: "task-wassel", emoji: "🔵", title: "שיעור 5 (א-סינכרוני): מפה מערכתית (אינה פוקס)", desc: "ביצוע משימה לתלקיט: ניתוח המפה המערכתית של אינה פוקס (1995).", weight: "תלקיט (27.01)", tagType: "tag-deliverable" },
+            { id: "w7_c3", courseKey: "levy", course: "סוגיות בהערכה – לוי-ורד", courseClass: "task-levy", emoji: "🟢", title: "שיעור 7: ניהול מבוסס נתונים + רפלקציה", desc: "צפייה בתחקיר פינלנד-ישראל וכתיבת רפלקציה שבועית בקיר השיתופי.", weight: "חובת שבוע (-8 נק')", tagType: "tag-penalty" }
+        ]
+    },
+    {
+        weekNum: 8,
+        dateStr: "13.12.2026",
+        modeC1: "קמפוס (פנים אל פנים)",
+        modeClass: "mode-campus",
+        tasks: [
+            { id: "w8_c1", courseKey: "mor", course: "הערכת תוכניות – מור", courseClass: "task-mor", emoji: "🟣", title: "מעבדת פיתוח כלי הערכה כמותני", desc: "עבודה בכיתה על הכנת טיוטה ראשונה של שאלון/מחוון כמותני מתוקף.", weight: "הכנה למפגש", tagType: "tag-deliverable" },
+            { id: "w8_c2", courseKey: "wassel", course: "פיתוח חדשנות – ואסל", courseClass: "task-wassel", emoji: "🔵", title: "שיעור 7 (בקמפוס): התמודדות עם חסמים וטעויות", desc: "התנגדויות וחסמים ליישום שינויים, פער בין תכנון לביצוע ומחקר ואסל.", weight: "חומר רקע", tagType: "tag-deliverable" },
+            { id: "w8_c3", courseKey: "levy", course: "סוגיות בהערכה – לוי-ורד", courseClass: "task-levy", emoji: "🟢", title: "שיעור 8: מיפוי ארגוני (סקר סקו\"פ) + רפלקציה", desc: "למידת סקר קוהרנטיות פנימית (אבני ראשה) וכתיבת רפלקציה בקיר השיתופי.", weight: "חובת שבוע (-8 נק')", tagType: "tag-penalty" }
+        ]
+    },
+    {
+        weekNum: 9,
+        dateStr: "20.12.2026",
+        modeC1: "מקוון (זום)",
+        modeClass: "mode-zoom",
+        tasks: [
+            { id: "w9_c1", courseKey: "mor", course: "הערכת תוכניות – מור", courseClass: "task-mor", emoji: "🟣", title: "🎯 הגשה: כלי הערכה כמותני (20% מהציון)", desc: "הגשת כלי כמותני מתוקף (שאלון, מחוון, מדד) מלווה ברציונל מתודולוגי.", weight: "20% מהציון", tagType: "tag-weight" },
+            { id: "w9_c2", courseKey: "wassel", course: "פיתוח חדשנות – ואסל", courseClass: "task-wassel", emoji: "🔵", title: "שיעור 8 (בקמפוס): מודלים ממוקדי תוכן", desc: "מודלים ממוקדי תוכן ככלים לאבחון ולשיפור ארגוני.", weight: "חומר רקע", tagType: "tag-deliverable" },
+            { id: "w9_c3", courseKey: "levy", course: "סוגיות בהערכה – לוי-ורד", courseClass: "task-levy", emoji: "🟢", title: "שיעור 9: מדד האושר (פרופ' יולי תמיר) + רפלקציה", desc: "קריאת המאמר על חינוך בבהוטן וכתיבת רפלקציה בקיר השיתופי.", weight: "חובת שבוע (-8 נק')", tagType: "tag-penalty" }
+        ]
+    },
+    {
+        weekNum: 10,
+        dateStr: "27.12.2026",
+        modeC1: "קמפוס (פנים אל פנים)",
+        modeClass: "mode-campus",
+        tasks: [
+            { id: "w10_c1", courseKey: "mor", course: "הערכת תוכניות – מור", courseClass: "task-mor", emoji: "🟣", title: "🎯 הגשה: פרויקט סיום – שלב ג' (15% מהציון)", desc: "מערך איסוף הנתונים השלם: שילוב הכלי הכמותני, תוכנית ניתוח ואתיקה.", weight: "15% מהציון", tagType: "tag-weight" },
+            { id: "w10_c2", courseKey: "wassel", course: "פיתוח חדשנות – ואסל", courseClass: "task-wassel", emoji: "🔵", title: "שיעור 10 (בקמפוס): עבודת צוות במיזמים", desc: "מודל טאקמן להתפתחות צוות, מודל Belbin, וניהול קונפליקטים בצוות.", weight: "חומר רקע", tagType: "tag-deliverable" },
+            { id: "w10_c3", courseKey: "levy", course: "סוגיות בהערכה – לוי-ורד", courseClass: "task-levy", emoji: "🟢", title: "שיעור 10: על הערכה וערכים (מור 2007) + רפלקציה", desc: "למידת יחידה 10 וכתיבת רפלקציה בקיר השיתופי.", weight: "חובת שבוע (-8 נק')", tagType: "tag-penalty" }
+        ]
+    },
+    {
+        weekNum: 11,
+        dateStr: "03.01.2027",
+        modeC1: "מקוון (זום)",
+        modeClass: "mode-zoom",
+        tasks: [
+            { id: "w11_c1", courseKey: "mor", course: "הערכת תוכניות – מור", courseClass: "task-mor", emoji: "🟣", title: "🎯 הגשה: פרויקט סיום – שלב ד' משוב עמיתים (10%)", desc: "מתן משוב עמיתים מובנה על טיוטת מערך ההערכה המלא (שלב ג') של עמית/ה.", weight: "10% מהציון", tagType: "tag-weight" },
+            { id: "w11_c2", courseKey: "wassel", course: "פיתוח חדשנות – ואסל", courseClass: "task-wassel", emoji: "🔵", title: "שיעור 11 (א-סינכרוני): מודל CASEL / SEL", desc: "קריאת מודל CASEL (יסודי ועל-יסודי), מצגת SEL, והכנת המשימה לתלקיט.", weight: "תלקיט (27.01)", tagType: "tag-deliverable" },
+            { id: "w11_c3", courseKey: "levy", course: "סוגיות בהערכה – לוי-ורד", courseClass: "task-levy", emoji: "🟢", title: "שיעור 11: תנאים ללמידה משמעותית (הרפז) + רפלקציה", desc: "קריאת הרפז (2014) וכתיבת רפלקציה שבועית בקיר השיתופי.", weight: "חובת שבוע (-8 נק')", tagType: "tag-penalty" }
+        ]
+    },
+    {
+        weekNum: 12,
+        dateStr: "10.01.2027",
+        modeC1: "קמפוס (פנים אל פנים)",
+        modeClass: "mode-campus",
+        tasks: [
+            { id: "w12_c1", courseKey: "mor", course: "הערכת תוכניות – מור", courseClass: "task-mor", emoji: "🟣", title: "פאנל מומחים והשלמת יומן למידה", desc: "גיבוש תיקונים סופיים לתוכנית ההערכה בעקבות משוב העמיתים + השלמת יומן למידה.", weight: "הכנה למפגש", tagType: "tag-deliverable" },
+            { id: "w12_c2", courseKey: "wassel", course: "פיתוח חדשנות – ואסל", courseClass: "task-wassel", emoji: "🔵", title: "איסוף ועריכת התלקיט הסופי", desc: "ריכוז כל 5 המשימות הא-סינכרוניות לקראת מועד ההגשה הקרב ב-27.01.", weight: "הכנה להגשה", tagType: "tag-deliverable" },
+            { id: "w12_c3", courseKey: "levy", course: "סוגיות בהערכה – לוי-ורד", courseClass: "task-levy", emoji: "🟢", title: "שיעור 12: כלי הערכה של ראמ\"ה + רפלקציה", desc: "הערכת מורים ומנהלים וכתיבת רפלקציה שבועית בקיר השיתופי.", weight: "חובת שבוע (-8 נק')", tagType: "tag-penalty" }
+        ]
+    },
+    {
+        weekNum: 13,
+        dateStr: "17.01.2027",
+        modeC1: "מקוון (זום)",
+        modeClass: "mode-zoom",
+        tasks: [
+            { id: "w13_c1", courseKey: "mor", course: "הערכת תוכניות – מור", courseClass: "task-mor", emoji: "🟣", title: "🎯 הגשה: פרויקט סיום שלב ה' (10%) + יומן למידה (10%)", desc: "הגשה סופית ואינטגרטיבית של תוכנית ההערכה השלמה + יומן הלמידה הרפלקטיבי!", weight: "20% מהציון", tagType: "tag-weight" },
+            { id: "w13_c2", courseKey: "wassel", course: "פיתוח חדשנות – ואסל", courseClass: "task-wassel", emoji: "🔵", title: "🏆 הגשה סופית: תלקיט פיתוח חדשנות (עד 27.01)", desc: "העלאת קובץ התלקיט המלא לתיבת ההגשה במודל.", weight: "ציון קורס מלא", tagType: "tag-weight" },
+            { id: "w13_c3", courseKey: "levy", course: "סוגיות בהערכה – לוי-ורד", courseClass: "task-levy", emoji: "🟢", title: "שיעור 13 + הגשת נייר עמדה בזוגות (70%)", desc: "רפלקציה מסכמת בשיעור 13 + הגשת נייר העמדה המשותף בזוגות!", weight: "70% מהציון", tagType: "tag-weight" }
+        ]
+    }
+];
+
+// State & LocalStorage
+let doneTasks = JSON.parse(localStorage.getItem('academic_done_tasks') || '[]');
+let currentFilter = 'all';
+
+function render() {
+    const list = document.getElementById('weeksList');
+    list.innerHTML = '';
+
+    let totalTasks = 0;
+    let doneCount = 0;
+
+    semesterSchedule.forEach(w => {
+        let matchingTasks = w.tasks.filter(t => {
+            if (currentFilter === 'all') return true;
+            if (currentFilter === 'deliverables') return t.tagType === 'tag-weight';
+            if (currentFilter === 'mor') return t.courseKey === 'mor';
+            if (currentFilter === 'wassel') return t.courseKey === 'wassel';
+            if (currentFilter === 'levy') return t.courseKey === 'levy';
+            return true;
+        });
+
+        totalTasks += w.tasks.length;
+        w.tasks.forEach(t => {
+            if (doneTasks.includes(t.id)) doneCount++;
+        });
+
+        if (matchingTasks.length === 0) return;
+
+        const isCurrentWeek = w.weekNum === 1;
+
+        const card = document.createElement('div');
+        card.className = `week-card ${isCurrentWeek ? 'current-week' : ''}`;
+        
+        card.innerHTML = `
+            ${isCurrentWeek ? '<div class="current-badge">השבוע הנוכחי</div>' : ''}
+            <div class="week-header">
+                <div class="week-num-title">
+                    <div class="week-num">${w.weekNum}</div>
+                    <div>
+                        <div style="font-weight: 800; font-size: 17px;">שבוע ${w.weekNum}</div>
+                        <div class="week-date">יום א', ${w.dateStr}</div>
+                    </div>
+                </div>
+                <div class="mode-pill ${w.modeClass}">
+                    מפגש מור: ${w.modeC1}
+                </div>
+            </div>
+            <div class="tasks-container">
+                ${matchingTasks.map(t => {
+                    const isDone = doneTasks.includes(t.id);
+                    return `
+                        <div class="task-item ${t.courseClass} ${isDone ? 'done' : ''}" id="card_${t.id}">
+                            <div class="task-top">
+                                <label class="task-checkbox-wrap">
+                                    <input type="checkbox" class="task-checkbox" 
+                                           ${isDone ? 'checked' : ''} 
+                                           onchange="toggleTask('${t.id}')">
+                                </label>
+                                <div class="task-content">
+                                    <span class="task-course-pill">${t.emoji} ${t.course}</span>
+                                    <div class="task-title">${t.title}</div>
+                                    <div class="task-desc">${t.desc}</div>
+                                </div>
+                            </div>
+                            <div class="task-footer">
+                                <span class="${t.tagType}">${t.weight}</span>
+                                <span style="font-weight: 700; font-size: 11px; color: ${isDone ? '#059669' : '#64748b'};">
+                                    ${isDone ? '✓ בוצע' : '⏳ פתוח'}
+                                </span>
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        `;
+        list.appendChild(card);
+    });
+
+    // Update Counters
+    document.getElementById('totalTasksCount').innerText = totalTasks;
+    document.getElementById('doneTasksCount').innerText = doneCount;
+    document.getElementById('pendingTasksCount').innerText = (totalTasks - doneCount);
+
+    const percent = totalTasks > 0 ? Math.round((doneCount / totalTasks) * 100) : 0;
+    document.getElementById('progressPercent').innerText = percent + '%';
+    document.getElementById('progressBar').style.width = percent + '%';
+}
+
+function toggleTask(id) {
+    if (doneTasks.includes(id)) {
+        doneTasks = doneTasks.filter(item => item !== id);
+    } else {
+        doneTasks.push(id);
+    }
+    localStorage.setItem('academic_done_tasks', JSON.stringify(doneTasks));
+    render();
+}
+
+function resetAllProgress() {
+    if (confirm('האם אתה בטוח שברצונך לאפס את כל המשימות שסומנו?')) {
+        doneTasks = [];
+        localStorage.removeItem('academic_done_tasks');
+        render();
+    }
+}
+
+function setFilter(filterType, element) {
+    currentFilter = filterType;
+    document.querySelectorAll('.filter-chip').forEach(el => el.classList.remove('active'));
+    if (element) element.classList.add('active');
+    render();
+}
+
+// Generate .ics file with Course Lecturer & Color Indicators
+function downloadICS(courseFilter = 'all') {
+    let calName = "תואר שני - סמסטר א'";
+    if (courseFilter === 'mor') calName = "הערכת תוכניות - מור";
+    if (courseFilter === 'wassel') calName = "פיתוח חדשנות - ואסל";
+    if (courseFilter === 'levy') calName = "סוגיות בהערכה - לוי-ורד";
+
+    let ics = [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "PRODID:-//Ofer Academic Assistant//Beit Berl M.Ed//HE",
+        "CALSCALE:GREGORIAN",
+        "METHOD:PUBLISH",
+        `X-WR-CALNAME:${calName}`,
+        "X-WR-TIMEZONE:Asia/Jerusalem"
+    ];
+
+    semesterSchedule.forEach(w => {
+        const parts = w.dateStr.split('.');
+        const dateFormatted = `${parts[2]}${parts[1]}${parts[0]}`; // YYYYMMDD
+
+        w.tasks.forEach((t) => {
+            if (courseFilter !== 'all' && t.courseKey !== courseFilter) return;
+
+            const uid = `${t.id}_2026@ofer_academic`;
+            const summary = `${t.emoji} [${t.course}] ${t.title}`;
+            const description = `${t.desc}\\nמשקל בציון: ${t.weight}\\nמרצה: ${t.course.split('–')[1].trim()}`;
+
+            ics.push("BEGIN:VEVENT");
+            ics.push(`UID:${uid}`);
+            ics.push(`DTSTAMP:${dateFormatted}T080000Z`);
+            ics.push(`DTSTART;VALUE=DATE:${dateFormatted}`);
+            ics.push(`SUMMARY:${summary}`);
+            ics.push(`DESCRIPTION:${description}`);
+            ics.push("STATUS:CONFIRMED");
+            ics.push("BEGIN:VALARM");
+            ics.push("TRIGGER:-P2D");
+            ics.push("ACTION:DISPLAY");
+            ics.push(`DESCRIPTION:תזכורת: ${summary}`);
+            ics.push("END:VALARM");
+            ics.push("END:VEVENT");
+        });
+    });
+
+    ics.push("END:VCALENDAR");
+
+    const blob = new Blob([ics.join("\r\n")], { type: 'text/calendar;charset=utf-8' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `${calName.replace(/ /g, '_')}.ics`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+// Service Worker Registration for PWA
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log('SW Registered!', reg))
+            .catch(err => console.log('SW Registration failed: ', err));
+    });
+}
+
+// Initial Render
+render();
+</script>
+
+</body>
+</html>
