@@ -16,6 +16,10 @@
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     
+    <!-- Google Identity Services (GIS) & GAPI -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://apis.google.com/js/api.js" async defer></script>
+
     <style>
         :root {
             --bg: #f8fafc;
@@ -139,6 +143,7 @@
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
+            align-items: center;
         }
 
         .btn {
@@ -175,8 +180,24 @@
             color: #4338ca;
         }
 
-        /* Dedicated Calendar Info Strip */
-        .calendar-unified-strip {
+        .btn-google {
+            background: #4285f4;
+            color: white;
+            border: none;
+            box-shadow: 0 2px 6px rgba(66, 133, 244, 0.4);
+        }
+        .btn-google:hover {
+            background: #3367d6;
+            color: white;
+        }
+
+        .btn-google.connected {
+            background: #10b981;
+            border: 1px solid #059669;
+        }
+
+        /* Live Sync Status Banner */
+        .sync-status-banner {
             background: #ffffff;
             border: 1px solid var(--border);
             border-radius: 18px;
@@ -190,32 +211,35 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
 
-        .cal-strip-text {
+        .sync-banner-text {
             display: flex;
             align-items: center;
             gap: 12px;
         }
 
-        .cal-strip-icon {
+        .sync-banner-icon {
             font-size: 26px;
             width: 44px;
             height: 44px;
             border-radius: 12px;
-            background: #f5f3ff;
-            color: #4f46e5;
+            background: #ecfdf5;
+            color: #10b981;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
         }
 
-        .cal-strip-info h3 {
+        .sync-banner-info h3 {
             font-size: 15px;
             font-weight: 800;
             color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .cal-strip-info p {
+        .sync-banner-info p {
             font-size: 13px;
             color: var(--text-muted);
         }
@@ -436,7 +460,6 @@
             gap: 12px;
         }
 
-        /* Task Cards by Course Specific Theme */
         .task-item {
             border-radius: 14px;
             padding: 16px;
@@ -576,6 +599,59 @@
             border: 1px solid #cbd5e1;
         }
 
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #0f172a;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 700;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 999;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Config Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+        .modal-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-card {
+            background: white;
+            border-radius: 20px;
+            padding: 26px;
+            max-width: 480px;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
         /* Footer */
         footer {
             margin-top: 40px;
@@ -643,8 +719,8 @@
             .tasks-container { grid-template-columns: 1fr; }
             .mobile-bottom-bar { display: flex; }
             .course-strip { grid-template-columns: 1fr; }
-            .calendar-unified-strip { flex-direction: column; align-items: stretch; text-align: center; }
-            .cal-strip-text { justify-content: center; text-align: right; }
+            .sync-status-banner { flex-direction: column; align-items: stretch; text-align: center; }
+            .sync-banner-text { justify-content: center; text-align: right; }
         }
     </style>
 </head>
@@ -662,8 +738,11 @@
                 </div>
             </div>
             <div class="header-actions">
+                <button class="btn btn-google" id="googleAuthBtn" onclick="handleAuthClick()">
+                    🔑 התחבר ל-Google Calendar
+                </button>
                 <button class="btn btn-primary" onclick="downloadICS()">
-                    📅 סנכרן יומן לימודים (Google Calendar)
+                    📅 הורד קובץ יומן (.ics)
                 </button>
                 <button class="btn" onclick="resetAllProgress()">
                     🔄 אפס סימונים
@@ -672,17 +751,17 @@
         </div>
     </header>
 
-    <!-- Unified Dedicated Calendar Strip -->
-    <div class="calendar-unified-strip">
-        <div class="cal-strip-text">
-            <div class="cal-strip-icon">🗓️</div>
-            <div class="cal-strip-info">
-                <h3>יומן לימודים ייעודי: "Roshaket - לימודים"</h3>
-                <p>כל המשימות מתנקזות ליומן אחד עצמאי ב-Google Calendar. בצבע אחיד לבחירתך, להדלקה ולכיבוי בלחיצה אחת.</p>
+    <!-- Live Sync Status Banner -->
+    <div class="sync-status-banner">
+        <div class="sync-banner-text">
+            <div class="sync-banner-icon" id="syncStatusIcon">⚡</div>
+            <div class="sync-banner-info">
+                <h3 id="syncStatusTitle">סנכרון דו-כיווני ליומן Google Calendar</h3>
+                <p id="syncStatusDesc">התחבר לחשבון Google שלך כדי שכל סימון V באפליקציה יעודכן מיד ביומן ל-✅ [הושלם] בצבע ירוק.</p>
             </div>
         </div>
-        <button class="btn btn-primary" style="background: #1e1b4b; color: white;" onclick="downloadICS()">
-            📥 הורד קובץ יומן (.ics)
+        <button class="btn btn-primary" style="background: #1e1b4b; color: white;" onclick="handleSyncAllToGoogle()">
+            🚀 סנכרן את כל המשימות לחשבון
         </button>
     </div>
 
@@ -776,7 +855,7 @@
             <span>•</span>
             <span>תשפ"ז (2026-2027)</span>
             <span>•</span>
-            <span>גרסה 1.0.0</span>
+            <span>גרסה 1.1.0</span>
         </div>
         <div class="footer-copy">
             כל הזכויות שמורות © 2026 D-Dialog | פותח עבור עופר ועמיתי התואר השני
@@ -784,14 +863,43 @@
     </footer>
 </div>
 
+<!-- Toast Message -->
+<div class="toast" id="toastBox">
+    <span id="toastText">עודכן ביומן בהצלחה!</span>
+</div>
+
+<!-- OAuth Client ID Config Modal (fallback if needed) -->
+<div class="modal-overlay" id="configModal">
+    <div class="modal-card">
+        <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 8px;">🔑 הגדרת חיבור ל-Google Calendar</h3>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">
+            כדי לאפשר חיבור ישיר לחשבון הגוגל שלך, הזן את מזהה הלקוח (Google Client ID) שנוצר ב-Google Cloud Console:
+        </p>
+        <input type="text" id="clientIdInput" placeholder="xxxx.apps.googleusercontent.com" 
+               style="width: 100%; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border); font-size: 13px; margin-bottom: 16px;">
+        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+            <button class="btn" style="background: #f1f5f9; color: var(--text-main);" onclick="closeConfigModal()">ביטול</button>
+            <button class="btn btn-primary" style="background: #4f46e5; color: white;" onclick="saveClientId()">שמור והתחבר</button>
+        </div>
+    </div>
+</div>
+
 <!-- Mobile Sticky Bottom Actions -->
 <div class="mobile-bottom-bar">
-    <button class="btn btn-primary" style="background: #1e1b4b; color: white; width: 100%; justify-content: center;" onclick="downloadICS()">
-        📅 הוסף יומן "Roshaket - לימודים" לגוגל
+    <button class="btn btn-primary" style="background: #1e1b4b; color: white; width: 100%; justify-content: center;" onclick="handleAuthClick()">
+        ⚡ התחבר ל-Google לסנכרון חי
     </button>
 </div>
 
 <script>
+// Google OAuth & Calendar API Configuration
+const DEFAULT_CLIENT_ID = localStorage.getItem('roshaket_client_id') || '889823725975-jiuqqf3eafkbg6u8apkurnoh4gohib4q.apps.googleusercontent.com';
+const SCOPES = 'https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar';
+
+let tokenClient = null;
+let googleAccessToken = localStorage.getItem('roshaket_g_token') || null;
+let roshaketCalendarId = localStorage.getItem('roshaket_cal_id') || null;
+
 // Master Semester Database with Lecturer Names
 const semesterSchedule = [
     {
@@ -1025,16 +1133,26 @@ function render() {
     const percent = totalTasks > 0 ? Math.round((doneCount / totalTasks) * 100) : 0;
     document.getElementById('progressPercent').innerText = percent + '%';
     document.getElementById('progressBar').style.width = percent + '%';
+
+    updateSyncUI();
 }
 
 function toggleTask(id) {
-    if (doneTasks.includes(id)) {
-        doneTasks = doneTasks.filter(item => item !== id);
-    } else {
+    const isNowDone = !doneTasks.includes(id);
+    if (isNowDone) {
         doneTasks.push(id);
+    } else {
+        doneTasks = doneTasks.filter(item => item !== id);
     }
     localStorage.setItem('roshaket_done_tasks', JSON.stringify(doneTasks));
     render();
+
+    // Live sync to Google Calendar if connected
+    if (googleAccessToken) {
+        syncSingleTaskToGoogle(id, isNowDone);
+    } else {
+        showToast(isNowDone ? '✓ משימה סומנה כבוצעה (מקומי)' : 'משימה הוחזרה לביצוע');
+    }
 }
 
 function resetAllProgress() {
@@ -1042,6 +1160,7 @@ function resetAllProgress() {
         doneTasks = [];
         localStorage.removeItem('roshaket_done_tasks');
         render();
+        showToast('כל הסימונים אופסו');
     }
 }
 
@@ -1052,7 +1171,234 @@ function setFilter(filterType, element) {
     render();
 }
 
-// Generate Unified Dedicated Calendar File
+function showToast(message) {
+    const toast = document.getElementById('toastBox');
+    document.getElementById('toastText').innerText = message;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3500);
+}
+
+// ==========================================
+// Google Calendar Live Sync & OAuth Engine
+// ==========================================
+
+function updateSyncUI() {
+    const btn = document.getElementById('googleAuthBtn');
+    const icon = document.getElementById('syncStatusIcon');
+    const title = document.getElementById('syncStatusTitle');
+    const desc = document.getElementById('syncStatusDesc');
+
+    if (googleAccessToken) {
+        btn.innerText = '🟢 מחובר לחשבון Google';
+        btn.classList.add('connected');
+        icon.innerText = '✅';
+        icon.style.background = '#ecfdf5';
+        icon.style.color = '#10b981';
+        title.innerHTML = 'סנכרון חי פעיל מול Google Calendar 🟢';
+        desc.innerText = 'כל סימון V מעדכן בזמן אמת את האירוע ביומן גוגל שלך ל-✅ [הושלם] בצבע ירוק.';
+    } else {
+        btn.innerText = '🔑 התחבר ל-Google Calendar';
+        btn.classList.remove('connected');
+        icon.innerText = '⚡';
+        icon.style.background = '#eff6ff';
+        icon.style.color = '#3b82f6';
+        title.innerText = 'סנכרון דו-כיווני ליומן Google Calendar';
+        desc.innerText = 'התחבר לחשבון Google שלך כדי שכל סימון V באפליקציה יעודכן מיד ביומן ל-✅ [הושלם] בצבע ירוק.';
+    }
+}
+
+function handleAuthClick() {
+    if (typeof google === 'undefined' || !google.accounts) {
+        showToast('טוען ספריות Google... נסה שוב בעוד כמה שניות');
+        return;
+    }
+
+    const clientId = localStorage.getItem('roshaket_client_id') || DEFAULT_CLIENT_ID;
+
+    try {
+        tokenClient = google.accounts.oauth2.initTokenClient({
+            client_id: clientId,
+            scope: SCOPES,
+            callback: async (resp) => {
+                if (resp.error !== undefined) {
+                    throw resp;
+                }
+                googleAccessToken = resp.access_token;
+                localStorage.setItem('roshaket_g_token', googleAccessToken);
+                showToast('🔑 התחברת בהצלחה לחשבון Google!');
+                updateSyncUI();
+                await ensureRoshaketCalendarExists();
+            },
+        });
+        tokenClient.requestAccessToken({ prompt: 'consent' });
+    } catch (err) {
+        console.error('Auth error:', err);
+        openConfigModal();
+    }
+}
+
+async function ensureRoshaketCalendarExists() {
+    if (!googleAccessToken) return null;
+    showToast('בודק יומן לימודים בחשבון גוגל...');
+
+    try {
+        const res = await fetch('https://www.googleapis.com/calendar/v3/users/me/calendarList', {
+            headers: { Authorization: `Bearer ${googleAccessToken}` }
+        });
+        const data = await res.json();
+        const existing = data.items && data.items.find(c => c.summary === 'Roshaket - לימודים');
+
+        if (existing) {
+            roshaketCalendarId = existing.id;
+            localStorage.setItem('roshaket_cal_id', roshaketCalendarId);
+            showToast('יומן "Roshaket - לימודים" זוהה בחשבון!');
+            return roshaketCalendarId;
+        }
+
+        // Create the calendar
+        const createRes = await fetch('https://www.googleapis.com/calendar/v3/calendars', {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${googleAccessToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                summary: 'Roshaket - לימודים',
+                description: 'יומן משימות ולוח זמנים לתואר שני בחינוך וחדשנות פדגוגית | מבית D-Dialog',
+                timeZone: 'Asia/Jerusalem'
+            })
+        });
+        const created = await createRes.json();
+        roshaketCalendarId = created.id;
+        localStorage.setItem('roshaket_cal_id', roshaketCalendarId);
+        showToast('יומן ייעודי "Roshaket - לימודים" הוקם בחשבונך בהצלחה!');
+        return roshaketCalendarId;
+    } catch (e) {
+        console.error('Error finding/creating calendar:', e);
+        return 'primary';
+    }
+}
+
+async function handleSyncAllToGoogle() {
+    if (!googleAccessToken) {
+        handleAuthClick();
+        return;
+    }
+    const calId = roshaketCalendarId || await ensureRoshaketCalendarExists() || 'primary';
+    showToast('מסנכרן את כל משימות הסמסטר ליומן...');
+
+    let synced = 0;
+    for (const w of semesterSchedule) {
+        const parts = w.dateStr.split('.');
+        const dateFormatted = `${parts[2]}-${parts[1]}-${parts[0]}`; // YYYY-MM-DD
+
+        for (const t of w.tasks) {
+            const isDone = doneTasks.includes(t.id);
+            const summary = isDone ? `✅ [הושלם] [${t.course}] ${t.title}` : `${t.emoji} [${t.course}] ${t.title}`;
+            
+            try {
+                await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events`, {
+                    method: 'POST',
+                    headers: {
+                        Authorization: `Bearer ${googleAccessToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        summary: summary,
+                        description: `${t.desc}\nמשקל בציון: ${t.weight}\nמערכת Roshaket מבית D-Dialog`,
+                        start: { date: dateFormatted },
+                        end: { date: dateFormatted },
+                        colorId: isDone ? '10' : undefined
+                    })
+                });
+                synced++;
+            } catch (err) {
+                console.error('Event insert error:', err);
+            }
+        }
+    }
+    showToast(`סונכרנו בהצלחה ${synced} משימות ליומן Google!`);
+}
+
+async function syncSingleTaskToGoogle(taskId, isDone) {
+    if (!googleAccessToken) return;
+
+    let targetTask = null;
+    let targetWeek = null;
+    for (const w of semesterSchedule) {
+        const found = w.tasks.find(t => t.id === taskId);
+        if (found) { targetTask = found; targetWeek = w; break; }
+    }
+    if (!targetTask) return;
+
+    const calId = roshaketCalendarId || 'primary';
+    const parts = targetWeek.dateStr.split('.');
+    const dateFormatted = `${parts[2]}-${parts[1]}-${parts[0]}`;
+
+    const newSummary = isDone 
+        ? `✅ [הושלם] [${targetTask.course}] ${targetTask.title}` 
+        : `${targetTask.emoji} [${targetTask.course}] ${targetTask.title}`;
+
+    try {
+        // Query event to update or create
+        const listRes = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events?q=${encodeURIComponent(targetTask.title)}`, {
+            headers: { Authorization: `Bearer ${googleAccessToken}` }
+        });
+        const listData = await listRes.json();
+
+        if (listData.items && listData.items.length > 0) {
+            const eventId = listData.items[0].id;
+            await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events/${eventId}`, {
+                method: 'PATCH',
+                headers: {
+                    Authorization: `Bearer ${googleAccessToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    summary: newSummary,
+                    colorId: isDone ? '10' : undefined
+                })
+            });
+            showToast(isDone ? '✅ עודכן ביומן גוגל: הושלם בהצלחה!' : 'עודכן ביומן גוגל: הוחזר לביצוע');
+        } else {
+            // Insert fresh event
+            await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events`, {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${googleAccessToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    summary: newSummary,
+                    description: `${targetTask.desc}\nמשקל בציון: ${targetTask.weight}`,
+                    start: { date: dateFormatted },
+                    end: { date: dateFormatted },
+                    colorId: isDone ? '10' : undefined
+                })
+            });
+            showToast('✅ האירוע נוצר ועודכן ביומן גוגל!');
+        }
+    } catch (e) {
+        console.error('Sync single task error:', e);
+    }
+}
+
+function openConfigModal() {
+    document.getElementById('configModal').classList.add('open');
+}
+function closeConfigModal() {
+    document.getElementById('configModal').classList.remove('open');
+}
+function saveClientId() {
+    const val = document.getElementById('clientIdInput').value.trim();
+    if (val) {
+        localStorage.setItem('roshaket_client_id', val);
+        closeConfigModal();
+        handleAuthClick();
+    }
+}
+
+// Fallback: Generate Standard .ics File
 function downloadICS() {
     const calName = "Roshaket - לימודים";
 
@@ -1072,7 +1418,8 @@ function downloadICS() {
 
         w.tasks.forEach((t) => {
             const uid = `${t.id}_2026@roshaket_ddialog`;
-            const summary = `${t.emoji} [${t.course}] ${t.title}`;
+            const isDone = doneTasks.includes(t.id);
+            const summary = isDone ? `✅ [הושלם] [${t.course}] ${t.title}` : `${t.emoji} [${t.course}] ${t.title}`;
             const description = `${t.desc}\\nמשקל בציון: ${t.weight}\\nמערכת Roshaket מבית D-Dialog`;
 
             ics.push("BEGIN:VEVENT");
@@ -1100,6 +1447,7 @@ function downloadICS() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    showToast('קובץ היומן הורד בהצלחה!');
 }
 
 // Service Worker Registration for PWA
