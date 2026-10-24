@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Roshaket 🎓 | ראש שקט לתואר</title>
+    <title>Roshaket 🎓 | ראש שקט לתואר | D-Dialog</title>
     
     <!-- PWA & Mobile Meta -->
     <meta name="theme-color" content="#1e1b4b">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="עוזר אקדמי">
+    <meta name="apple-mobile-web-app-title" content="Roshaket">
     <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&display=swap" rel="stylesheet">
@@ -61,7 +62,7 @@
             color: var(--text-main);
             line-height: 1.6;
             padding: 16px;
-            padding-bottom: 80px; /* Space for mobile floating bar */
+            padding-bottom: 90px;
         }
 
         .container {
@@ -102,8 +103,25 @@
             z-index: 1;
         }
 
+        .brand-cluster {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .brand-logo {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            object-fit: cover;
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            background: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            flex-shrink: 0;
+        }
+
         .header-title h1 {
-            font-size: 26px;
+            font-size: 28px;
             font-weight: 800;
             letter-spacing: -0.5px;
             display: flex;
@@ -113,13 +131,13 @@
 
         .header-title p {
             color: #cbd5e1;
-            font-size: 15px;
-            margin-top: 4px;
+            font-size: 14.5px;
+            margin-top: 3px;
         }
 
         .header-actions {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             flex-wrap: wrap;
         }
 
@@ -127,27 +145,79 @@
             background: rgba(255, 255, 255, 0.14);
             color: white;
             border: 1px solid rgba(255, 255, 255, 0.25);
-            padding: 10px 16px;
+            padding: 10px 18px;
             border-radius: 12px;
             cursor: pointer;
             font-size: 14px;
             font-weight: 700;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             transition: all 0.2s ease;
             text-decoration: none;
             min-height: 44px;
         }
 
-        .btn:active {
-            transform: scale(0.98);
+        .btn:hover {
+            background: white;
+            color: #0f172a;
+            transform: translateY(-2px);
         }
 
         .btn-primary {
             background: #ffffff;
             color: #1e1b4b;
             border: none;
+        }
+
+        .btn-primary:hover {
+            background: #f1f5f9;
+            color: #4338ca;
+        }
+
+        /* Dedicated Calendar Info Strip */
+        .calendar-unified-strip {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 14px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+
+        .cal-strip-text {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .cal-strip-icon {
+            font-size: 26px;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: #f5f3ff;
+            color: #4f46e5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .cal-strip-info h3 {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .cal-strip-info p {
+            font-size: 13px;
+            color: var(--text-muted);
         }
 
         /* 3 Course Strips */
@@ -173,17 +243,6 @@
         .badge-mor { background: var(--c-mor-bg); color: var(--c-mor-text); border-color: var(--c-mor-border); }
         .badge-wassel { background: var(--c-wassel-bg); color: var(--c-wassel-text); border-color: var(--c-wassel-border); }
         .badge-levy { background: var(--c-levy-bg); color: var(--c-levy-text); border-color: var(--c-levy-border); }
-
-        .btn-cal-mini {
-            font-size: 11px;
-            font-weight: 700;
-            padding: 5px 10px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            background: white;
-            color: var(--text-main);
-            cursor: pointer;
-        }
 
         /* Stats Grid */
         .stats-grid {
@@ -416,7 +475,6 @@
             gap: 12px;
         }
 
-        /* Big Touch Friendly Checkbox */
         .task-checkbox-wrap {
             padding: 4px;
             margin: -4px;
@@ -518,6 +576,50 @@
             border: 1px solid #cbd5e1;
         }
 
+        /* Footer */
+        footer {
+            margin-top: 40px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 28px 24px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            font-weight: 800;
+            color: var(--text-main);
+            font-size: 16px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin: 12px 0;
+            flex-wrap: wrap;
+            font-size: 13px;
+        }
+
+        .footer-links a {
+            color: #4f46e5;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer-copy {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 8px;
+        }
+
         /* Mobile Bottom Nav Bar */
         .mobile-bottom-bar {
             display: none;
@@ -541,22 +643,27 @@
             .tasks-container { grid-template-columns: 1fr; }
             .mobile-bottom-bar { display: flex; }
             .course-strip { grid-template-columns: 1fr; }
+            .calendar-unified-strip { flex-direction: column; align-items: stretch; text-align: center; }
+            .cal-strip-text { justify-content: center; text-align: right; }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- Header -->
+    <!-- Header with D-Dialog Logo -->
     <header>
         <div class="header-content">
-            <div class="header-title">
-                <h1>🎓 Roshaket <span style="font-size: 20px; font-weight: 600; opacity: 0.85;">| ראש שקט לתואר</span></h1>
-                <p>מכללת בית ברל | תוכנית המהפכה | שנה ב' תשפ"ז</p>
+            <div class="brand-cluster">
+                <img src="logo.jpg" alt="D-Dialog Logo" class="brand-logo" onerror="this.style.display='none'">
+                <div class="header-title">
+                    <h1>🎓 Roshaket <span style="font-size: 18px; font-weight: 600; opacity: 0.85;">| ראש שקט לתואר</span></h1>
+                    <p>מכללת בית ברל | תוכנית המהפכה | שנה ב' תשפ"ז | מבית D-Dialog</p>
+                </div>
             </div>
             <div class="header-actions">
-                <button class="btn btn-primary" onclick="downloadICS('all')">
-                    📅 סנכרן הכל ל-Google Calendar
+                <button class="btn btn-primary" onclick="downloadICS()">
+                    📅 סנכרן יומן לימודים (Google Calendar)
                 </button>
                 <button class="btn" onclick="resetAllProgress()">
                     🔄 אפס סימונים
@@ -565,19 +672,33 @@
         </div>
     </header>
 
+    <!-- Unified Dedicated Calendar Strip -->
+    <div class="calendar-unified-strip">
+        <div class="cal-strip-text">
+            <div class="cal-strip-icon">🗓️</div>
+            <div class="cal-strip-info">
+                <h3>יומן לימודים ייעודי: "Roshaket - לימודים"</h3>
+                <p>כל המשימות מתנקזות ליומן אחד עצמאי ב-Google Calendar. בצבע אחיד לבחירתך, להדלקה ולכיבוי בלחיצה אחת.</p>
+            </div>
+        </div>
+        <button class="btn btn-primary" style="background: #1e1b4b; color: white;" onclick="downloadICS()">
+            📥 הורד קובץ יומן (.ics)
+        </button>
+    </div>
+
     <!-- 3 Course Strips -->
     <div class="course-strip">
         <div class="course-card-badge badge-mor">
             <span>🟣 הערכת תוכניות – מור</span>
-            <button class="btn-cal-mini" onclick="downloadICS('mor')">הורד יומן לקורס</button>
+            <span style="font-size: 12px; font-weight: 600;">מפגשי ראשון (זום/קמפוס)</span>
         </div>
         <div class="course-card-badge badge-wassel">
             <span>🔵 פיתוח חדשנות – ואסל</span>
-            <button class="btn-cal-mini" onclick="downloadICS('wassel')">הורד יומן לקורס</button>
+            <span style="font-size: 12px; font-weight: 600;">משימות תלקיט מצטבר (27.01)</span>
         </div>
         <div class="course-card-badge badge-levy">
             <span>🟢 סוגיות בהערכה – לוי-ורד</span>
-            <button class="btn-cal-mini" onclick="downloadICS('levy')">הורד יומן לקורס</button>
+            <span style="font-size: 12px; font-weight: 600;">חובת רפלקציה שבועית בקיר</span>
         </div>
     </div>
 
@@ -639,12 +760,34 @@
     <div class="weeks-list" id="weeksList">
         <!-- Injected via JavaScript -->
     </div>
+
+    <!-- Footer with D-Dialog Branding -->
+    <footer>
+        <div class="footer-brand">
+            <span>🚀 D-Dialog | דיאלוג דיגיטלי</span>
+        </div>
+        <p style="font-weight: 600; color: #475569;">
+            Roshaket (ראשקט) – מערכת ניהול משימות ולוח זמנים בראש שקט ללימודים מתקדמים
+        </p>
+        <div class="footer-links">
+            <a href="https://d-dialog.co.il" target="_blank" rel="noopener">אתר הבית D-Dialog</a>
+            <span>•</span>
+            <span>תוכנית המהפכה - בית ברל</span>
+            <span>•</span>
+            <span>תשפ"ז (2026-2027)</span>
+            <span>•</span>
+            <span>גרסה 1.0.0</span>
+        </div>
+        <div class="footer-copy">
+            כל הזכויות שמורות © 2026 D-Dialog | פותח עבור עופר ועמיתי התואר השני
+        </div>
+    </footer>
 </div>
 
 <!-- Mobile Sticky Bottom Actions -->
 <div class="mobile-bottom-bar">
-    <button class="btn btn-primary" style="background: #1e1b4b; color: white; width: 100%; justify-content: center;" onclick="downloadICS('all')">
-        📅 הוסף את כל המשימות ליומן גוגל
+    <button class="btn btn-primary" style="background: #1e1b4b; color: white; width: 100%; justify-content: center;" onclick="downloadICS()">
+        📅 הוסף יומן "Roshaket - לימודים" לגוגל
     </button>
 </div>
 
@@ -797,7 +940,7 @@ const semesterSchedule = [
 ];
 
 // State & LocalStorage
-let doneTasks = JSON.parse(localStorage.getItem('academic_done_tasks') || '[]');
+let doneTasks = JSON.parse(localStorage.getItem('roshaket_done_tasks') || '[]');
 let currentFilter = 'all';
 
 function render() {
@@ -890,14 +1033,14 @@ function toggleTask(id) {
     } else {
         doneTasks.push(id);
     }
-    localStorage.setItem('academic_done_tasks', JSON.stringify(doneTasks));
+    localStorage.setItem('roshaket_done_tasks', JSON.stringify(doneTasks));
     render();
 }
 
 function resetAllProgress() {
-    if (confirm('האם אתה בטוח שברצונך לאפס את כל המשימות שסומנו?')) {
+    if (confirm('האם לאפס את כל המשימות שסומנו ב-Roshaket?')) {
         doneTasks = [];
-        localStorage.removeItem('academic_done_tasks');
+        localStorage.removeItem('roshaket_done_tasks');
         render();
     }
 }
@@ -909,17 +1052,14 @@ function setFilter(filterType, element) {
     render();
 }
 
-// Generate .ics file with Course Lecturer & Color Indicators
-function downloadICS(courseFilter = 'all') {
-    let calName = "תואר שני - סמסטר א'";
-    if (courseFilter === 'mor') calName = "הערכת תוכניות - מור";
-    if (courseFilter === 'wassel') calName = "פיתוח חדשנות - ואסל";
-    if (courseFilter === 'levy') calName = "סוגיות בהערכה - לוי-ורד";
+// Generate Unified Dedicated Calendar File
+function downloadICS() {
+    const calName = "Roshaket - לימודים";
 
     let ics = [
         "BEGIN:VCALENDAR",
         "VERSION:2.0",
-        "PRODID:-//Ofer Academic Assistant//Beit Berl M.Ed//HE",
+        "PRODID:-//D-Dialog Roshaket//Beit Berl M.Ed//HE",
         "CALSCALE:GREGORIAN",
         "METHOD:PUBLISH",
         `X-WR-CALNAME:${calName}`,
@@ -931,11 +1071,9 @@ function downloadICS(courseFilter = 'all') {
         const dateFormatted = `${parts[2]}${parts[1]}${parts[0]}`; // YYYYMMDD
 
         w.tasks.forEach((t) => {
-            if (courseFilter !== 'all' && t.courseKey !== courseFilter) return;
-
-            const uid = `${t.id}_2026@ofer_academic`;
+            const uid = `${t.id}_2026@roshaket_ddialog`;
             const summary = `${t.emoji} [${t.course}] ${t.title}`;
-            const description = `${t.desc}\\nמשקל בציון: ${t.weight}\\nמרצה: ${t.course.split('–')[1].trim()}`;
+            const description = `${t.desc}\\nמשקל בציון: ${t.weight}\\nמערכת Roshaket מבית D-Dialog`;
 
             ics.push("BEGIN:VEVENT");
             ics.push(`UID:${uid}`);
@@ -958,7 +1096,7 @@ function downloadICS(courseFilter = 'all') {
     const blob = new Blob([ics.join("\r\n")], { type: 'text/calendar;charset=utf-8' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `Roshaket_${calName.replace(/ /g, '_')}.ics`;
+    link.download = `Roshaket_Calendar_Semester_A.ics`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -968,7 +1106,7 @@ function downloadICS(courseFilter = 'all') {
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
-            .then(reg => console.log('SW Registered!', reg))
+            .then(reg => console.log('Roshaket SW Registered!', reg))
             .catch(err => console.log('SW Registration failed: ', err));
     });
 }
