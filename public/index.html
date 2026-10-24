@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>עוזר משימות תואר שני | בית ברל</title>
+    <title>Roshaket 🎓 | ראש שקט לתואר</title>
     
     <!-- PWA & Mobile Meta -->
     <meta name="theme-color" content="#1e1b4b">
@@ -551,7 +551,7 @@
     <header>
         <div class="header-content">
             <div class="header-title">
-                <h1>🎓 עוזר משימות תואר שני</h1>
+                <h1>🎓 Roshaket <span style="font-size: 20px; font-weight: 600; opacity: 0.85;">| ראש שקט לתואר</span></h1>
                 <p>מכללת בית ברל | תוכנית המהפכה | שנה ב' תשפ"ז</p>
             </div>
             <div class="header-actions">
@@ -958,7 +958,7 @@ function downloadICS(courseFilter = 'all') {
     const blob = new Blob([ics.join("\r\n")], { type: 'text/calendar;charset=utf-8' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `${calName.replace(/ /g, '_')}.ics`;
+    link.download = `Roshaket_${calName.replace(/ /g, '_')}.ics`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
