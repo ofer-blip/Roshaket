@@ -893,7 +893,8 @@
 
 <script>
 // Google OAuth & Calendar API Configuration
-const DEFAULT_CLIENT_ID = localStorage.getItem('roshaket_client_id') || '889823725975-jiuqqf3eafkbg6u8apkurnoh4gohib4q.apps.googleusercontent.com';
+const DEFAULT_CLIENT_ID = '889823725975-l5p1o8nnnsffqpc9lb9dr5vfdq15vsrn.apps.googleusercontent.com';
+localStorage.setItem('roshaket_client_id', DEFAULT_CLIENT_ID);
 const SCOPES = 'https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar';
 
 let tokenClient = null;
