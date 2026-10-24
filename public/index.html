@@ -16,9 +16,10 @@
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Google Identity Services (GIS) & GAPI -->
+    <!-- Google Identity Services (GIS) & GAPI + Confetti -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="https://apis.google.com/js/api.js" async defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
     <style>
         :root {
@@ -733,6 +734,54 @@
             .sync-status-banner { flex-direction: column; align-items: stretch; text-align: center; }
             .sync-banner-text { justify-content: center; text-align: right; }
         }
+
+        /* Meme Celebration Popup */
+        .meme-popup {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(120px) scale(0.9);
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 20px 45px rgba(15, 23, 42, 0.25), 0 0 0 1px rgba(99, 102, 241, 0.2);
+            padding: 16px;
+            max-width: 360px;
+            width: 90%;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-align: center;
+            border: 2px solid #6366f1;
+            cursor: pointer;
+        }
+
+        .meme-popup.show {
+            transform: translateX(-50%) translateY(0) scale(1);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .meme-popup img {
+            width: 100%;
+            height: 190px;
+            object-fit: cover;
+            border-radius: 14px;
+            margin-bottom: 12px;
+        }
+
+        .meme-popup h4 {
+            font-size: 18px;
+            font-weight: 800;
+            color: #1e1b4b;
+            margin-bottom: 4px;
+        }
+
+        .meme-popup p {
+            font-size: 13px;
+            color: #475569;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -885,6 +934,13 @@
 <!-- Toast Message -->
 <div class="toast" id="toastBox">
     <span id="toastText">עודכן ביומן בהצלחה!</span>
+</div>
+
+<!-- Celebration Meme Floating Popup -->
+<div class="meme-popup" id="memePopup" onclick="closeMemePopup()">
+    <img id="memeImg" src="" alt="Meme celebration">
+    <h4 id="memeTitle">אלוף שבעולם! 🎉</h4>
+    <p id="memeSub">עוד מטלה נכבשה בדרך לתואר שני!</p>
 </div>
 
 <!-- Sync Progress Modal -->
@@ -1200,6 +1256,7 @@ function toggleTask(id) {
     const isNowDone = !doneTasks.includes(id);
     if (isNowDone) {
         doneTasks.push(id);
+        triggerCelebrationMeme();
     } else {
         doneTasks = doneTasks.filter(item => item !== id);
     }
@@ -1212,6 +1269,80 @@ function toggleTask(id) {
     } else {
         showToast(isNowDone ? '✓ משימה סומנה כבוצעה (מקומי)' : 'משימה הוחזרה לביצוע');
     }
+}
+
+// Celebration Memes & Confetti System
+const CELEBRATION_MEMES = [
+    {
+        url: "https://media.giphy.com/media/GCLlQnV7dXZ2E/giphy.gif",
+        title: "לחיים! אלוף שבעולם! 🥂",
+        sub: "עוד מטלה הלכה לישון. ראש שקט לתואר!"
+    },
+    {
+        url: "https://media.giphy.com/media/artj92V8o75VPL7AeQ/giphy.gif",
+        title: "יששש! כיבוש מושלם! 🕺",
+        sub: "התקדמות אדירה לקראת התואר השני!"
+    },
+    {
+        url: "https://media.giphy.com/media/nXxOjZrbnbRxS/giphy.gif",
+        title: "Yes! עוד V בלוח! 💪",
+        sub: "תואר שני קטן עליך! ממשיכים בקצב!"
+    },
+    {
+        url: "https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif",
+        title: "פרודוקטיביות שיא! 🐱💻",
+        sub: "הקלדת, הגשת, ניצחת! שבת שלום ללא רגשות אשם!"
+    },
+    {
+        url: "https://media.giphy.com/media/10UeedrT5MIfPG/giphy.gif",
+        title: "חגיגה במכללה! 🍌🎉",
+        sub: "עוד שלב בפרויקט נסגר בהצלחה!"
+    },
+    {
+        url: "https://media.giphy.com/media/huJmPXfeir5JlpPAx0/giphy.gif",
+        title: "זה קורה! זה עובד! 🤩",
+        sub: "ד\"ר מור וד\"ר ואסל גאים בך!"
+    },
+    {
+        url: "https://media.giphy.com/media/blSTtZehjAZ8I/giphy.gif",
+        title: "ריקוד הניצחון! 🕺✨",
+        sub: "עוד רפלקציה סומנה והציון מובטח!"
+    }
+];
+
+let memeTimer = null;
+function triggerCelebrationMeme() {
+    if (typeof confetti === 'function') {
+        confetti({
+            particleCount: 65,
+            spread: 60,
+            origin: { y: 0.8 },
+            colors: ['#6366f1', '#10b981', '#f59e0b', '#ec4899', '#3b82f6']
+        });
+    }
+
+    const popup = document.getElementById('memePopup');
+    const img = document.getElementById('memeImg');
+    const title = document.getElementById('memeTitle');
+    const sub = document.getElementById('memeSub');
+
+    const meme = CELEBRATION_MEMES[Math.floor(Math.random() * CELEBRATION_MEMES.length)];
+    img.src = meme.url;
+    title.innerText = meme.title;
+    sub.innerText = meme.sub;
+
+    popup.classList.add('show');
+
+    if (memeTimer) clearTimeout(memeTimer);
+    memeTimer = setTimeout(() => {
+        popup.classList.remove('show');
+    }, 2800);
+}
+
+function closeMemePopup() {
+    const popup = document.getElementById('memePopup');
+    popup.classList.remove('show');
+    if (memeTimer) clearTimeout(memeTimer);
 }
 
 function resetAllProgress() {
@@ -1353,10 +1484,12 @@ async function getValidCalendarId() {
         headers: { Authorization: `Bearer ${googleAccessToken}` }
     });
     if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
         if (res.status === 401) {
             throw new Error('AUTH_EXPIRED');
         }
-        throw new Error(`שגיאה בגישה ליומנים (HTTP ${res.status})`);
+        const msg = errData.error?.message || `HTTP ${res.status}`;
+        throw new Error(`שגיאה בגישה ליומנים: ${msg}`);
     }
     const data = await res.json();
 
