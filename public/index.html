@@ -196,6 +196,17 @@
             border: 1px solid #059669;
         }
 
+        .btn-logout {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+        }
+        .btn-logout:hover {
+            background: #ef4444;
+            color: white;
+            border-color: #dc2626;
+        }
+
         /* Live Sync Status Banner */
         .sync-status-banner {
             background: #ffffff;
@@ -741,6 +752,9 @@
                 <button class="btn btn-google" id="googleAuthBtn" onclick="handleAuthClick()">
                     🔑 התחבר ל-Google Calendar
                 </button>
+                <button class="btn btn-logout" id="googleLogoutBtn" onclick="handleLogoutClick()" style="display: none;">
+                    🚪 התנתק
+                </button>
                 <button class="btn btn-primary" onclick="downloadICS()">
                     📅 הורד קובץ יומן (.ics)
                 </button>
@@ -760,9 +774,14 @@
                 <p id="syncStatusDesc">התחבר לחשבון Google שלך כדי שכל סימון V באפליקציה יעודכן מיד ביומן ל-✅ [הושלם] בצבע ירוק.</p>
             </div>
         </div>
-        <button class="btn btn-primary" style="background: #1e1b4b; color: white;" onclick="handleSyncAllToGoogle()">
-            🚀 סנכרן את כל המשימות לחשבון
-        </button>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+            <button class="btn btn-primary" id="syncAllBtn" style="background: #1e1b4b; color: white;" onclick="handleSyncAllToGoogle()">
+                🚀 סנכרן את כל המשימות לחשבון
+            </button>
+            <button class="btn" id="bannerLogoutBtn" style="display: none; background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5;" onclick="handleLogoutClick()">
+                🚪 התנתק מחשבון Google
+            </button>
+        </div>
     </div>
 
     <!-- 3 Course Strips -->
@@ -1183,8 +1202,21 @@ function showToast(message) {
 // Google Calendar Live Sync & OAuth Engine
 // ==========================================
 
+function getNextDay(dateFormatted) {
+    const parts = dateFormatted.split('-').map(Number);
+    // Month is 0-indexed in Date constructor (parts[1] - 1)
+    const d = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+    d.setUTCDate(d.getUTCDate() + 1);
+    const y = d.getUTCFullYear();
+    const m = String(d.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(d.getUTCDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+}
+
 function updateSyncUI() {
     const btn = document.getElementById('googleAuthBtn');
+    const logoutBtn = document.getElementById('googleLogoutBtn');
+    const bannerLogoutBtn = document.getElementById('bannerLogoutBtn');
     const icon = document.getElementById('syncStatusIcon');
     const title = document.getElementById('syncStatusTitle');
     const desc = document.getElementById('syncStatusDesc');
@@ -1192,20 +1224,42 @@ function updateSyncUI() {
     if (googleAccessToken) {
         btn.innerText = '🟢 מחובר לחשבון Google';
         btn.classList.add('connected');
+        if (logoutBtn) logoutBtn.style.display = 'inline-flex';
+        if (bannerLogoutBtn) bannerLogoutBtn.style.display = 'inline-flex';
         icon.innerText = '✅';
         icon.style.background = '#ecfdf5';
         icon.style.color = '#10b981';
         title.innerHTML = 'סנכרון חי פעיל מול Google Calendar 🟢';
-        desc.innerText = 'כל סימון V מעדכן בזמן אמת את האירוע ביומן גוגל שלך ל-✅ [הושלם] בצבע ירוק.';
+        desc.innerText = 'מחובר ליומן "לימודים בית ברל". כל סימון V מעדכן בזמן אמת ביומן גוגל ל-✅ [הושלם] בצבע ירוק.';
     } else {
         btn.innerText = '🔑 התחבר ל-Google Calendar';
         btn.classList.remove('connected');
+        if (logoutBtn) logoutBtn.style.display = 'none';
+        if (bannerLogoutBtn) bannerLogoutBtn.style.display = 'none';
         icon.innerText = '⚡';
         icon.style.background = '#eff6ff';
         icon.style.color = '#3b82f6';
         title.innerText = 'סנכרון דו-כיווני ליומן Google Calendar';
         desc.innerText = 'התחבר לחשבון Google שלך כדי שכל סימון V באפליקציה יעודכן מיד ביומן ל-✅ [הושלם] בצבע ירוק.';
     }
+}
+
+function handleLogoutClick() {
+    if (googleAccessToken && typeof google !== 'undefined' && google.accounts && google.accounts.oauth2) {
+        try {
+            google.accounts.oauth2.revoke(googleAccessToken, () => {
+                console.log('Token revoked from Google');
+            });
+        } catch (e) {
+            console.warn('Revoke warning:', e);
+        }
+    }
+    googleAccessToken = null;
+    roshaketCalendarId = null;
+    localStorage.removeItem('roshaket_g_token');
+    localStorage.removeItem('roshaket_cal_id');
+    updateSyncUI();
+    showToast('🚪 התנתקת בהצלחה מחשבון Google');
 }
 
 function handleAuthClick() {
@@ -1246,17 +1300,32 @@ async function ensureRoshaketCalendarExists() {
         const res = await fetch('https://www.googleapis.com/calendar/v3/users/me/calendarList', {
             headers: { Authorization: `Bearer ${googleAccessToken}` }
         });
+        if (!res.ok) {
+            if (res.status === 401) {
+                handleLogoutClick();
+                showToast('פג תוקף ההתחברות לגוגל, יש להתחבר מחדש');
+                return null;
+            }
+            throw new Error(`Calendar list HTTP ${res.status}`);
+        }
         const data = await res.json();
-        const existing = data.items && data.items.find(c => c.summary === 'Roshaket - לימודים');
+        
+        // Find existing 'לימודים בית ברל' or 'Roshaket - לימודים'
+        const existing = data.items && data.items.find(c => 
+            c.summary === 'לימודים בית ברל' || 
+            c.summary === 'Roshaket - לימודים' ||
+            c.summary.includes('לימודים בית ברל')
+        );
 
         if (existing) {
             roshaketCalendarId = existing.id;
             localStorage.setItem('roshaket_cal_id', roshaketCalendarId);
-            showToast('יומן "Roshaket - לימודים" זוהה בחשבון!');
+            showToast(`יומן "${existing.summary}" זוהה ומקושר בהצלחה!`);
             return roshaketCalendarId;
         }
 
-        // Create the calendar
+        // Create the calendar 'לימודים בית ברל'
+        showToast('יוצר יומן ייעודי "לימודים בית ברל"...');
         const createRes = await fetch('https://www.googleapis.com/calendar/v3/calendars', {
             method: 'POST',
             headers: {
@@ -1264,18 +1333,24 @@ async function ensureRoshaketCalendarExists() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                summary: 'Roshaket - לימודים',
+                summary: 'לימודים בית ברל',
                 description: 'יומן משימות ולוח זמנים לתואר שני בחינוך וחדשנות פדגוגית | מבית D-Dialog',
                 timeZone: 'Asia/Jerusalem'
             })
         });
+        if (!createRes.ok) {
+            const err = await createRes.json().catch(() => ({}));
+            console.error('Create calendar error:', err);
+            throw new Error(err.error?.message || `HTTP ${createRes.status}`);
+        }
         const created = await createRes.json();
         roshaketCalendarId = created.id;
         localStorage.setItem('roshaket_cal_id', roshaketCalendarId);
-        showToast('יומן ייעודי "Roshaket - לימודים" הוקם בחשבונך בהצלחה!');
+        showToast('יומן ייעודי "לימודים בית ברל" הוקם בחשבונך בהצלחה!');
         return roshaketCalendarId;
     } catch (e) {
         console.error('Error finding/creating calendar:', e);
+        showToast('הערה: יש לאשר גישה לניהול יומנים בגוגל');
         return 'primary';
     }
 }
@@ -1286,19 +1361,22 @@ async function handleSyncAllToGoogle() {
         return;
     }
     const calId = roshaketCalendarId || await ensureRoshaketCalendarExists() || 'primary';
-    showToast('מסנכרן את כל משימות הסמסטר ליומן...');
+    showToast('מתחיל סנכרון 39 משימות ליומן...');
 
     let synced = 0;
+    let errors = 0;
+
     for (const w of semesterSchedule) {
         const parts = w.dateStr.split('.');
         const dateFormatted = `${parts[2]}-${parts[1]}-${parts[0]}`; // YYYY-MM-DD
+        const nextDayFormatted = getNextDay(dateFormatted);
 
         for (const t of w.tasks) {
             const isDone = doneTasks.includes(t.id);
             const summary = isDone ? `✅ [הושלם] [${t.course}] ${t.title}` : `${t.emoji} [${t.course}] ${t.title}`;
             
             try {
-                await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events`, {
+                const evRes = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events`, {
                     method: 'POST',
                     headers: {
                         Authorization: `Bearer ${googleAccessToken}`,
@@ -1308,17 +1386,34 @@ async function handleSyncAllToGoogle() {
                         summary: summary,
                         description: `${t.desc}\nמשקל בציון: ${t.weight}\nמערכת Roshaket מבית D-Dialog`,
                         start: { date: dateFormatted },
-                        end: { date: dateFormatted },
+                        end: { date: nextDayFormatted },
                         colorId: isDone ? '10' : undefined
                     })
                 });
-                synced++;
+
+                if (evRes.ok) {
+                    synced++;
+                } else {
+                    errors++;
+                    const err = await evRes.json().catch(() => ({}));
+                    console.error('Event insert failed for', t.id, err);
+                    if (evRes.status === 401) {
+                        showToast('פג תוקף החיבור לגוגל, יש להתחבר שוב');
+                        handleLogoutClick();
+                        return;
+                    }
+                }
             } catch (err) {
+                errors++;
                 console.error('Event insert error:', err);
             }
         }
     }
-    showToast(`סונכרנו בהצלחה ${synced} משימות ליומן Google!`);
+    if (synced > 0) {
+        showToast(`🎉 סונכרנו בהצלחה ${synced} משימות ליומן!`);
+    } else {
+        showToast(`הסנכרון נתקל בשגיאה (${errors} שגיאות). בדוק הרשאות ביומן.`);
+    }
 }
 
 async function syncSingleTaskToGoogle(taskId, isDone) {
@@ -1335,6 +1430,7 @@ async function syncSingleTaskToGoogle(taskId, isDone) {
     const calId = roshaketCalendarId || 'primary';
     const parts = targetWeek.dateStr.split('.');
     const dateFormatted = `${parts[2]}-${parts[1]}-${parts[0]}`;
+    const nextDayFormatted = getNextDay(dateFormatted);
 
     const newSummary = isDone 
         ? `✅ [הושלם] [${targetTask.course}] ${targetTask.title}` 
@@ -1345,11 +1441,18 @@ async function syncSingleTaskToGoogle(taskId, isDone) {
         const listRes = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events?q=${encodeURIComponent(targetTask.title)}`, {
             headers: { Authorization: `Bearer ${googleAccessToken}` }
         });
+        if (!listRes.ok) {
+            if (listRes.status === 401) {
+                handleLogoutClick();
+                showToast('פג תוקף החיבור לגוגל');
+            }
+            return;
+        }
         const listData = await listRes.json();
 
         if (listData.items && listData.items.length > 0) {
             const eventId = listData.items[0].id;
-            await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events/${eventId}`, {
+            const patchRes = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events/${eventId}`, {
                 method: 'PATCH',
                 headers: {
                     Authorization: `Bearer ${googleAccessToken}`,
@@ -1360,10 +1463,12 @@ async function syncSingleTaskToGoogle(taskId, isDone) {
                     colorId: isDone ? '10' : undefined
                 })
             });
-            showToast(isDone ? '✅ עודכן ביומן גוגל: הושלם בהצלחה!' : 'עודכן ביומן גוגל: הוחזר לביצוע');
+            if (patchRes.ok) {
+                showToast(isDone ? '✅ עודכן ביומן גוגל: הושלם בהצלחה!' : 'עודכן ביומן גוגל: הוחזר לביצוע');
+            }
         } else {
             // Insert fresh event
-            await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events`, {
+            const insRes = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events`, {
                 method: 'POST',
                 headers: {
                     Authorization: `Bearer ${googleAccessToken}`,
@@ -1373,11 +1478,13 @@ async function syncSingleTaskToGoogle(taskId, isDone) {
                     summary: newSummary,
                     description: `${targetTask.desc}\nמשקל בציון: ${targetTask.weight}`,
                     start: { date: dateFormatted },
-                    end: { date: dateFormatted },
+                    end: { date: nextDayFormatted },
                     colorId: isDone ? '10' : undefined
                 })
             });
-            showToast('✅ האירוע נוצר ועודכן ביומן גוגל!');
+            if (insRes.ok) {
+                showToast('✅ האירוע נוצר ועודכן ביומן גוגל!');
+            }
         }
     } catch (e) {
         console.error('Sync single task error:', e);
