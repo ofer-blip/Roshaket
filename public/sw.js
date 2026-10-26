@@ -1,5 +1,5 @@
-// Service Worker for Roshaket PWA - v9
-const CACHE_NAME = 'roshaket-v9';
+// Service Worker for Roshaket PWA - v10
+const CACHE_NAME = 'roshaket-v10';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
