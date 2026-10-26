@@ -499,6 +499,57 @@
             opacity: 0.65;
         }
 
+        .task-user-note-wrap {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px dashed rgba(0, 0, 0, 0.12);
+        }
+
+        .task-user-note-display {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: #1e293b;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 5px 9px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .task-user-note-display:hover {
+            background: #ffffff;
+            border-color: #6366f1;
+            box-shadow: 0 2px 5px rgba(99, 102, 241, 0.15);
+        }
+
+        .task-user-note-badge {
+            background: #ecfdf5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+            font-weight: 700;
+        }
+
+        .task-user-note-empty {
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .task-user-note-input {
+            width: 100%;
+            padding: 6px 10px;
+            border-radius: 8px;
+            border: 1.5px solid #6366f1;
+            font-family: inherit;
+            font-size: 12.5px;
+            color: #0f172a;
+            outline: none;
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+        }
+
         .task-item.done .task-title {
             text-decoration: line-through;
             color: var(--text-muted);
@@ -804,9 +855,6 @@
                 <button class="btn btn-logout" id="googleLogoutBtn" onclick="handleLogoutClick()" style="display: none;">
                     🚪 התנתק
                 </button>
-                <button class="btn btn-primary" onclick="downloadICS()">
-                    📅 הורד קובץ יומן (.ics)
-                </button>
                 <button class="btn" onclick="resetAllProgress()">
                     🔄 אפס סימונים
                 </button>
@@ -830,9 +878,7 @@
             <button class="btn" id="cleanDuplicatesBtn" style="background: #f8fafc; color: #334155; border: 1px solid #cbd5e1;" onclick="handleCleanDuplicates()">
                 🧹 נקה כפילויות מיומן Google
             </button>
-            <button class="btn" id="bannerLogoutBtn" style="display: none; background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5;" onclick="handleLogoutClick()">
-                🚪 התנתק
-            </button>
+
         </div>
     </div>
 
@@ -1167,6 +1213,7 @@ const semesterSchedule = [
 
 // State & LocalStorage
 let doneTasks = JSON.parse(localStorage.getItem('roshaket_done_tasks') || '[]');
+let userTaskNotes = JSON.parse(localStorage.getItem('roshaket_user_notes') || '{}');
 let currentFilter = 'all';
 
 function render() {
@@ -1229,6 +1276,30 @@ function render() {
                                     <div class="task-desc">${t.desc}</div>
                                 </div>
                             </div>
+                            <div class="task-user-note-wrap">
+                                ${userTaskNotes[t.id] ? `
+                                    <div class="task-user-note-display task-user-note-badge" onclick="editTaskNote('${t.id}')" title="לחץ לעריכת ההערה">
+                                        <span>📝</span>
+                                        <span style="flex-grow: 1; word-break: break-word;">${escapeHtml(userTaskNotes[t.id])}</span>
+                                        <span style="font-size: 10px; color: #047857; text-decoration: underline;">ערוך</span>
+                                    </div>
+                                ` : `
+                                    <div class="task-user-note-display task-user-note-empty" onclick="editTaskNote('${t.id}')" title="לחץ להוספת הערה או שינוי למשימה">
+                                        <span>✏️</span>
+                                        <span>הוסף הערה או עדכון...</span>
+                                    </div>
+                                `}
+                                <div id="noteEditBox_${t.id}" style="display: none; margin-top: 6px;">
+                                    <div style="display: flex; gap: 6px;">
+                                        <input type="text" id="noteInput_${t.id}" class="task-user-note-input" 
+                                               placeholder="הקלד הערה או שינוי (למשל: שיעור א-סינכרוני / הגשה נדחתה)..."
+                                               value="${escapeHtml(userTaskNotes[t.id] || '')}"
+                                               onkeydown="if(event.key === 'Enter') saveTaskNote('${t.id}')">
+                                        <button class="btn btn-primary" style="padding: 4px 10px; min-height: 32px; font-size: 12px; background: #6366f1; color: white;" onclick="saveTaskNote('${t.id}')">שמור</button>
+                                        <button class="btn" style="padding: 4px 8px; min-height: 32px; font-size: 12px; background: #f1f5f9; color: #475569;" onclick="cancelEditTaskNote('${t.id}')">ביטול</button>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="task-footer">
                                 <span class="${t.tagType}">${t.weight}</span>
                                 <span style="font-weight: 700; font-size: 11px; color: ${isDone ? '#059669' : '#64748b'};">
@@ -1253,6 +1324,49 @@ function render() {
     document.getElementById('progressBar').style.width = percent + '%';
 
     updateSyncUI();
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function editTaskNote(taskId) {
+    const box = document.getElementById(`noteEditBox_${taskId}`);
+    if (box) {
+        box.style.display = 'block';
+        const input = document.getElementById(`noteInput_${taskId}`);
+        if (input) {
+            input.focus();
+            input.select();
+        }
+    }
+}
+
+function cancelEditTaskNote(taskId) {
+    const box = document.getElementById(`noteEditBox_${taskId}`);
+    if (box) box.style.display = 'none';
+}
+
+async function saveTaskNote(taskId) {
+    const input = document.getElementById(`noteInput_${taskId}`);
+    if (!input) return;
+    const text = input.value.trim();
+    if (text) {
+        userTaskNotes[taskId] = text;
+        showToast('📝 ההערה נשמרה בהצלחה!');
+    } else {
+        delete userTaskNotes[taskId];
+        showToast('ההערה הוסרה');
+    }
+    localStorage.setItem('roshaket_user_notes', JSON.stringify(userTaskNotes));
+    render();
+
+    // If connected to Google Calendar, sync note into calendar event description!
+    if (googleAccessToken) {
+        const isDone = doneTasks.includes(taskId);
+        syncSingleTaskToGoogle(taskId, isDone);
+    }
 }
 
 function toggleTask(id) {
@@ -1756,7 +1870,7 @@ async function handleSyncAllToGoogle() {
                         },
                         body: JSON.stringify({
                             summary: summary,
-                            description: `${t.desc}\nמשקל בציון: ${t.weight}\nמערכת Roshaket מבית D-Dialog`,
+                            description: `${t.desc}${userTaskNotes[t.id] ? '\n\n📝 הערה/שינוי: ' + userTaskNotes[t.id] : ''}\n\nמשקל בציון: ${t.weight}\nמערכת Roshaket מבית D-Dialog`,
                             start: { date: dateFormatted },
                             end: { date: nextDayFormatted },
                             transparency: 'transparent',
@@ -1782,7 +1896,7 @@ async function handleSyncAllToGoogle() {
                         body: JSON.stringify({
                             id: targetEventId,
                             summary: summary,
-                            description: `${t.desc}\nמשקל בציון: ${t.weight}\nמערכת Roshaket מבית D-Dialog`,
+                            description: `${t.desc}${userTaskNotes[t.id] ? '\n\n📝 הערה/שינוי: ' + userTaskNotes[t.id] : ''}\n\nמשקל בציון: ${t.weight}\nמערכת Roshaket מבית D-Dialog`,
                             start: { date: dateFormatted },
                             end: { date: nextDayFormatted },
                             transparency: 'transparent',
@@ -1896,6 +2010,7 @@ async function syncSingleTaskToGoogle(taskId, isDone) {
             },
             body: JSON.stringify({
                 summary: newSummary,
+                description: `${targetTask.desc}${userTaskNotes[targetTask.id] ? '\n\n📝 הערה/שינוי: ' + userTaskNotes[targetTask.id] : ''}\n\nמשקל בציון: ${targetTask.weight}\nמערכת Roshaket מבית D-Dialog`,
                 colorId: isDone ? '10' : undefined
             })
         });
