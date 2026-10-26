@@ -920,16 +920,52 @@
             </div>
             
             <!-- Analysis Result Box -->
-            <div id="waResultBox" style="display: none; margin-top: 14px; padding: 14px; border-radius: 12px; background: #f0fdf4; border: 1px solid #bbf7d0;">
-                <div style="font-weight: 800; color: #166534; font-size: 14px; margin-bottom: 4px;" id="waResultTitle">
-                    ✅ זוהה עדכון במשימה!
+            <div id="waResultBox" style="display: none; margin-top: 14px; padding: 16px; border-radius: 14px; background: #f0fdf4; border: 1.5px solid #86efac;">
+                <div style="font-weight: 800; color: #166534; font-size: 15px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
+                    <span id="waResultTitle">✅ תוצאת פענוח ההודעה</span>
+                    <span style="font-size: 12px; font-weight: 700; background: #bbf7d0; color: #14532d; padding: 3px 10px; border-radius: 12px;">ניתן לדייק בשדות מטה</span>
                 </div>
-                <div style="font-size: 13.5px; color: #14532d; margin-bottom: 12px; line-height: 1.5;" id="waResultDesc"></div>
-                <div style="display: flex; gap: 8px;">
-                    <button class="btn btn-primary" style="background: #166534; color: white;" id="waApplyBtn" onclick="applyWhatsAppChange()">
-                        אשר עדכון וסנכרן ליומן Google 🚀
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 12px;">
+                    <div>
+                        <label style="display: block; font-size: 12px; font-weight: 700; color: #166534; margin-bottom: 4px;">קורס מושפע:</label>
+                        <select id="waSelectCourse" onchange="onWACourseChange()" style="width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid #86efac; font-family: inherit; font-size: 13px; font-weight: 700; background: white;">
+                            <option value="wassel">🔵 פיתוח חדשנות – ואסל</option>
+                            <option value="mor">🟣 הערכת תוכניות – מור</option>
+                            <option value="levy">🟢 סוגיות בהערכה – לוי-ורד</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 12px; font-weight: 700; color: #166534; margin-bottom: 4px;">משימה מושפעת:</label>
+                        <select id="waSelectTask" onchange="onWATaskChange()" style="width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid #86efac; font-family: inherit; font-size: 13px; font-weight: 600; background: white;">
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 12px; font-weight: 700; color: #166534; margin-bottom: 4px;">תאריך יעד:</label>
+                        <input type="text" id="waInputDate" placeholder="DD.MM.YYYY" style="width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid #86efac; font-family: inherit; font-size: 13px; font-weight: 700; background: white;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 12px; font-weight: 700; color: #166534; margin-bottom: 4px;">אופי המפגש (אם השתנה):</label>
+                        <select id="waSelectMode" style="width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid #86efac; font-family: inherit; font-size: 13px; background: white;">
+                            <option value="keep">ללא שינוי באופי המפגש</option>
+                            <option value="א-סינכרוני (למידה עצמית)">א-סינכרוני (למידה עצמית)</option>
+                            <option value="מקוון (זום)">מקוון (זום)</option>
+                            <option value="קמפוס (פנים אל פנים)">קמפוס (פנים אל פנים)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 14px;">
+                    <label style="display: block; font-size: 12px; font-weight: 700; color: #166534; margin-bottom: 4px;">הערה או הנחיה מהמרצה (תוצג בלוח ובתיאור ביומן גוגל):</label>
+                    <input type="text" id="waInputNote" placeholder="למשל: שיעור א-סינכרוני; 2 משימות לתלקיט" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid #86efac; font-family: inherit; font-size: 13px; background: white;">
+                </div>
+
+                <div style="display: flex; gap: 8px; justify-content: flex-end; align-items: center;">
+                    <button class="btn btn-primary" style="background: #166534; color: white; font-weight: 800;" id="waApplyBtn" onclick="applyWhatsAppChange()">
+                        🚀 אשר עדכון וסנכרן ליומן Google
                     </button>
-                    <button class="btn" style="background: white; color: #475569;" onclick="cancelWhatsAppChange()">
+                    <button class="btn" style="background: white; color: #475569; border: 1px solid #cbd5e1;" onclick="cancelWhatsAppChange()">
                         ביטול
                     </button>
                 </div>
@@ -1121,6 +1157,8 @@ if (!googleAccessToken || googleAccessToken === 'undefined' || googleAccessToken
 
 // User customized task dates (e.g. from WhatsApp updates)
 let customTaskDates = JSON.parse(localStorage.getItem('roshaket_custom_dates') || '{}');
+let customTaskNotes = JSON.parse(localStorage.getItem('roshaket_custom_notes') || '{}');
+let customWeekModes = JSON.parse(localStorage.getItem('roshaket_custom_modes') || '{}');
 
 // Master Semester Database with Lecturer Names
 const semesterSchedule = [
@@ -1298,6 +1336,7 @@ function render() {
         if (matchingTasks.length === 0) return;
 
         const isCurrentWeek = w.weekNum === 1;
+        const activeMode = customWeekModes[w.weekNum] || w.modeC1;
 
         const card = document.createElement('div');
         card.className = `week-card ${isCurrentWeek ? 'current-week' : ''}`;
@@ -1313,15 +1352,19 @@ function render() {
                     </div>
                 </div>
                 <div class="mode-pill ${w.modeClass}">
-                    מפגש מור: ${w.modeC1}
+                    מפגש מור: ${activeMode}
                 </div>
             </div>
             <div class="tasks-container">
                 ${matchingTasks.map(t => {
                     const isDone = doneTasks.includes(t.id);
                     const activeCustomDate = customTaskDates[t.id];
+                    const activeNote = customTaskNotes[t.id];
                     const dateBadge = activeCustomDate 
                         ? `<span style="background: #ecfdf5; color: #047857; font-weight: 800; padding: 2px 8px; border-radius: 6px; font-size: 11px; border: 1px solid #a7f3d0; margin-right: 6px;">📅 יעד מעודכן: ${activeCustomDate}</span>` 
+                        : '';
+                    const noteHtml = activeNote 
+                        ? `<div style="margin-top: 6px; padding: 4px 8px; border-radius: 6px; background: #f0fdf4; border: 1px solid #bbf7d0; font-size: 11.5px; color: #166534;">💬 <strong>הנחיית מרצה:</strong> ${activeNote}</div>` 
                         : '';
                     return `
                         <div class="task-item ${t.courseClass} ${isDone ? 'done' : ''}" id="card_${t.id}">
@@ -1338,6 +1381,7 @@ function render() {
                                     </div>
                                     <div class="task-title">${t.title}</div>
                                     <div class="task-desc">${t.desc}</div>
+                                    ${noteHtml}
                                 </div>
                             </div>
                             <div class="task-footer">
@@ -1999,6 +2043,9 @@ async function syncSingleTaskToGoogle(taskId, isDone) {
         ? `✅ [הושלם] [${targetTask.course}] ${targetTask.title}` 
         : `${targetTask.emoji} [${targetTask.course}] ${targetTask.title}`;
 
+    const customNote = customTaskNotes[targetTask.id];
+    const updatedDesc = `${targetTask.desc}\nמשקל בציון: ${targetTask.weight}${customNote ? '\n💬 הנחיית מרצה: ' + customNote : ''}\nמערכת Roshaket מבית D-Dialog`;
+
     try {
         // Try PATCH on deterministic ID first
         const directPatch = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events/${encodeURIComponent(targetEventId)}`, {
@@ -2009,6 +2056,9 @@ async function syncSingleTaskToGoogle(taskId, isDone) {
             },
             body: JSON.stringify({
                 summary: newSummary,
+                description: updatedDesc,
+                start: { date: dateFormatted },
+                end: { date: nextDayFormatted },
                 colorId: isDone ? '10' : undefined
             })
         });
@@ -2041,6 +2091,9 @@ async function syncSingleTaskToGoogle(taskId, isDone) {
                 },
                 body: JSON.stringify({
                     summary: newSummary,
+                    description: updatedDesc,
+                    start: { date: dateFormatted },
+                    end: { date: nextDayFormatted },
                     colorId: isDone ? '10' : undefined
                 })
             });
@@ -2058,7 +2111,7 @@ async function syncSingleTaskToGoogle(taskId, isDone) {
                 body: JSON.stringify({
                     id: targetEventId,
                     summary: newSummary,
-                    description: `${targetTask.desc}\nמשקל בציון: ${targetTask.weight}`,
+                    description: updatedDesc,
                     start: { date: dateFormatted },
                     end: { date: nextDayFormatted },
                     transparency: 'transparent',
@@ -2094,6 +2147,57 @@ function toggleWhatsAppCard() {
 
 function processWhatsAppMessage() {
     const raw = document.getElementById('waMessageInput').value.trim();
+function getTaskById(taskId) {
+    for (const w of semesterSchedule) {
+        const t = w.tasks.find(item => item.id === taskId);
+        if (t) return t;
+    }
+    return null;
+}
+
+function getWeekByTaskId(taskId) {
+    for (const w of semesterSchedule) {
+        if (w.tasks.some(item => item.id === taskId)) return w;
+    }
+    return null;
+}
+
+function populateWATaskDropdown(courseKey) {
+    const taskSelect = document.getElementById('waSelectTask');
+    taskSelect.innerHTML = '';
+    
+    semesterSchedule.forEach(w => {
+        w.tasks.forEach(t => {
+            if (!courseKey || t.courseKey === courseKey) {
+                const opt = document.createElement('option');
+                opt.value = t.id;
+                opt.innerText = `שבוע ${w.weekNum} (${w.dateStr}): ${t.title}`;
+                taskSelect.appendChild(opt);
+            }
+        });
+    });
+}
+
+function onWACourseChange() {
+    const courseKey = document.getElementById('waSelectCourse').value;
+    populateWATaskDropdown(courseKey);
+    onWATaskChange();
+}
+
+function onWATaskChange() {
+    const taskId = document.getElementById('waSelectTask').value;
+    const task = getTaskById(taskId);
+    const week = getWeekByTaskId(taskId);
+    if (task && week) {
+        const currentDate = customTaskDates[task.id] || week.dateStr;
+        document.getElementById('waInputDate').value = currentDate;
+        const currentNote = customTaskNotes[task.id] || '';
+        document.getElementById('waInputNote').value = currentNote;
+    }
+}
+
+function processWhatsAppMessage() {
+    const raw = document.getElementById('waMessageInput').value.trim();
     if (!raw) {
         showToast('אנא הדבק קודם הודעה מהוואטסאפ');
         return;
@@ -2102,20 +2206,25 @@ function processWhatsAppMessage() {
     const text = raw.toLowerCase();
 
     // 1. Detect Course
-    let detectedCourseKey = null;
-    let detectedCourseName = '';
-    if (text.includes('מור') || text.includes('ישי') || text.includes('הערכת תוכניות') || text.includes('מפת מושג') || text.includes('cipp') || text.includes('פרויקט סיום')) {
+    let detectedCourseKey = 'wassel';
+    if (text.includes('מור') || text.includes('ישי') || text.includes('הערכת תוכניות')) {
         detectedCourseKey = 'mor';
-        detectedCourseName = 'הערכת תוכניות – מור';
-    } else if (text.includes('ואסל') || text.includes('חדשנות פדגוגית') || text.includes('דה בונו') || text.includes('דה-בונו') || text.includes('כובעי') || text.includes('תלקיט') || text.includes('אינה פוקס')) {
+    } else if (text.includes('ואסל') || text.includes('חנין') || text.includes('פיתוח חדשנות')) {
         detectedCourseKey = 'wassel';
-        detectedCourseName = 'פיתוח חדשנות – ואסל';
-    } else if (text.includes('לוי-ורד') || text.includes('לוי ורד') || text.includes('עדי') || text.includes('סוגיות') || text.includes('רפלקציה') || text.includes('קיר שיתופי') || text.includes('פדלט')) {
+    } else if (text.includes('לוי-ורד') || text.includes('לוי ורד') || text.includes('עדי') || text.includes('סוגיות בהערכה') || text.includes('סוגיות')) {
         detectedCourseKey = 'levy';
-        detectedCourseName = 'סוגיות בהערכה – לוי-ורד';
     }
 
-    // 2. Extract Date
+    // 2. Detect Week / Unit / Lesson number
+    // Explicitly detects: "יחידה מספר 2", "שיעור (2)", "שיעור 2", "שבוע 2", "יחידה 2"
+    let detectedWeekNum = null;
+    const weekRegex = /(?:שיעור|יחידה|שבוע|מפגש)\s*(?:מספר\s*)?\(?(\d{1,2})\)?/;
+    const wMatch = raw.match(weekRegex);
+    if (wMatch) {
+        detectedWeekNum = parseInt(wMatch[1], 10);
+    }
+
+    // 3. Detect Date
     let newDateStr = null;
     const dMatch = raw.match(/(\d{1,2})[./\-](\d{1,2})(?:[./\-](\d{2,4}))?/);
     if (dMatch) {
@@ -2137,88 +2246,125 @@ function processWhatsAppMessage() {
         }
     }
 
-    // 3. Match Task
-    let bestTask = null;
-    let bestWeek = null;
-
-    for (const w of semesterSchedule) {
-        for (const t of w.tasks) {
-            if (detectedCourseKey && t.courseKey !== detectedCourseKey) continue;
-
-            const tWords = t.title.toLowerCase().split(/\s+/).filter(w => w.length > 2);
-            for (const word of tWords) {
-                if (text.includes(word)) {
-                    bestTask = t;
-                    bestWeek = w;
-                    break;
-                }
-            }
-            if (bestTask) break;
-        }
-        if (bestTask) break;
+    // 4. Detect Lesson Format Mode (א-סינכרוני / זום / קמפוס)
+    let detectedMode = 'keep';
+    if (text.includes('א-סינכרוני') || text.includes('א סינכרוני') || text.includes('למידה עצמית')) {
+        detectedMode = 'א-סינכרוני (למידה עצמית)';
+    } else if (text.includes('זום') || text.includes('zoom') || text.includes('מקוון')) {
+        detectedMode = 'מקוון (זום)';
+    } else if (text.includes('קמפוס') || text.includes('פנים אל פנים')) {
+        detectedMode = 'קמפוס (פנים אל פנים)';
     }
 
-    if (!bestTask && detectedCourseKey) {
+    // 5. Detect Note / Instructions
+    let detectedNote = '';
+    if (text.includes('תלקיט') || text.includes('פורום') || text.includes('א-סינכרוני')) {
+        if (text.includes('2 משימות') || text.includes('שתי משימות')) {
+            detectedNote = 'שיעור א-סינכרוני: 2 משימות להגשה (תלקיט ופורום)';
+        } else if (text.includes('תלקיט')) {
+            detectedNote = 'משימה לתלקיט הסופי (הגשה בסוף הקורס)';
+        } else {
+            detectedNote = 'הנחיית מרצה: ' + raw.slice(0, 60).replace(/\n/g, ' ') + '...';
+        }
+    }
+
+    // Set course dropdown
+    document.getElementById('waSelectCourse').value = detectedCourseKey;
+    populateWATaskDropdown(detectedCourseKey);
+
+    // Pinpoint matching task
+    let targetTaskId = null;
+    if (detectedWeekNum) {
+        const weekObj = semesterSchedule.find(w => w.weekNum === detectedWeekNum);
+        if (weekObj) {
+            const t = weekObj.tasks.find(item => item.courseKey === detectedCourseKey);
+            if (t) targetTaskId = t.id;
+        }
+    }
+
+    if (!targetTaskId) {
+        // Fallback to keyword match
         for (const w of semesterSchedule) {
-            const found = w.tasks.find(t => t.courseKey === detectedCourseKey);
-            if (found) { bestTask = found; bestWeek = w; break; }
+            for (const t of w.tasks) {
+                if (t.courseKey !== detectedCourseKey) continue;
+                const words = t.title.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+                for (const wd of words) {
+                    if (text.includes(wd)) {
+                        targetTaskId = t.id;
+                        break;
+                    }
+                }
+                if (targetTaskId) break;
+            }
+            if (targetTaskId) break;
         }
     }
 
-    if (!bestTask && !newDateStr) {
-        showToast('⚠️ לא הצלחנו לזהות קורס או תאריך בהודעה. נסה להדביק הודעה מפורטת יותר.');
-        return;
+    const taskSelect = document.getElementById('waSelectTask');
+    if (targetTaskId && taskSelect.querySelector(`option[value="${targetTaskId}"]`)) {
+        taskSelect.value = targetTaskId;
     }
 
-    const currentDueDate = (customTaskDates[bestTask?.id]) || bestWeek?.dateStr || 'לא ידוע';
+    const selTask = getTaskById(taskSelect.value);
+    const selWeek = getWeekByTaskId(taskSelect.value);
+    const finalDate = newDateStr || (selTask && customTaskDates[selTask.id]) || selWeek?.dateStr || '25.10.2026';
 
-    pendingWhatsAppChange = {
-        taskId: bestTask ? bestTask.id : null,
-        taskTitle: bestTask ? bestTask.title : 'משימה כללית בקורס',
-        course: bestTask ? bestTask.course : (detectedCourseName || 'כללי'),
-        oldDate: currentDueDate,
-        newDate: newDateStr || currentDueDate,
-        rawMessage: raw
-    };
+    document.getElementById('waInputDate').value = finalDate;
+    document.getElementById('waSelectMode').value = detectedMode;
+    document.getElementById('waInputNote').value = detectedNote;
 
     document.getElementById('waResultBox').style.display = 'block';
-    document.getElementById('waResultTitle').innerHTML = `✅ זוהה עדכון: <strong>${pendingWhatsAppChange.course}</strong>`;
-    document.getElementById('waResultDesc').innerHTML = `
-        <strong>משימה:</strong> ${pendingWhatsAppChange.taskTitle}<br>
-        <strong>תאריך מקורי:</strong> ${pendingWhatsAppChange.oldDate} ⬅️<br>
-        <strong>תאריך יעד מעודכן:</strong> <span style="font-weight: 800; color: #15803d; font-size: 15px;">${pendingWhatsAppChange.newDate}</span> 🎯
-    `;
+    showToast('💡 ההודעה פוענחה בהצלחה! השדות עודכנו לבדיקתך.');
 }
 
 async function applyWhatsAppChange() {
-    if (!pendingWhatsAppChange || !pendingWhatsAppChange.taskId) {
-        showToast('שגיאה בהחלת השינוי');
+    const taskId = document.getElementById('waSelectTask').value;
+    const newDate = document.getElementById('waInputDate').value.trim();
+    const newNote = document.getElementById('waInputNote').value.trim();
+    const newMode = document.getElementById('waSelectMode').value;
+
+    if (!taskId) {
+        showToast('אנא בחר משימה לעדכון');
         return;
     }
 
-    const taskId = pendingWhatsAppChange.taskId;
-    const newDate = pendingWhatsAppChange.newDate;
+    // Save Custom Date
+    if (newDate) {
+        customTaskDates[taskId] = newDate;
+        localStorage.setItem('roshaket_custom_dates', JSON.stringify(customTaskDates));
+    }
 
-    customTaskDates[taskId] = newDate;
-    localStorage.setItem('roshaket_custom_dates', JSON.stringify(customTaskDates));
+    // Save Custom Note
+    if (newNote) {
+        customTaskNotes[taskId] = newNote;
+        localStorage.setItem('roshaket_custom_notes', JSON.stringify(customTaskNotes));
+    }
+
+    // Save Lesson Mode
+    const week = getWeekByTaskId(taskId);
+    if (week && newMode !== 'keep') {
+        customWeekModes[week.weekNum] = newMode;
+        localStorage.setItem('roshaket_custom_modes', JSON.stringify(customWeekModes));
+    }
 
     render();
 
+    // Sync to Google Calendar
     if (googleAccessToken) {
-        showToast('מסנכרן תאריך מעודכן ל-Google Calendar...');
+        showToast('מסנכרן עדכון ל-Google Calendar...');
         const isDone = doneTasks.includes(taskId);
         await syncSingleTaskToGoogle(taskId, isDone);
     }
 
     triggerCelebrationMeme();
-    showToast(`🎉 המשימה "${pendingWhatsAppChange.taskTitle}" עודכנה ל-${newDate}!`);
+    const taskObj = getTaskById(taskId);
+    showToast(`🎉 המשימה "${taskObj ? taskObj.title : ''}" עודכנה וסונכרנה בהצלחה!`);
 
     cancelWhatsAppChange();
     document.getElementById('waMessageInput').value = '';
 }
 
 function cancelWhatsAppChange() {
-    pendingWhatsAppChange = null;
     document.getElementById('waResultBox').style.display = 'none';
 }
 
