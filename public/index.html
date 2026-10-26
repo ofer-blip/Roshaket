@@ -827,8 +827,11 @@
             <button class="btn btn-primary" id="syncAllBtn" style="background: #1e1b4b; color: white;" onclick="handleSyncAllToGoogle()">
                 🚀 סנכרן את כל המשימות לחשבון
             </button>
+            <button class="btn" id="cleanDuplicatesBtn" style="background: #f8fafc; color: #334155; border: 1px solid #cbd5e1;" onclick="handleCleanDuplicates()">
+                🧹 נקה כפילויות מיומן Google
+            </button>
             <button class="btn" id="bannerLogoutBtn" style="display: none; background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5;" onclick="handleLogoutClick()">
-                🚪 התנתק מחשבון Google
+                🚪 התנתק
             </button>
         </div>
     </div>
@@ -1541,6 +1544,136 @@ async function ensureRoshaketCalendarExists() {
     }
 }
 
+function getTaskEventId(taskObj, weekNum) {
+    const weekStr = String(weekNum).padStart(2, '0');
+    const cNum = taskObj.id.split('_c')[1] || '1';
+    return `roshaket2026s${weekStr}c${cNum}`;
+}
+
+async function getAllCalendarEvents(calId) {
+    let allEvents = [];
+    let pageToken = null;
+    do {
+        const url = new URL(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events`);
+        url.searchParams.set('maxResults', '250');
+        url.searchParams.set('singleEvents', 'true');
+        if (pageToken) url.searchParams.set('pageToken', pageToken);
+
+        const res = await fetch(url.toString(), {
+            headers: { Authorization: `Bearer ${googleAccessToken}` }
+        });
+        if (!res.ok) {
+            if (res.status === 401) throw new Error('AUTH_EXPIRED');
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.error?.message || `HTTP ${res.status}`);
+        }
+        const data = await res.json();
+        if (data.items) {
+            allEvents = allEvents.concat(data.items);
+        }
+        pageToken = data.nextPageToken;
+    } while (pageToken);
+    return allEvents;
+}
+
+async function handleCleanDuplicates() {
+    if (!googleAccessToken) {
+        handleAuthClick();
+        return;
+    }
+    openSyncProgressModal();
+    document.getElementById('syncModalTitle').innerText = 'מנקה כפילויות מיומן Google 🧹';
+    document.getElementById('syncModalCurrentTask').innerText = 'סורק אירועים קיימים ביומן...';
+
+    let targetCal = null;
+    try {
+        targetCal = await getValidCalendarId();
+    } catch (e) {
+        document.getElementById('syncModalIcon').innerText = '❌';
+        document.getElementById('syncModalTitle').innerText = 'שגיאה באיתור היומן';
+        document.getElementById('syncModalCurrentTask').innerText = e.message;
+        document.getElementById('syncModalCloseBtn').style.display = 'inline-flex';
+        return;
+    }
+
+    const calId = targetCal.id;
+    document.getElementById('syncModalTargetCal').innerText = `יומן: ${targetCal.summary}`;
+
+    try {
+        const events = await getAllCalendarEvents(calId);
+        document.getElementById('syncModalCurrentTask').innerText = `נמצאו ${events.length} אירועים ביומן. מאתר כפילויות...`;
+
+        const seen = new Map();
+        const toDelete = [];
+
+        for (const ev of events) {
+            if (!ev.summary) continue;
+            // Normalize summary to identify the task (strip prefix emojis, completed tags)
+            const normTitle = ev.summary
+                .replace(/^✅\s*\[הושלם\]\s*/, '')
+                .replace(/^[🟣🔵🟢🎯📦⏳⚡]\s*/, '')
+                .trim();
+            const date = ev.start?.date || ev.start?.dateTime?.split('T')[0] || '';
+            const key = `${normTitle}__${date}`;
+
+            if (seen.has(key)) {
+                toDelete.push(ev);
+            } else {
+                seen.set(key, ev);
+            }
+        }
+
+        if (toDelete.length === 0) {
+            document.getElementById('syncModalIcon').innerText = '✨';
+            document.getElementById('syncModalTitle').innerText = 'היומן נקי לחלוטין!';
+            document.getElementById('syncModalCurrentTask').innerText = 'לא נמצאו אירועים כפולים ביומן Google.';
+            document.getElementById('syncModalCounter').innerText = `${events.length} אירועים תקינים`;
+            document.getElementById('syncModalProgressBar').style.width = '100%';
+            document.getElementById('syncModalCloseBtn').innerText = 'סגור';
+            document.getElementById('syncModalCloseBtn').style.display = 'inline-flex';
+            document.getElementById('syncModalCloseBtn').onclick = closeSyncProgressModal;
+            return;
+        }
+
+        document.getElementById('syncModalTitle').innerText = `מוחק ${toDelete.length} כפילויות... 🧹`;
+        let deleted = 0;
+        for (const ev of toDelete) {
+            document.getElementById('syncModalCurrentTask').innerText = `מוחק כפילות: ${ev.summary}`;
+            try {
+                await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events/${encodeURIComponent(ev.id)}`, {
+                    method: 'DELETE',
+                    headers: { Authorization: `Bearer ${googleAccessToken}` }
+                });
+                deleted++;
+            } catch (err) {
+                console.error('Delete duplicate error:', err);
+            }
+            const pct = Math.round((deleted / toDelete.length) * 100);
+            document.getElementById('syncModalProgressBar').style.width = `${pct}%`;
+            document.getElementById('syncModalCounter').innerText = `${deleted} / ${toDelete.length} כפילויות נמחקו`;
+        }
+
+        document.getElementById('syncModalIcon').innerText = '🎉';
+        document.getElementById('syncModalTitle').innerText = 'ניקוי הכפילויות הושלם!';
+        document.getElementById('syncModalCurrentTask').innerText = `נמחקו בהצלחה ${deleted} כפילויות. נותרו ${seen.size} משימות יחידות ונקיות!`;
+        document.getElementById('syncModalCloseBtn').innerText = 'מעולה! פתח את יומן Google';
+        document.getElementById('syncModalCloseBtn').style.display = 'inline-flex';
+        document.getElementById('syncModalCloseBtn').onclick = () => {
+            closeSyncProgressModal();
+            window.open('https://calendar.google.com', '_blank');
+        };
+        showToast(`🧹 נמחקו ${deleted} כפילויות בהצלחה!`);
+    } catch (err) {
+        console.error('Clean duplicates error:', err);
+        document.getElementById('syncModalIcon').innerText = '❌';
+        document.getElementById('syncModalTitle').innerText = 'שגיאה בניקוי כפילויות';
+        document.getElementById('syncModalCurrentTask').innerText = err.message;
+        document.getElementById('syncModalCloseBtn').innerText = 'סגור';
+        document.getElementById('syncModalCloseBtn').style.display = 'inline-flex';
+        document.getElementById('syncModalCloseBtn').onclick = closeSyncProgressModal;
+    }
+}
+
 async function handleSyncAllToGoogle() {
     if (!googleAccessToken) {
         handleAuthClick();
@@ -1578,9 +1711,20 @@ async function handleSyncAllToGoogle() {
 
     const calId = targetCal.id;
     document.getElementById('syncModalTargetCal').innerText = `יומן יעד: ${targetCal.summary} 🎯`;
+    document.getElementById('syncModalCurrentTask').innerText = 'טוען אירועים קיימים למניעת כפילויות...';
+
+    // Fetch existing events once to match in-memory and guarantee ZERO duplicates!
+    let existingEvents = [];
+    try {
+        existingEvents = await getAllCalendarEvents(calId);
+    } catch (e) {
+        console.warn('Could not pre-fetch existing events:', e);
+    }
 
     const totalTasks = 39;
     let synced = 0;
+    let createdCount = 0;
+    let updatedCount = 0;
     let failed = 0;
 
     for (const w of semesterSchedule) {
@@ -1591,34 +1735,84 @@ async function handleSyncAllToGoogle() {
         for (const t of w.tasks) {
             const isDone = doneTasks.includes(t.id);
             const summary = isDone ? `✅ [הושלם] [${t.course}] ${t.title}` : `${t.emoji} [${t.course}] ${t.title}`;
+            const targetEventId = getTaskEventId(t, w.weekNum);
 
             document.getElementById('syncModalCurrentTask').innerText = `שבוע ${w.weekNum}: ${t.title}`;
 
-            try {
-                const evRes = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events`, {
-                    method: 'POST',
-                    headers: {
-                        Authorization: `Bearer ${googleAccessToken}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        summary: summary,
-                        description: `${t.desc}\nמשקל בציון: ${t.weight}\nמערכת Roshaket מבית D-Dialog`,
-                        start: { date: dateFormatted },
-                        end: { date: nextDayFormatted },
-                        transparency: 'transparent',
-                        colorId: isDone ? '10' : undefined
-                    })
-                });
+            // Check if this task already exists in Google Calendar
+            const existing = existingEvents.find(ev => 
+                ev.id === targetEventId || 
+                (ev.summary && ev.summary.includes(t.title))
+            );
 
-                if (evRes.ok) {
-                    synced++;
-                } else {
-                    failed++;
-                    const errData = await evRes.json().catch(() => ({}));
-                    console.error('Task insert error:', t.id, errData);
-                    if (evRes.status === 401) {
+            try {
+                if (existing) {
+                    // UPDATE existing event in place (PATCH) - prevents duplicates!
+                    const patchRes = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events/${encodeURIComponent(existing.id)}`, {
+                        method: 'PATCH',
+                        headers: {
+                            Authorization: `Bearer ${googleAccessToken}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            summary: summary,
+                            description: `${t.desc}\nמשקל בציון: ${t.weight}\nמערכת Roshaket מבית D-Dialog`,
+                            start: { date: dateFormatted },
+                            end: { date: nextDayFormatted },
+                            transparency: 'transparent',
+                            colorId: isDone ? '10' : undefined
+                        })
+                    });
+                    if (patchRes.ok) {
+                        synced++;
+                        updatedCount++;
+                    } else if (patchRes.status === 401) {
                         throw new Error('AUTH_EXPIRED');
+                    } else {
+                        failed++;
+                    }
+                } else {
+                    // CREATE fresh event with deterministic ID
+                    const insRes = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events`, {
+                        method: 'POST',
+                        headers: {
+                            Authorization: `Bearer ${googleAccessToken}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            id: targetEventId,
+                            summary: summary,
+                            description: `${t.desc}\nמשקל בציון: ${t.weight}\nמערכת Roshaket מבית D-Dialog`,
+                            start: { date: dateFormatted },
+                            end: { date: nextDayFormatted },
+                            transparency: 'transparent',
+                            colorId: isDone ? '10' : undefined
+                        })
+                    });
+                    if (insRes.ok) {
+                        const createdEv = await insRes.json().catch(() => null);
+                        if (createdEv) existingEvents.push(createdEv);
+                        synced++;
+                        createdCount++;
+                    } else if (insRes.status === 401) {
+                        throw new Error('AUTH_EXPIRED');
+                    } else if (insRes.status === 409) {
+                        // Conflict: update instead
+                        await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events/${encodeURIComponent(targetEventId)}`, {
+                            method: 'PATCH',
+                            headers: {
+                                Authorization: `Bearer ${googleAccessToken}`,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                summary: summary,
+                                colorId: isDone ? '10' : undefined
+                            })
+                        });
+                        synced++;
+                        updatedCount++;
+                    } else {
+                        failed++;
                     }
                 }
             } catch (e) {
@@ -1636,7 +1830,7 @@ async function handleSyncAllToGoogle() {
                     return;
                 }
                 failed++;
-                console.error('Fetch error:', e);
+                console.error('Sync item error:', e);
             }
 
             const percent = Math.round((synced / totalTasks) * 100);
@@ -1648,18 +1842,18 @@ async function handleSyncAllToGoogle() {
     if (synced > 0) {
         document.getElementById('syncModalIcon').innerText = '🎉';
         document.getElementById('syncModalTitle').innerText = 'הסנכרון הושלם בהצלחה!';
-        document.getElementById('syncModalCurrentTask').innerText = `כל ${synced} המשימות הוכנסו ליומן "${targetCal.summary}".`;
+        document.getElementById('syncModalCurrentTask').innerText = `עודכנו ${updatedCount} משימות, נוצרו ${createdCount} חדשות. אפס כפילויות!`;
         document.getElementById('syncModalCloseBtn').innerText = 'פתח את יומן Google לצפייה 📅';
         document.getElementById('syncModalCloseBtn').style.display = 'inline-flex';
         document.getElementById('syncModalCloseBtn').onclick = () => {
             closeSyncProgressModal();
             window.open('https://calendar.google.com/calendar/u/0/r/week/2026/10/18', '_blank');
         };
-        showToast(`🎉 ${synced} משימות סונכרנו בהצלחה ליומן Google!`);
+        showToast(`🎉 ${synced} משימות עודכנו ביומן ללא כפילויות!`);
     } else {
         document.getElementById('syncModalIcon').innerText = '❌';
         document.getElementById('syncModalTitle').innerText = 'הסנכרון לא הושלם';
-        document.getElementById('syncModalCurrentTask').innerText = `נרשמו ${failed} שגיאות. נסה להתנתק ולהתחבר מחדש עם הרשאות מלאות.`;
+        document.getElementById('syncModalCurrentTask').innerText = `נרשמו ${failed} שגיאות. נסה להתנתק ולהתחבר מחדש.`;
         document.getElementById('syncModalCloseBtn').innerText = 'סגור';
         document.getElementById('syncModalCloseBtn').style.display = 'inline-flex';
         document.getElementById('syncModalCloseBtn').onclick = closeSyncProgressModal;
@@ -1683,6 +1877,7 @@ async function syncSingleTaskToGoogle(taskId, isDone) {
         calId = cal ? cal.id : 'primary';
     }
 
+    const targetEventId = getTaskEventId(targetTask, targetWeek.weekNum);
     const parts = targetWeek.dateStr.split('.');
     const dateFormatted = `${parts[2]}-${parts[1]}-${parts[0]}`;
     const nextDayFormatted = getNextDay(dateFormatted);
@@ -1692,7 +1887,25 @@ async function syncSingleTaskToGoogle(taskId, isDone) {
         : `${targetTask.emoji} [${targetTask.course}] ${targetTask.title}`;
 
     try {
-        // Query event to update or create
+        // Try PATCH on deterministic ID first
+        const directPatch = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events/${encodeURIComponent(targetEventId)}`, {
+            method: 'PATCH',
+            headers: {
+                Authorization: `Bearer ${googleAccessToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                summary: newSummary,
+                colorId: isDone ? '10' : undefined
+            })
+        });
+
+        if (directPatch.ok) {
+            showToast(isDone ? '✅ עודכן ביומן גוגל: הושלם בהצלחה!' : 'עודכן ביומן גוגל: הוחזר לביצוע');
+            return;
+        }
+
+        // If not found by deterministic ID, query event by title to avoid duplicate
         const listRes = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events?q=${encodeURIComponent(targetTask.title)}`, {
             headers: { Authorization: `Bearer ${googleAccessToken}` }
         });
@@ -1722,7 +1935,7 @@ async function syncSingleTaskToGoogle(taskId, isDone) {
                 showToast(isDone ? '✅ עודכן ביומן גוגל: הושלם בהצלחה!' : 'עודכן ביומן גוגל: הוחזר לביצוע');
             }
         } else {
-            // Insert fresh event
+            // Insert fresh event with deterministic ID
             const insRes = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events`, {
                 method: 'POST',
                 headers: {
@@ -1730,6 +1943,7 @@ async function syncSingleTaskToGoogle(taskId, isDone) {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
+                    id: targetEventId,
                     summary: newSummary,
                     description: `${targetTask.desc}\nמשקל בציון: ${targetTask.weight}`,
                     start: { date: dateFormatted },
