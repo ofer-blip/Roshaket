@@ -782,6 +782,74 @@
             color: #475569;
             font-weight: 600;
         }
+
+        /* WhatsApp Smart Task Updater Card */
+        .whatsapp-updater-card {
+            background: #ffffff;
+            border: 1px solid #25d366;
+            border-radius: 18px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(37, 211, 102, 0.08);
+        }
+
+        .whatsapp-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            gap: 12px;
+        }
+
+        .whatsapp-title-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .whatsapp-badge {
+            background: #dcfce7;
+            color: #15803d;
+            font-size: 12px;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .whatsapp-header h3 {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--text-main);
+            margin: 0;
+        }
+
+        .whatsapp-toggle-btn {
+            background: #f0fdf4;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .whatsapp-toggle-btn:hover {
+            background: #25d366;
+            color: white;
+            border-color: #25d366;
+        }
+
+        .whatsapp-body {
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px dashed #e2e8f0;
+        }
     </style>
 </head>
 <body>
@@ -803,9 +871,6 @@
                 </button>
                 <button class="btn btn-logout" id="googleLogoutBtn" onclick="handleLogoutClick()" style="display: none;">
                     🚪 התנתק
-                </button>
-                <button class="btn btn-primary" onclick="downloadICS()">
-                    📅 הורד קובץ יומן (.ics)
                 </button>
                 <button class="btn" onclick="resetAllProgress()">
                     🔄 אפס סימונים
@@ -830,9 +895,45 @@
             <button class="btn" id="cleanDuplicatesBtn" style="background: #f8fafc; color: #334155; border: 1px solid #cbd5e1;" onclick="handleCleanDuplicates()">
                 🧹 נקה כפילויות מיומן Google
             </button>
-            <button class="btn" id="bannerLogoutBtn" style="display: none; background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5;" onclick="handleLogoutClick()">
-                🚪 התנתק
-            </button>
+        </div>
+    </div>
+
+    <!-- WhatsApp Smart Task Updater -->
+    <div class="whatsapp-updater-card">
+        <div class="whatsapp-header" onclick="toggleWhatsAppCard()">
+            <div class="whatsapp-title-group">
+                <span class="whatsapp-badge">💬 וואטסאפ חכם</span>
+                <h3>עדכון משימות ישירות מהודעות WhatsApp</h3>
+            </div>
+            <button class="whatsapp-toggle-btn" id="waToggleBtn">➕ פתח עדכון מהיר</button>
+        </div>
+        <div class="whatsapp-body" id="waBody" style="display: none;">
+            <p style="font-size: 13px; color: #475569; margin-bottom: 10px;">
+                העתק הודעה מהמרצה או מקבוצת הוואטסאפ (למשל: <em>"חברים, עקב המצב דחיתי את הגשת מפת המושגים בשבוע ל-15.11"</em>), הדבק כאן והמערכת תזהה את הקורס והמשימה, ותסנכרן את התאריך החדש ישירות ללוח וליומן Google:
+            </p>
+            <textarea id="waMessageInput" rows="3" placeholder="הדבק כאן את הודעת הוואטסאפ..." style="width: 100%; border-radius: 12px; border: 1px solid var(--border); padding: 12px 14px; font-family: inherit; font-size: 14px; resize: vertical; margin-bottom: 10px;"></textarea>
+            
+            <div style="display: flex; gap: 10px; justify-content: flex-end; align-items: center; flex-wrap: wrap;">
+                <button class="btn btn-primary" style="background: #25d366; color: white; border: none; font-weight: 800;" onclick="processWhatsAppMessage()">
+                    🤖 נתח הודעה ועדכן משימות
+                </button>
+            </div>
+            
+            <!-- Analysis Result Box -->
+            <div id="waResultBox" style="display: none; margin-top: 14px; padding: 14px; border-radius: 12px; background: #f0fdf4; border: 1px solid #bbf7d0;">
+                <div style="font-weight: 800; color: #166534; font-size: 14px; margin-bottom: 4px;" id="waResultTitle">
+                    ✅ זוהה עדכון במשימה!
+                </div>
+                <div style="font-size: 13.5px; color: #14532d; margin-bottom: 12px; line-height: 1.5;" id="waResultDesc"></div>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn btn-primary" style="background: #166534; color: white;" id="waApplyBtn" onclick="applyWhatsAppChange()">
+                        אשר עדכון וסנכרן ליומן Google 🚀
+                    </button>
+                    <button class="btn" style="background: white; color: #475569;" onclick="cancelWhatsAppChange()">
+                        ביטול
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1017,6 +1118,9 @@ if (!googleAccessToken || googleAccessToken === 'undefined' || googleAccessToken
     googleAccessToken = null;
     localStorage.removeItem('roshaket_g_token');
 }
+
+// User customized task dates (e.g. from WhatsApp updates)
+let customTaskDates = JSON.parse(localStorage.getItem('roshaket_custom_dates') || '{}');
 
 // Master Semester Database with Lecturer Names
 const semesterSchedule = [
@@ -1215,6 +1319,10 @@ function render() {
             <div class="tasks-container">
                 ${matchingTasks.map(t => {
                     const isDone = doneTasks.includes(t.id);
+                    const activeCustomDate = customTaskDates[t.id];
+                    const dateBadge = activeCustomDate 
+                        ? `<span style="background: #ecfdf5; color: #047857; font-weight: 800; padding: 2px 8px; border-radius: 6px; font-size: 11px; border: 1px solid #a7f3d0; margin-right: 6px;">📅 יעד מעודכן: ${activeCustomDate}</span>` 
+                        : '';
                     return `
                         <div class="task-item ${t.courseClass} ${isDone ? 'done' : ''}" id="card_${t.id}">
                             <div class="task-top">
@@ -1224,7 +1332,10 @@ function render() {
                                            onchange="toggleTask('${t.id}')">
                                 </label>
                                 <div class="task-content">
-                                    <span class="task-course-pill">${t.emoji} ${t.course}</span>
+                                    <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 4px; margin-bottom: 4px;">
+                                        <span class="task-course-pill">${t.emoji} ${t.course}</span>
+                                        ${dateBadge}
+                                    </div>
                                     <div class="task-title">${t.title}</div>
                                     <div class="task-desc">${t.desc}</div>
                                 </div>
@@ -1728,11 +1839,12 @@ async function handleSyncAllToGoogle() {
     let failed = 0;
 
     for (const w of semesterSchedule) {
-        const parts = w.dateStr.split('.');
-        const dateFormatted = `${parts[2]}-${parts[1]}-${parts[0]}`; // YYYY-MM-DD
-        const nextDayFormatted = getNextDay(dateFormatted);
-
         for (const t of w.tasks) {
+            const taskDateStr = customTaskDates[t.id] || w.dateStr;
+            const parts = taskDateStr.split('.');
+            const dateFormatted = `${parts[2]}-${parts[1]}-${parts[0]}`; // YYYY-MM-DD
+            const nextDayFormatted = getNextDay(dateFormatted);
+
             const isDone = doneTasks.includes(t.id);
             const summary = isDone ? `✅ [הושלם] [${t.course}] ${t.title}` : `${t.emoji} [${t.course}] ${t.title}`;
             const targetEventId = getTaskEventId(t, w.weekNum);
@@ -1878,7 +1990,8 @@ async function syncSingleTaskToGoogle(taskId, isDone) {
     }
 
     const targetEventId = getTaskEventId(targetTask, targetWeek.weekNum);
-    const parts = targetWeek.dateStr.split('.');
+    const taskDateStr = customTaskDates[targetTask.id] || targetWeek.dateStr;
+    const parts = taskDateStr.split('.');
     const dateFormatted = `${parts[2]}-${parts[1]}-${parts[0]}`;
     const nextDayFormatted = getNextDay(dateFormatted);
 
@@ -1959,6 +2072,154 @@ async function syncSingleTaskToGoogle(taskId, isDone) {
     } catch (e) {
         console.error('Sync single task error:', e);
     }
+}
+
+// ==========================================
+// WhatsApp Smart Task Assistant Engine
+// ==========================================
+
+let pendingWhatsAppChange = null;
+
+function toggleWhatsAppCard() {
+    const body = document.getElementById('waBody');
+    const btn = document.getElementById('waToggleBtn');
+    if (body.style.display === 'none' || !body.style.display) {
+        body.style.display = 'block';
+        btn.innerText = '✖️ סגור';
+    } else {
+        body.style.display = 'none';
+        btn.innerText = '➕ פתח עדכון מהיר';
+    }
+}
+
+function processWhatsAppMessage() {
+    const raw = document.getElementById('waMessageInput').value.trim();
+    if (!raw) {
+        showToast('אנא הדבק קודם הודעה מהוואטסאפ');
+        return;
+    }
+
+    const text = raw.toLowerCase();
+
+    // 1. Detect Course
+    let detectedCourseKey = null;
+    let detectedCourseName = '';
+    if (text.includes('מור') || text.includes('ישי') || text.includes('הערכת תוכניות') || text.includes('מפת מושג') || text.includes('cipp') || text.includes('פרויקט סיום')) {
+        detectedCourseKey = 'mor';
+        detectedCourseName = 'הערכת תוכניות – מור';
+    } else if (text.includes('ואסל') || text.includes('חדשנות פדגוגית') || text.includes('דה בונו') || text.includes('דה-בונו') || text.includes('כובעי') || text.includes('תלקיט') || text.includes('אינה פוקס')) {
+        detectedCourseKey = 'wassel';
+        detectedCourseName = 'פיתוח חדשנות – ואסל';
+    } else if (text.includes('לוי-ורד') || text.includes('לוי ורד') || text.includes('עדי') || text.includes('סוגיות') || text.includes('רפלקציה') || text.includes('קיר שיתופי') || text.includes('פדלט')) {
+        detectedCourseKey = 'levy';
+        detectedCourseName = 'סוגיות בהערכה – לוי-ורד';
+    }
+
+    // 2. Extract Date
+    let newDateStr = null;
+    const dMatch = raw.match(/(\d{1,2})[./\-](\d{1,2})(?:[./\-](\d{2,4}))?/);
+    if (dMatch) {
+        const day = dMatch[1].padStart(2, '0');
+        const month = dMatch[2].padStart(2, '0');
+        const year = dMatch[3] ? (dMatch[3].length === 2 ? `20${dMatch[3]}` : dMatch[3]) : '2026';
+        newDateStr = `${day}.${month}.${year}`;
+    } else {
+        const months = { 'אוקטובר': '10', 'נובמבר': '11', 'דצמבר': '12', 'ינואר': '01', 'פברואר': '02' };
+        for (const [mName, mNum] of Object.entries(months)) {
+            const re = new RegExp(`(\\d{1,2})\\s*(?:ב|ל)?${mName}`);
+            const m = raw.match(re);
+            if (m) {
+                const day = m[1].padStart(2, '0');
+                const yr = mNum === '01' || mNum === '02' ? '2027' : '2026';
+                newDateStr = `${day}.${mNum}.${yr}`;
+                break;
+            }
+        }
+    }
+
+    // 3. Match Task
+    let bestTask = null;
+    let bestWeek = null;
+
+    for (const w of semesterSchedule) {
+        for (const t of w.tasks) {
+            if (detectedCourseKey && t.courseKey !== detectedCourseKey) continue;
+
+            const tWords = t.title.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+            for (const word of tWords) {
+                if (text.includes(word)) {
+                    bestTask = t;
+                    bestWeek = w;
+                    break;
+                }
+            }
+            if (bestTask) break;
+        }
+        if (bestTask) break;
+    }
+
+    if (!bestTask && detectedCourseKey) {
+        for (const w of semesterSchedule) {
+            const found = w.tasks.find(t => t.courseKey === detectedCourseKey);
+            if (found) { bestTask = found; bestWeek = w; break; }
+        }
+    }
+
+    if (!bestTask && !newDateStr) {
+        showToast('⚠️ לא הצלחנו לזהות קורס או תאריך בהודעה. נסה להדביק הודעה מפורטת יותר.');
+        return;
+    }
+
+    const currentDueDate = (customTaskDates[bestTask?.id]) || bestWeek?.dateStr || 'לא ידוע';
+
+    pendingWhatsAppChange = {
+        taskId: bestTask ? bestTask.id : null,
+        taskTitle: bestTask ? bestTask.title : 'משימה כללית בקורס',
+        course: bestTask ? bestTask.course : (detectedCourseName || 'כללי'),
+        oldDate: currentDueDate,
+        newDate: newDateStr || currentDueDate,
+        rawMessage: raw
+    };
+
+    document.getElementById('waResultBox').style.display = 'block';
+    document.getElementById('waResultTitle').innerHTML = `✅ זוהה עדכון: <strong>${pendingWhatsAppChange.course}</strong>`;
+    document.getElementById('waResultDesc').innerHTML = `
+        <strong>משימה:</strong> ${pendingWhatsAppChange.taskTitle}<br>
+        <strong>תאריך מקורי:</strong> ${pendingWhatsAppChange.oldDate} ⬅️<br>
+        <strong>תאריך יעד מעודכן:</strong> <span style="font-weight: 800; color: #15803d; font-size: 15px;">${pendingWhatsAppChange.newDate}</span> 🎯
+    `;
+}
+
+async function applyWhatsAppChange() {
+    if (!pendingWhatsAppChange || !pendingWhatsAppChange.taskId) {
+        showToast('שגיאה בהחלת השינוי');
+        return;
+    }
+
+    const taskId = pendingWhatsAppChange.taskId;
+    const newDate = pendingWhatsAppChange.newDate;
+
+    customTaskDates[taskId] = newDate;
+    localStorage.setItem('roshaket_custom_dates', JSON.stringify(customTaskDates));
+
+    render();
+
+    if (googleAccessToken) {
+        showToast('מסנכרן תאריך מעודכן ל-Google Calendar...');
+        const isDone = doneTasks.includes(taskId);
+        await syncSingleTaskToGoogle(taskId, isDone);
+    }
+
+    triggerCelebrationMeme();
+    showToast(`🎉 המשימה "${pendingWhatsAppChange.taskTitle}" עודכנה ל-${newDate}!`);
+
+    cancelWhatsAppChange();
+    document.getElementById('waMessageInput').value = '';
+}
+
+function cancelWhatsAppChange() {
+    pendingWhatsAppChange = null;
+    document.getElementById('waResultBox').style.display = 'none';
 }
 
 function openConfigModal() {
