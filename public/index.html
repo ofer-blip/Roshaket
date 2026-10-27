@@ -987,11 +987,103 @@
         }
 
 
-        /* Full-Width Quick Status Banner Bar (Tala Style) */
+
+        /* Header Options Dropdown Menu */
+        .menu-dropdown-wrap {
+            position: relative;
+            display: inline-block;
+        }
+
+        .btn-menu-trigger {
+            background: rgba(255, 255, 255, 0.14);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 800;
+            transition: all 0.2s;
+        }
+
+        .btn-menu-trigger:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: scale(1.05);
+        }
+
+        .dropdown-panel {
+            position: absolute;
+            top: 115%;
+            left: 0;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.08);
+            min-width: 220px;
+            padding: 6px;
+            z-index: 1000;
+            display: none;
+            text-align: right;
+            direction: rtl;
+        }
+
+        .dropdown-panel.open {
+            display: block;
+            animation: fadeInDown 0.2s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 12px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #1e293b;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-decoration: none;
+            border: none;
+            background: transparent;
+            width: 100%;
+            font-family: inherit;
+        }
+
+        .dropdown-item:hover {
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+
+        .dropdown-item.danger {
+            color: #b91c1c;
+        }
+
+        .dropdown-item.danger:hover {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: #e2e8f0;
+            margin: 4px 0;
+        }
+
+        /* Simplified full-width quick status bar */
         .quick-status-bar {
             background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
             border-radius: 16px;
-            padding: 16px 22px;
+            padding: 16px 24px;
             margin-bottom: 22px;
             display: flex;
             justify-content: space-between;
@@ -1017,9 +1109,9 @@
         .quick-status-bar-icon {
             font-size: 26px;
             background: rgba(255, 255, 255, 0.15);
-            width: 52px;
-            height: 52px;
-            border-radius: 14px;
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1028,11 +1120,10 @@
         }
 
         .quick-status-bar-texts h3 {
-            font-size: 17px;
+            font-size: 16.5px;
             font-weight: 800;
             color: #ffffff;
             margin-bottom: 3px;
-            letter-spacing: -0.3px;
         }
 
         .quick-status-bar-texts p {
@@ -1042,72 +1133,19 @@
             font-weight: 500;
         }
 
-        .quick-status-bar-cta {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(255, 255, 255, 0.18);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+        .quick-status-bar-arrow {
+            font-size: 20px;
             color: #ffffff;
-            padding: 8px 16px;
-            border-radius: 12px;
-            font-size: 13.5px;
-            font-weight: 800;
-            flex-shrink: 0;
-            transition: all 0.2s;
+            opacity: 0.8;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+            margin-left: 10px;
         }
 
-        .quick-status-bar:hover .quick-status-bar-cta {
-            background: #ffffff;
-            color: #1e1b4b;
+        .quick-status-bar:hover .quick-status-bar-arrow {
+            transform: translateX(-4px);
+            opacity: 1;
         }
 
-        /* Stacked Compact Header Actions */
-        .header-actions-stacked {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            align-items: flex-end;
-        }
-
-        .header-actions-subrow {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-        }
-
-        .btn-mini-subtle {
-            background: rgba(255, 255, 255, 0.12);
-            color: #cbd5e1;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 4px 10px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            min-height: 28px;
-        }
-
-        .btn-mini-subtle:hover {
-            background: rgba(255, 255, 255, 0.22);
-            color: white;
-            border-color: rgba(255, 255, 255, 0.4);
-        }
-
-        .btn-mini-danger {
-            background: rgba(239, 68, 68, 0.15);
-            color: #fca5a5;
-            border-color: rgba(239, 68, 68, 0.3);
-        }
-
-        .btn-mini-danger:hover {
-            background: #ef4444;
-            color: white;
-        }
 
     </style>
 </head>
@@ -1122,31 +1160,46 @@
                 <div class="header-title">
                     <h1>🎓 Roshaket <span style="font-size: 18px; font-weight: 600; opacity: 0.85;">| ראש שקט לתואר</span></h1>
                     <p>
-    מכללת בית ברל | תוכנית המהפכה | שנה ב' תשפ"ז | מבית D-Dialog
-    <span id="appModeBadge" class="demo-pill-badge" style="margin-right: 8px;">🎭 מצב התנסות (דמו)</span>
-</p>
+                        מכללת בית ברל | תוכנית המהפכה | שנה ב' תשפ"ז | מבית D-Dialog
+                        <span id="appModeBadge" class="demo-pill-badge" style="margin-right: 8px;">🎭 מצב התנסות (דמו)</span>
+                    </p>
                 </div>
             </div>
-            <div class="header-actions-stacked">
+            
+            <div class="header-actions" style="display: flex; align-items: center; gap: 8px;">
                 <button class="btn btn-google" id="googleAuthBtn" onclick="handleAuthClick()">
-                    <span>🔑</span> <span>התחבר לנתונים האישיים (Google)</span>
+                    <span>🔑</span> <span>התחבר לנתונים (Google)</span>
                 </button>
-                <div class="header-actions-subrow">
-                    <button class="btn-mini-subtle" onclick="openCourseSettingsModal()" title="ניהול קורסים בסמסטר או העלאת סילבוס">
-                        ⚙️ נהל קורסים / סילבוס
+                <button class="btn btn-logout" id="googleLogoutBtn" onclick="handleLogoutClick()" style="display: none;">
+                    🚪 התנתק
+                </button>
+                
+                <!-- Options Dropdown Menu (3 Dots) -->
+                <div class="menu-dropdown-wrap">
+                    <button class="btn-menu-trigger" onclick="toggleOptionsMenu(event)" title="אפשרויות והגדרות נוספות">
+                        ⋮
                     </button>
-                    <button class="btn-mini-subtle" onclick="resetAllProgress()" title="אפס סימונים בלוח">
-                        🔄 אפס
-                    </button>
-                    <button class="btn-mini-subtle btn-mini-danger" id="googleLogoutBtn" onclick="handleLogoutClick()" style="display: none;">
-                        🚪 התנתק
-                    </button>
+                    <div class="dropdown-panel" id="optionsDropdownMenu">
+                        <button class="dropdown-item" onclick="openCourseSettingsModal(); closeOptionsMenu();">
+                            <span>⚙️</span>
+                            <span>ניהול קורסים וסילבוס</span>
+                        </button>
+                        <button class="dropdown-item" onclick="handleCleanDuplicates(); closeOptionsMenu();">
+                            <span>🧹</span>
+                            <span>ניקוי כפילויות ביומן Google</span>
+                        </button>
+                        <div class="dropdown-divider"></div>
+                        <button class="dropdown-item danger" onclick="resetAllProgress(); closeOptionsMenu();">
+                            <span>🔄</span>
+                            <span>איפוס כל הסימונים בלוח</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </header>
 
-        <!-- Full-Width Quick Status Bar (Tala Executive Style) -->
+    <!-- Full-Width Clean Quick Status Bar -->
     <div class="quick-status-bar" onclick="openQuickStatusModal()" title="לחץ לפתיחת דוח סטטוס מהיר ותמונת מצב מפורטת">
         <div class="quick-status-bar-info">
             <div class="quick-status-bar-icon">📊</div>
@@ -1155,20 +1208,7 @@
                 <p id="barSubText">לחץ כאן לצפייה מלאה בסטטוס התקדמות הקורסים, פער השבועות ומועדי ההגשה לתלקיט</p>
             </div>
         </div>
-        <div class="quick-status-bar-cta">
-            <span>פתח דוח מרוכז</span>
-            <span style="font-size: 16px;">⬅️</span>
-        </div>
-    </div>
-        <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
-            <button class="btn btn-primary" id="syncAllBtn" style="background: #1e1b4b; color: white;" onclick="handleSyncAllToGoogle()">
-                🚀 סנכרן את כל המשימות לחשבון
-            </button>
-            <button class="btn" id="cleanDuplicatesBtn" style="background: #f8fafc; color: #334155; border: 1px solid #cbd5e1;" onclick="handleCleanDuplicates()">
-                🧹 נקה כפילויות מיומן Google
-            </button>
-
-        </div>
+        <div class="quick-status-bar-arrow">⬅️</div>
     </div>
 
     <!-- 3 Course Strips -->
@@ -1949,42 +1989,26 @@ function getNextDay(dateFormatted) {
 function updateSyncUI() {
     const btn = document.getElementById('googleAuthBtn');
     const logoutBtn = document.getElementById('googleLogoutBtn');
-    const bannerLogoutBtn = document.getElementById('bannerLogoutBtn');
-    const icon = document.getElementById('syncStatusIcon');
-    const title = document.getElementById('syncStatusTitle');
-    const desc = document.getElementById('syncStatusDesc');
     const appModeBadge = document.getElementById('appModeBadge');
 
     if (googleAccessToken) {
         isUserLoggedIn = true;
-        btn.innerHTML = '<span>🟢</span> <span>מחובר לנתונים האישיים</span>';
+        btn.innerHTML = '<span>🟢</span> <span>מחובר לחשבון</span>';
         btn.classList.add('connected');
         if (logoutBtn) logoutBtn.style.display = 'inline-flex';
-        if (bannerLogoutBtn) bannerLogoutBtn.style.display = 'inline-flex';
         if (appModeBadge) {
             appModeBadge.className = 'user-live-badge';
             appModeBadge.innerHTML = '👤 נתונים אישיים מסונכרנים';
         }
-        icon.innerText = '🟢';
-        icon.style.background = '#ecfdf5';
-        icon.style.color = '#10b981';
-        title.innerHTML = 'סנכרון חי פעיל מול Google Calendar 🟢';
-        desc.innerText = 'מחובר ליומן "לימודים בית ברל". כל סימון V מעדכן בזמן אמת ביומן גוגל ל- ✅ [הושלם] בצבע ירוק.';
     } else {
         isUserLoggedIn = false;
-        btn.innerHTML = '<span>🔑</span> <span>התחבר לנתונים האישיים (Google)</span>';
+        btn.innerHTML = '<span>🔑</span> <span>התחבר לחשבון Google</span>';
         btn.classList.remove('connected');
         if (logoutBtn) logoutBtn.style.display = 'none';
-        if (bannerLogoutBtn) bannerLogoutBtn.style.display = 'none';
         if (appModeBadge) {
             appModeBadge.className = 'demo-pill-badge';
             appModeBadge.innerHTML = '🎭 מצב התנסות (דמו)';
         }
-        icon.innerText = '🎭';
-        icon.style.background = '#fef3c7';
-        icon.style.color = '#92400e';
-        title.innerText = 'מצב התנסות ודמו פעיל';
-        desc.innerText = 'המערכת כרגע נקייה לחלוטין וללא חיבור ליומן. התחבר לחשבון Google כדי לטעון את הנתונים האישיים שלך ולסנכרן את המשימות ליומן.';
     }
 }
 
@@ -2839,6 +2863,25 @@ function handleSyllabusFileUpload(input) {
         showToast(`📄 סילבוס "${file.name}" נקלט בהצלחה!`);
     }, 1200);
 }
+
+
+// Options Dropdown Menu Handler
+function toggleOptionsMenu(event) {
+    if (event) event.stopPropagation();
+    const menu = document.getElementById('optionsDropdownMenu');
+    if (menu) menu.classList.toggle('open');
+}
+
+function closeOptionsMenu() {
+    const menu = document.getElementById('optionsDropdownMenu');
+    if (menu) menu.classList.remove('open');
+}
+
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.menu-dropdown-wrap')) {
+        closeOptionsMenu();
+    }
+});
 
 // Initial Render
 render();
