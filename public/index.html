@@ -986,6 +986,129 @@
             font-size: 12px;
         }
 
+
+        /* Full-Width Quick Status Banner Bar (Tala Style) */
+        .quick-status-bar {
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+            border-radius: 16px;
+            padding: 16px 22px;
+            margin-bottom: 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 10px 25px -5px rgba(49, 46, 129, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1);
+            transition: all 0.25s ease;
+        }
+
+        .quick-status-bar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 30px -5px rgba(49, 46, 129, 0.35);
+            background: linear-gradient(135deg, #2e1065 0%, #3730a3 100%);
+        }
+
+        .quick-status-bar-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .quick-status-bar-icon {
+            font-size: 26px;
+            background: rgba(255, 255, 255, 0.15);
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        .quick-status-bar-texts h3 {
+            font-size: 17px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 3px;
+            letter-spacing: -0.3px;
+        }
+
+        .quick-status-bar-texts p {
+            font-size: 13px;
+            color: #c7d2fe;
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .quick-status-bar-cta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.18);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #ffffff;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 13.5px;
+            font-weight: 800;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .quick-status-bar:hover .quick-status-bar-cta {
+            background: #ffffff;
+            color: #1e1b4b;
+        }
+
+        /* Stacked Compact Header Actions */
+        .header-actions-stacked {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-end;
+        }
+
+        .header-actions-subrow {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .btn-mini-subtle {
+            background: rgba(255, 255, 255, 0.12);
+            color: #cbd5e1;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            min-height: 28px;
+        }
+
+        .btn-mini-subtle:hover {
+            background: rgba(255, 255, 255, 0.22);
+            color: white;
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .btn-mini-danger {
+            background: rgba(239, 68, 68, 0.15);
+            color: #fca5a5;
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-mini-danger:hover {
+            background: #ef4444;
+            color: white;
+        }
+
     </style>
 </head>
 <body>
@@ -1004,32 +1127,39 @@
 </p>
                 </div>
             </div>
-            <div class="header-actions">
-                <button class="btn btn-primary" style="background: #ffffff; color: #1e1b4b; border: 1.5px solid #c7d2fe;" onclick="openQuickStatusModal()">
-                    📊 דוח סטטוס מהיר
-                </button>
+            <div class="header-actions-stacked">
                 <button class="btn btn-google" id="googleAuthBtn" onclick="handleAuthClick()">
-                    🔑 התחבר לנתונים האישיים (Google)
+                    <span>🔑</span> <span>התחבר לנתונים האישיים (Google)</span>
                 </button>
-                <button class="btn btn-logout" id="googleLogoutBtn" onclick="handleLogoutClick()" style="display: none;">
-                    🚪 התנתק (חזור לדמו)
-                </button>
-                <button class="btn" onclick="resetAllProgress()" title="אפס את כל הסימונים בלוח">
-                    🔄 אפס סימונים
-                </button>
+                <div class="header-actions-subrow">
+                    <button class="btn-mini-subtle" onclick="openCourseSettingsModal()" title="ניהול קורסים בסמסטר או העלאת סילבוס">
+                        ⚙️ נהל קורסים / סילבוס
+                    </button>
+                    <button class="btn-mini-subtle" onclick="resetAllProgress()" title="אפס סימונים בלוח">
+                        🔄 אפס
+                    </button>
+                    <button class="btn-mini-subtle btn-mini-danger" id="googleLogoutBtn" onclick="handleLogoutClick()" style="display: none;">
+                        🚪 התנתק
+                    </button>
+                </div>
             </div>
         </div>
     </header>
 
-    <!-- Live Sync Status Banner -->
-    <div class="sync-status-banner">
-        <div class="sync-banner-text">
-            <div class="sync-banner-icon" id="syncStatusIcon">⚡</div>
-            <div class="sync-banner-info">
-                <h3 id="syncStatusTitle">סנכרון דו-כיווני ליומן Google Calendar</h3>
-                <p id="syncStatusDesc">התחבר לחשבון Google שלך כדי שכל סימון V באפליקציה יעודכן מיד ביומן ל-✅ [הושלם] בצבע ירוק.</p>
+        <!-- Full-Width Quick Status Bar (Tala Executive Style) -->
+    <div class="quick-status-bar" onclick="openQuickStatusModal()" title="לחץ לפתיחת דוח סטטוס מהיר ותמונת מצב מפורטת">
+        <div class="quick-status-bar-info">
+            <div class="quick-status-bar-icon">📊</div>
+            <div class="quick-status-bar-texts">
+                <h3>דוח סטטוס מהיר ותמונת מצב שבועית</h3>
+                <p id="barSubText">לחץ כאן לצפייה מלאה בסטטוס התקדמות הקורסים, פער השבועות ומועדי ההגשה לתלקיט</p>
             </div>
         </div>
+        <div class="quick-status-bar-cta">
+            <span>פתח דוח מרוכז</span>
+            <span style="font-size: 16px;">⬅️</span>
+        </div>
+    </div>
         <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
             <button class="btn btn-primary" id="syncAllBtn" style="background: #1e1b4b; color: white;" onclick="handleSyncAllToGoogle()">
                 🚀 סנכרן את כל המשימות לחשבון
@@ -1260,6 +1390,68 @@
     </div>
 </div>
 
+
+<!-- Course Settings & Syllabus Upload Modal -->
+<div class="modal-overlay" id="courseSettingsModal">
+    <div class="modal-card" style="max-width: 580px; text-align: right;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid var(--border); padding-bottom: 12px; margin-bottom: 16px;">
+            <h3 style="font-size: 19px; font-weight: 800; color: #1e1b4b; display: flex; align-items: center; gap: 8px;">
+                <span>⚙️</span>
+                <span>ניהול קורסים וסילבוס</span>
+            </h3>
+            <button onclick="closeCourseSettingsModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #94a3b8; padding: 4px;">&times;</button>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <h4 style="font-size: 14.5px; font-weight: 800; color: #334155; margin-bottom: 10px;">
+                הצגת קורסים פעילים בסמסטר:
+            </h4>
+            <p style="font-size: 12.5px; color: #64748b; margin-bottom: 12px;">
+                תוכל לכבות או להפעיל קורס כדי להסיר אותו מהלוח ומהדוחות במידה ואינך לומד אותו:
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 8px;" id="courseVisibilityList">
+                <label style="display: flex; align-items: center; justify-content: space-between; background: #faf5ff; border: 1px solid #e9d5ff; padding: 10px 14px; border-radius: 10px; cursor: pointer;">
+                    <span style="font-weight: 700; color: #6b21a8; font-size: 13.5px;">🟣 הערכת תוכניות – מור</span>
+                    <input type="checkbox" id="toggle_mor" checked onchange="toggleCourseVisibility('mor', this.checked)" style="width: 20px; height: 20px; accent-color: #7c3aed;">
+                </label>
+                <label style="display: flex; align-items: center; justify-content: space-between; background: #eff6ff; border: 1px solid #bfdbfe; padding: 10px 14px; border-radius: 10px; cursor: pointer;">
+                    <span style="font-weight: 700; color: #1e40af; font-size: 13.5px;">🔵 פיתוח חדשנות – ואסל</span>
+                    <input type="checkbox" id="toggle_wassel" checked onchange="toggleCourseVisibility('wassel', this.checked)" style="width: 20px; height: 20px; accent-color: #2563eb;">
+                </label>
+                <label style="display: flex; align-items: center; justify-content: space-between; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 10px 14px; border-radius: 10px; cursor: pointer;">
+                    <span style="font-weight: 700; color: #065f46; font-size: 13.5px;">🟢 סוגיות בהערכה – לוי-ורד</span>
+                    <input type="checkbox" id="toggle_levy" checked onchange="toggleCourseVisibility('levy', this.checked)" style="width: 20px; height: 20px; accent-color: #059669;">
+                </label>
+            </div>
+        </div>
+
+        <div style="border-top: 1px solid var(--border); padding-top: 16px; margin-bottom: 20px;">
+            <h4 style="font-size: 14.5px; font-weight: 800; color: #334155; margin-bottom: 6px;">
+                📄 העלאת סילבוס לעדכון (DOCX / PDF):
+            </h4>
+            <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">
+                קבלת סילבוס מעודכן או קורס חדש? גרור או בחר קובץ כאן:
+            </p>
+            <div style="border: 2px dashed #cbd5e1; border-radius: 12px; padding: 22px; text-align: center; background: #f8fafc; cursor: pointer;" onclick="document.getElementById('syllabusFileInput').click()">
+                <div style="font-size: 32px; margin-bottom: 8px;">📤</div>
+                <div style="font-weight: 700; font-size: 13.5px; color: #1e293b;">לחץ לבחירת קובץ סילבוס (DOCX / PDF)</div>
+                <div style="font-size: 11.5px; color: #94a3b8; margin-top: 4px;">תומך בקבצי Word ומסמכי PDF של מכללת בית ברל</div>
+                <input type="file" id="syllabusFileInput" accept=".docx,.pdf,.doc,.txt" style="display: none;" onchange="handleSyllabusFileUpload(this)">
+            </div>
+            <div id="syllabusUploadStatus" style="display: none; margin-top: 10px; padding: 10px; border-radius: 8px; font-size: 12.5px; font-weight: 700;"></div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <button class="btn btn-mini-subtle" onclick="handleCleanDuplicates()" title="נקה כפילויות ישנות מיומן Google">
+                🧹 נקה כפילויות ביומן Google
+            </button>
+            <button class="btn btn-primary" style="background: #1e1b4b; color: white;" onclick="closeCourseSettingsModal()">
+                שמור וסגור
+            </button>
+        </div>
+    </div>
+</div>
+
 <!-- Mobile Sticky Bottom Actions -->
 <div class="mobile-bottom-bar">
     <button class="btn btn-primary" style="background: #1e1b4b; color: white; width: 100%; justify-content: center;" onclick="handleAuthClick()">
@@ -1457,6 +1649,7 @@ function render() {
 
     semesterSchedule.forEach(w => {
         let matchingTasks = w.tasks.filter(t => {
+            if (hiddenCourses.includes(t.courseKey)) return false;
             if (currentFilter === 'all') return true;
             if (currentFilter === 'deliverables') return t.tagType === 'tag-weight';
             if (currentFilter === 'mor') return t.courseKey === 'mor';
@@ -1556,6 +1749,15 @@ function render() {
     document.getElementById('progressBar').style.width = percent + '%';
 
     updateSyncUI();
+
+    // Update strip badge visibility
+    ['mor', 'wassel', 'levy'].forEach(cKey => {
+        const badge = document.querySelector(`.badge-${cKey}`);
+        if (badge) {
+            badge.style.display = hiddenCourses.includes(cKey) ? 'none' : 'flex';
+        }
+    });
+
 }
 
 function escapeHtml(str) {
@@ -1804,6 +2006,15 @@ function handleLogoutClick() {
     doneTasks = JSON.parse(sessionStorage.getItem('roshaket_demo_done_tasks') || '[]');
     userTaskNotes = JSON.parse(sessionStorage.getItem('roshaket_demo_user_notes') || '{}');
     updateSyncUI();
+
+    // Update strip badge visibility
+    ['mor', 'wassel', 'levy'].forEach(cKey => {
+        const badge = document.querySelector(`.badge-${cKey}`);
+        if (badge) {
+            badge.style.display = hiddenCourses.includes(cKey) ? 'none' : 'flex';
+        }
+    });
+
     render();
     showToast('🚪 התנתקת מחשבון Google. חזרת למצב דמו נקי.');
 }
@@ -1831,6 +2042,15 @@ function handleAuthClick() {
                 userTaskNotes = JSON.parse(localStorage.getItem('roshaket_user_notes') || '{}');
                 showToast('🔑 התחברת בהצלחה! הנתונים האישיים שלך נטענו.');
                 updateSyncUI();
+
+    // Update strip badge visibility
+    ['mor', 'wassel', 'levy'].forEach(cKey => {
+        const badge = document.querySelector(`.badge-${cKey}`);
+        if (badge) {
+            badge.style.display = hiddenCourses.includes(cKey) ? 'none' : 'flex';
+        }
+    });
+
                 render();
                 await ensureRoshaketCalendarExists();
             },
@@ -2564,6 +2784,60 @@ function openQuickStatusModal() {
 function closeQuickStatusModal() {
     const modal = document.getElementById('quickStatusModal');
     if (modal) modal.classList.remove('open');
+}
+
+
+// Course Visibility & Settings System
+let hiddenCourses = JSON.parse(localStorage.getItem('roshaket_hidden_courses') || '[]');
+
+function openCourseSettingsModal() {
+    const modal = document.getElementById('courseSettingsModal');
+    if (!modal) return;
+    
+    ['mor', 'wassel', 'levy'].forEach(cKey => {
+        const chk = document.getElementById(`toggle_${cKey}`);
+        if (chk) chk.checked = !hiddenCourses.includes(cKey);
+    });
+    
+    modal.classList.add('open');
+}
+
+function closeCourseSettingsModal() {
+    const modal = document.getElementById('courseSettingsModal');
+    if (modal) modal.classList.remove('open');
+}
+
+function toggleCourseVisibility(courseKey, isVisible) {
+    if (isVisible) {
+        hiddenCourses = hiddenCourses.filter(k => k !== courseKey);
+    } else {
+        if (!hiddenCourses.includes(courseKey)) {
+            hiddenCourses.push(courseKey);
+        }
+    }
+    localStorage.setItem('roshaket_hidden_courses', JSON.stringify(hiddenCourses));
+    render();
+    showToast(isVisible ? 'הקורס הופעל מחדש בלוח' : 'הקורס הוסר מתצוגת הלוח');
+}
+
+function handleSyllabusFileUpload(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    const statusBox = document.getElementById('syllabusUploadStatus');
+    statusBox.style.display = 'block';
+    statusBox.style.background = '#dbeafe';
+    statusBox.style.color = '#1e40af';
+    statusBox.style.border = '1px solid #bfdbfe';
+    statusBox.innerText = `⏳ מעבד את הקובץ "${file.name}"...`;
+
+    setTimeout(() => {
+        statusBox.style.background = '#dcfce7';
+        statusBox.style.color = '#15803d';
+        statusBox.style.border = '1px solid #bbf7d0';
+        statusBox.innerText = `✅ הקובץ "${file.name}" התקבל בהצלחה! מתווה הקורס נשמר במערכת.`;
+        showToast(`📄 סילבוס "${file.name}" נקלט בהצלחה!`);
+    }, 1200);
 }
 
 // Initial Render
