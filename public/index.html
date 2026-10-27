@@ -833,6 +833,159 @@
             color: #475569;
             font-weight: 600;
         }
+
+        /* Demo Mode & Tooltips & Quick Status Modal */
+        .demo-pill-badge {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fde68a;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .user-live-badge {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Tooltip Hint Bubble */
+        .hint-bubble {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 19px;
+            height: 19px;
+            background: #e0e7ff;
+            color: #4338ca;
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+            position: relative;
+            vertical-align: middle;
+            margin-right: 4px;
+            margin-left: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+        }
+
+        .hint-bubble:hover {
+            background: #4f46e5;
+            color: white;
+            transform: scale(1.15);
+        }
+
+        .hint-bubble[data-tooltip]:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 130%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #0f172a;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            white-space: normal;
+            width: max-content;
+            max-width: 240px;
+            line-height: 1.4;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+            pointer-events: none;
+            text-align: right;
+            direction: rtl;
+        }
+
+        /* Quick Status Modal Table (Tala-inspired) */
+        .status-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 15px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .status-table th {
+            background: #f8fafc;
+            color: #475569;
+            font-size: 12.5px;
+            font-weight: 800;
+            padding: 10px 14px;
+            text-align: right;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .status-table td {
+            padding: 12px 14px;
+            font-size: 13px;
+            border-bottom: 1px solid #f1f5f9;
+            background: white;
+            transition: background 0.15s;
+        }
+
+        .status-table tr:hover td {
+            background: #f8fafc;
+        }
+
+        .badge-gap-ok {
+            background: #dcfce7;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11.5px;
+            font-weight: 800;
+            display: inline-block;
+        }
+
+        .badge-gap-behind {
+            background: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fca5a5;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11.5px;
+            font-weight: 800;
+            display: inline-block;
+        }
+
+        .badge-gap-ahead {
+            background: #e0e7ff;
+            color: #4338ca;
+            border: 1px solid #c7d2fe;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11.5px;
+            font-weight: 800;
+            display: inline-block;
+        }
+
+        .course-mini-pill {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-weight: 800;
+            font-size: 12px;
+        }
+
     </style>
 </head>
 <body>
@@ -845,17 +998,23 @@
                 <img src="logo.jpg" alt="D-Dialog Logo" class="brand-logo" onerror="this.style.display='none'">
                 <div class="header-title">
                     <h1>🎓 Roshaket <span style="font-size: 18px; font-weight: 600; opacity: 0.85;">| ראש שקט לתואר</span></h1>
-                    <p>מכללת בית ברל | תוכנית המהפכה | שנה ב' תשפ"ז | מבית D-Dialog</p>
+                    <p>
+    מכללת בית ברל | תוכנית המהפכה | שנה ב' תשפ"ז | מבית D-Dialog
+    <span id="appModeBadge" class="demo-pill-badge" style="margin-right: 8px;">🎭 מצב התנסות (דמו)</span>
+</p>
                 </div>
             </div>
             <div class="header-actions">
+                <button class="btn btn-primary" style="background: #ffffff; color: #1e1b4b; border: 1.5px solid #c7d2fe;" onclick="openQuickStatusModal()">
+                    📊 דוח סטטוס מהיר
+                </button>
                 <button class="btn btn-google" id="googleAuthBtn" onclick="handleAuthClick()">
-                    🔑 התחבר ל-Google Calendar
+                    🔑 התחבר לנתונים האישיים (Google)
                 </button>
                 <button class="btn btn-logout" id="googleLogoutBtn" onclick="handleLogoutClick()" style="display: none;">
-                    🚪 התנתק
+                    🚪 התנתק (חזור לדמו)
                 </button>
-                <button class="btn" onclick="resetAllProgress()">
+                <button class="btn" onclick="resetAllProgress()" title="אפס את כל הסימונים בלוח">
                     🔄 אפס סימונים
                 </button>
             </div>
@@ -885,15 +1044,24 @@
     <!-- 3 Course Strips -->
     <div class="course-strip">
         <div class="course-card-badge badge-mor">
-            <span>🟣 הערכת תוכניות – מור</span>
+            <span>
+                🟣 הערכת תוכניות – מור
+                <span class="hint-bubble" data-tooltip="הכנה למפגשי יום ראשון, מפות מושגים ופרויקט סיום (שלבים א'-ה')">?</span>
+            </span>
             <span style="font-size: 12px; font-weight: 600;">מפגשי ראשון (זום/קמפוס)</span>
         </div>
         <div class="course-card-badge badge-wassel">
-            <span>🔵 פיתוח חדשנות – ואסל</span>
+            <span>
+                🔵 פיתוח חדשנות – ואסל
+                <span class="hint-bubble" data-tooltip="5 משימות א-סינכרוניות מצטברות להגשה מרוכזת ב-27.01.2027">?</span>
+            </span>
             <span style="font-size: 12px; font-weight: 600;">משימות תלקיט מצטבר (27.01)</span>
         </div>
         <div class="course-card-badge badge-levy">
-            <span>🟢 סוגיות בהערכה – לוי-ורד</span>
+            <span>
+                🟢 סוגיות בהערכה – לוי-ורד
+                <span class="hint-bubble" data-tooltip="חובת כתיבת רפלקציה שבועית בקיר השיתופי בכל שיעור ונייר עמדה בזוגות">?</span>
+            </span>
             <span style="font-size: 12px; font-weight: 600;">חובת רפלקציה שבועית בקיר</span>
         </div>
     </div>
@@ -1033,6 +1201,61 @@
         <div style="display: flex; gap: 10px; justify-content: flex-end;">
             <button class="btn" style="background: #f1f5f9; color: var(--text-main);" onclick="closeConfigModal()">ביטול</button>
             <button class="btn btn-primary" style="background: #4f46e5; color: white;" onclick="saveClientId()">שמור והתחבר</button>
+        </div>
+    </div>
+</div>
+
+
+<!-- Executive Quick Status Modal (Tala Quantitative Dashboard) -->
+<div class="modal-overlay" id="quickStatusModal">
+    <div class="modal-card" style="max-width: 650px; text-align: right;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid var(--border); padding-bottom: 12px; margin-bottom: 14px;">
+            <div>
+                <h3 style="font-size: 20px; font-weight: 800; color: #1e1b4b; display: flex; align-items: center; gap: 8px;">
+                    <span>📊</span>
+                    <span>דוח סטטוס מהיר ותמונת מצב</span>
+                </h3>
+                <p id="currentWeekDateInfo" style="font-size: 13px; color: #64748b; margin-top: 4px; font-weight: 600;">
+                    מחשב שבוע אקדמי נוכחי...
+                </p>
+            </div>
+            <button onclick="closeQuickStatusModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #94a3b8; padding: 4px;">&times;</button>
+        </div>
+
+        <!-- 3 Courses Quantitative Table -->
+        <table class="status-table">
+            <thead>
+                <tr>
+                    <th>קורס</th>
+                    <th style="text-align: center;">בוצע בפועל</th>
+                    <th style="text-align: center;">יעד לתאריך היום</th>
+                    <th style="text-align: center;">סטטוס קצב</th>
+                    <th style="text-align: center;">התקדמות</th>
+                </tr>
+            </thead>
+            <tbody id="quickStatusTbody">
+                <!-- Dynamically generated rows -->
+            </tbody>
+        </table>
+
+        <!-- Long-term Deliverables Focus (Vassel Portfolio & Mor Capstone) -->
+        <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 14px; margin-bottom: 16px;">
+            <div style="font-weight: 800; font-size: 13.5px; color: #1e293b; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+                <span>📦 משימות לטווח ארוך (תלקיט ופרויקטי סיום)</span>
+                <span id="vasselDaysCountdown" style="font-size: 12px; font-weight: 700; color: #4338ca; background: #e0e7ff; padding: 2px 8px; border-radius: 10px;">סופר ימים...</span>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;" id="longTermCardsWrap">
+                <!-- Dynamic cards -->
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <div style="font-size: 12px; color: #64748b; font-weight: 600;">
+                💡 לחץ על שורת קורס בטבלה לסינון מהיר של המשימות שלו
+            </div>
+            <button class="btn btn-primary" style="background: #1e1b4b; color: white;" onclick="closeQuickStatusModal()">
+                סגור דוח
+            </button>
         </div>
     </div>
 </div>
@@ -1212,8 +1435,17 @@ const semesterSchedule = [
 ];
 
 // State & LocalStorage
-let doneTasks = JSON.parse(localStorage.getItem('roshaket_done_tasks') || '[]');
-let userTaskNotes = JSON.parse(localStorage.getItem('roshaket_user_notes') || '{}');
+// Default Mode: If user is connected to Google, load personal data; otherwise start in clean DEMO mode!
+let isUserLoggedIn = Boolean(googleAccessToken);
+
+let doneTasks = isUserLoggedIn 
+    ? JSON.parse(localStorage.getItem('roshaket_done_tasks') || '[]')
+    : JSON.parse(sessionStorage.getItem('roshaket_demo_done_tasks') || '[]');
+
+let userTaskNotes = isUserLoggedIn 
+    ? JSON.parse(localStorage.getItem('roshaket_user_notes') || '{}')
+    : JSON.parse(sessionStorage.getItem('roshaket_demo_user_notes') || '{}');
+
 let currentFilter = 'all';
 
 function render() {
@@ -1359,7 +1591,11 @@ async function saveTaskNote(taskId) {
         delete userTaskNotes[taskId];
         showToast('ההערה הוסרה');
     }
-    localStorage.setItem('roshaket_user_notes', JSON.stringify(userTaskNotes));
+    if (isUserLoggedIn) {
+        localStorage.setItem('roshaket_user_notes', JSON.stringify(userTaskNotes));
+    } else {
+        sessionStorage.setItem('roshaket_demo_user_notes', JSON.stringify(userTaskNotes));
+    }
     render();
 
     // If connected to Google Calendar, sync note into calendar event description!
@@ -1377,7 +1613,11 @@ function toggleTask(id) {
     } else {
         doneTasks = doneTasks.filter(item => item !== id);
     }
-    localStorage.setItem('roshaket_done_tasks', JSON.stringify(doneTasks));
+    if (isUserLoggedIn) {
+        localStorage.setItem('roshaket_done_tasks', JSON.stringify(doneTasks));
+    } else {
+        sessionStorage.setItem('roshaket_demo_done_tasks', JSON.stringify(doneTasks));
+    }
     render();
 
     // Live sync to Google Calendar if connected
@@ -1465,7 +1705,11 @@ function closeMemePopup() {
 function resetAllProgress() {
     if (confirm('האם לאפס את כל המשימות שסומנו ב-Roshaket?')) {
         doneTasks = [];
-        localStorage.removeItem('roshaket_done_tasks');
+        if (isUserLoggedIn) {
+            localStorage.removeItem('roshaket_done_tasks');
+        } else {
+            sessionStorage.removeItem('roshaket_demo_done_tasks');
+        }
         render();
         showToast('כל הסימונים אופסו');
     }
@@ -1507,27 +1751,38 @@ function updateSyncUI() {
     const icon = document.getElementById('syncStatusIcon');
     const title = document.getElementById('syncStatusTitle');
     const desc = document.getElementById('syncStatusDesc');
+    const appModeBadge = document.getElementById('appModeBadge');
 
     if (googleAccessToken) {
-        btn.innerText = '🟢 מחובר לחשבון Google';
+        isUserLoggedIn = true;
+        btn.innerHTML = '<span>🟢</span> <span>מחובר לנתונים האישיים</span>';
         btn.classList.add('connected');
         if (logoutBtn) logoutBtn.style.display = 'inline-flex';
         if (bannerLogoutBtn) bannerLogoutBtn.style.display = 'inline-flex';
-        icon.innerText = '✅';
+        if (appModeBadge) {
+            appModeBadge.className = 'user-live-badge';
+            appModeBadge.innerHTML = '👤 נתונים אישיים מסונכרנים';
+        }
+        icon.innerText = '🟢';
         icon.style.background = '#ecfdf5';
         icon.style.color = '#10b981';
         title.innerHTML = 'סנכרון חי פעיל מול Google Calendar 🟢';
-        desc.innerText = 'מחובר ליומן "לימודים בית ברל". כל סימון V מעדכן בזמן אמת ביומן גוגל ל-✅ [הושלם] בצבע ירוק.';
+        desc.innerText = 'מחובר ליומן "לימודים בית ברל". כל סימון V מעדכן בזמן אמת ביומן גוגל ל- ✅ [הושלם] בצבע ירוק.';
     } else {
-        btn.innerText = '🔑 התחבר ל-Google Calendar';
+        isUserLoggedIn = false;
+        btn.innerHTML = '<span>🔑</span> <span>התחבר לנתונים האישיים (Google)</span>';
         btn.classList.remove('connected');
         if (logoutBtn) logoutBtn.style.display = 'none';
         if (bannerLogoutBtn) bannerLogoutBtn.style.display = 'none';
-        icon.innerText = '⚡';
-        icon.style.background = '#eff6ff';
-        icon.style.color = '#3b82f6';
-        title.innerText = 'סנכרון דו-כיווני ליומן Google Calendar';
-        desc.innerText = 'התחבר לחשבון Google שלך כדי שכל סימון V באפליקציה יעודכן מיד ביומן ל-✅ [הושלם] בצבע ירוק.';
+        if (appModeBadge) {
+            appModeBadge.className = 'demo-pill-badge';
+            appModeBadge.innerHTML = '🎭 מצב התנסות (דמו)';
+        }
+        icon.innerText = '🎭';
+        icon.style.background = '#fef3c7';
+        icon.style.color = '#92400e';
+        title.innerText = 'מצב התנסות ודמו פעיל';
+        desc.innerText = 'המערכת כרגע נקייה לחלוטין וללא חיבור ליומן. התחבר לחשבון Google כדי לטעון את הנתונים האישיים שלך ולסנכרן את המשימות ליומן.';
     }
 }
 
@@ -1545,8 +1800,12 @@ function handleLogoutClick() {
     roshaketCalendarId = null;
     localStorage.removeItem('roshaket_g_token');
     localStorage.removeItem('roshaket_cal_id');
+    isUserLoggedIn = false;
+    doneTasks = JSON.parse(sessionStorage.getItem('roshaket_demo_done_tasks') || '[]');
+    userTaskNotes = JSON.parse(sessionStorage.getItem('roshaket_demo_user_notes') || '{}');
     updateSyncUI();
-    showToast('🚪 התנתקת בהצלחה מחשבון Google');
+    render();
+    showToast('🚪 התנתקת מחשבון Google. חזרת למצב דמו נקי.');
 }
 
 function handleAuthClick() {
@@ -1567,8 +1826,12 @@ function handleAuthClick() {
                 }
                 googleAccessToken = resp.access_token;
                 localStorage.setItem('roshaket_g_token', googleAccessToken);
-                showToast('🔑 התחברת בהצלחה לחשבון Google!');
+                isUserLoggedIn = true;
+                doneTasks = JSON.parse(localStorage.getItem('roshaket_done_tasks') || '[]');
+                userTaskNotes = JSON.parse(localStorage.getItem('roshaket_user_notes') || '{}');
+                showToast('🔑 התחברת בהצלחה! הנתונים האישיים שלך נטענו.');
                 updateSyncUI();
+                render();
                 await ensureRoshaketCalendarExists();
             },
         });
@@ -2150,6 +2413,157 @@ if ('serviceWorker' in navigator) {
             .then(reg => console.log('Roshaket SW Registered!', reg))
             .catch(err => console.log('SW Registration failed: ', err));
     });
+}
+
+
+// Academic Week Detection (Based on today's actual date)
+function getCurrentAcademicWeek() {
+    const today = new Date();
+    // Compare today with semesterSchedule dates
+    let targetWeek = 1;
+    for (let i = 0; i < semesterSchedule.length; i++) {
+        const w = semesterSchedule[i];
+        const parts = w.dateStr.split('.');
+        const wDate = new Date(parseInt(parts[2], 10), parseInt(parts[1], 10) - 1, parseInt(parts[0], 10));
+        if (today >= wDate) {
+            targetWeek = w.weekNum;
+        } else {
+            break;
+        }
+    }
+    return targetWeek;
+}
+
+function openQuickStatusModal() {
+    const modal = document.getElementById('quickStatusModal');
+    if (!modal) return;
+
+    const currentW = getCurrentAcademicWeek();
+    const today = new Date();
+    const todayStr = `${today.getDate().toString().padStart(2, '0')}.${(today.getMonth() + 1).toString().padStart(2, '0')}.${today.getFullYear()}`;
+    
+    document.getElementById('currentWeekDateInfo').innerText = `היום: ${todayStr} | שבוע אקדמי נוכחי בלוח: שבוע ${currentW}`;
+
+    // Calculate per-course status
+    const courses = [
+        { key: 'mor', name: 'הערכת תוכניות (מור)', color: '#6d28d9', bg: '#ede9fe', classFilter: 'filter-mor' },
+        { key: 'wassel', name: 'פיתוח חדשנות (ואסל)', color: '#1d4ed8', bg: '#dbeafe', classFilter: 'filter-wassel' },
+        { key: 'levy', name: 'סוגיות בהערכה (לוי-ורד)', color: '#047857', bg: '#d1fae5', classFilter: 'filter-levy' }
+    ];
+
+    const tbody = document.getElementById('quickStatusTbody');
+    tbody.innerHTML = '';
+
+    courses.forEach(c => {
+        // Find tasks for this course
+        const courseTasks = [];
+        semesterSchedule.forEach(w => {
+            const t = w.tasks.find(item => item.courseKey === c.key);
+            if (t) {
+                courseTasks.push({ ...t, weekNum: w.weekNum });
+            }
+        });
+
+        const totalC = courseTasks.length;
+        const doneC = courseTasks.filter(t => doneTasks.includes(t.id)).length;
+        const pct = Math.round((doneC / totalC) * 100);
+
+        // Find latest done week
+        let latestDoneWeek = 0;
+        courseTasks.forEach(t => {
+            if (doneTasks.includes(t.id) && t.weekNum > latestDoneWeek) {
+                latestDoneWeek = t.weekNum;
+            }
+        });
+
+        // Target for today: expected to have completed up to currentW
+        let statusBadge = '';
+        if (latestDoneWeek >= currentW) {
+            if (latestDoneWeek > currentW) {
+                statusBadge = `<span class="badge-gap-ahead">🚀 מקדים (שבוע ${latestDoneWeek})</span>`;
+            } else {
+                statusBadge = `<span class="badge-gap-ok">✅ בקצב (שבוע ${currentW})</span>`;
+            }
+        } else {
+            const diff = currentW - latestDoneWeek;
+            statusBadge = `<span class="badge-gap-behind">⚠️ פיגור של ${diff} שבועות</span>`;
+        }
+
+        const tr = document.createElement('tr');
+        tr.style.cursor = 'pointer';
+        tr.title = `לחץ כדי לסנן רק את משימות ${c.name}`;
+        tr.onclick = () => {
+            closeQuickStatusModal();
+            const btn = document.querySelector(`.filter-btn[data-filter="${c.key}"]`);
+            if (btn) btn.click();
+        };
+
+        tr.innerHTML = `
+            <td>
+                <span class="course-mini-pill" style="background: ${c.bg}; color: ${c.color};">
+                    ${c.name}
+                </span>
+            </td>
+            <td style="text-align: center; font-weight: 700;">
+                ${latestDoneWeek > 0 ? `שבוע ${latestDoneWeek}` : 'טרם הוחל'}
+            </td>
+            <td style="text-align: center; font-weight: 700; color: #475569;">
+                שבוע ${currentW}
+            </td>
+            <td style="text-align: center;">
+                ${statusBadge}
+            </td>
+            <td style="text-align: center;">
+                <div style="display: flex; align-items: center; gap: 8px; justify-content: center;">
+                    <div style="width: 70px; background: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden;">
+                        <div style="width: ${pct}%; background: ${c.color}; height: 100%;"></div>
+                    </div>
+                    <span style="font-size: 11px; font-weight: 800; min-width: 30px;">${pct}%</span>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+
+    // Long-Term Deliverables Cards
+    // 1. Vassel Portfolio
+    const wasselPortfolioTasks = ['w1_c2', 'w2_c2', 'w3_c2', 'w5_c2', 'w7_c2', 'w11_c2'];
+    const wasselPortfolioDone = wasselPortfolioTasks.filter(id => doneTasks.includes(id)).length;
+    
+    // Days until 27.01.2027
+    const vasselTargetDate = new Date(2027, 0, 27);
+    const diffTime = vasselTargetDate - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    document.getElementById('vasselDaysCountdown').innerText = diffDays > 0 ? `נותרו עוד ${diffDays} ימים להגשה` : 'מועד ההגשה עבר';
+
+    // 2. Mor Capstone
+    const morFinalTasks = ['w4_c1', 'w6_c1', 'w7_c1', 'w9_c1', 'w10_c1', 'w11_c1', 'w13_c1'];
+    const morDone = morFinalTasks.filter(id => doneTasks.includes(id)).length;
+
+    const cardsWrap = document.getElementById('longTermCardsWrap');
+    cardsWrap.innerHTML = `
+        <div style="background: white; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px;">
+            <div style="font-weight: 700; font-size: 12.5px; color: #1e40af; margin-bottom: 4px;">🔵 תלקיט פיתוח חדשנות (ואסל)</div>
+            <div style="font-size: 12px; color: #475569; margin-bottom: 6px;">הושלמו <strong>${wasselPortfolioDone} מתוך 5</strong> משימות תלקיט</div>
+            <div style="background: #e2e8f0; height: 6px; border-radius: 3px; overflow: hidden;">
+                <div style="width: ${Math.round((wasselPortfolioDone/5)*100)}%; background: #2563eb; height: 100%;"></div>
+            </div>
+        </div>
+        <div style="background: white; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px;">
+            <div style="font-weight: 700; font-size: 12.5px; color: #6d28d9; margin-bottom: 4px;">🟣 פרויקט שלם + יומן (מור)</div>
+            <div style="font-size: 12px; color: #475569; margin-bottom: 6px;">הושלמו <strong>${morDone} מתוך ${morFinalTasks.length}</strong> ציוני דרך</div>
+            <div style="background: #e2e8f0; height: 6px; border-radius: 3px; overflow: hidden;">
+                <div style="width: ${Math.round((morDone/morFinalTasks.length)*100)}%; background: #7c3aed; height: 100%;"></div>
+            </div>
+        </div>
+    `;
+
+    modal.classList.add('open');
+}
+
+function closeQuickStatusModal() {
+    const modal = document.getElementById('quickStatusModal');
+    if (modal) modal.classList.remove('open');
 }
 
 // Initial Render
