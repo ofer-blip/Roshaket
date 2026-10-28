@@ -1334,6 +1334,79 @@
             gap: 6px;
         }
 
+
+        /* Vertical Stacked Actions Column (Left-Aligned) */
+        .header-actions-col {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            align-items: flex-start;
+            justify-content: center;
+        }
+
+        .header-top-subrow {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-icon-round {
+            background: rgba(255, 255, 255, 0.14);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 800;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .btn-icon-round:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.45);
+            transform: scale(1.05);
+        }
+
+        .btn-compact-auth {
+            font-size: 13px;
+            padding: 7px 14px;
+            border-radius: 10px;
+            min-height: 36px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .btn-compact-logout {
+            font-size: 11.5px;
+            padding: 4px 10px;
+            min-height: 26px;
+            border-radius: 8px;
+            background: rgba(239, 68, 68, 0.16);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.2s;
+        }
+
+        .btn-compact-logout:hover {
+            background: #ef4444;
+            color: white;
+            border-color: #dc2626;
+        }
+
     </style>
 </head>
 <body>
@@ -1396,49 +1469,51 @@
                 <img src="logo.jpg" alt="D-Dialog Logo" class="brand-logo" onerror="this.style.display='none'">
                 <div class="header-title">
                     <h1>🎓 Roshaket <span style="font-size: 18px; font-weight: 600; opacity: 0.85;">| ראש שקט לתואר</span></h1>
-                    <p>
-                        מכללת בית ברל | תוכנית המהפכה | שנה ב' תשפ"ז | מבית D-Dialog
-                        <span id="appModeBadge" class="demo-pill-badge" style="margin-right: 8px;">🎭 מצב התנסות (דמו)</span>
-                    </p>
+                    <p>מכללת בית ברל | תוכנית המהפכה | שנה ב' תשפ"ז | מבית D-Dialog</p>
                 </div>
             </div>
             
-            <div class="header-actions" style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                <!-- Explanation / Welcome Screen Trigger -->
-                <button class="btn btn-mini-subtle" onclick="showWelcomeScreen()" title="הסבר על המערכת ודף כניסה" style="min-height: 40px; padding: 8px 14px; font-size: 13.5px; border-radius: 12px;">
-                    <span>ℹ️</span> <span>הסבר</span>
+            <!-- Left-aligned Vertical Stack: 3-Dots & Info on top, Account & Logout underneath -->
+            <div class="header-actions-col">
+                <!-- Top Mini Row: 3-Dots Menu & Question Mark (?) -->
+                <div class="header-top-subrow">
+                    <!-- 3-Dots Options Menu -->
+                    <div class="menu-dropdown-wrap">
+                        <button class="btn-icon-round" onclick="toggleOptionsMenu(event)" title="תפריט אפשרויות והגדרות">
+                            ⋮
+                        </button>
+                        <div class="dropdown-panel" id="optionsDropdownMenu">
+                            <button class="dropdown-item" onclick="openCourseSettingsModal(); closeOptionsMenu();">
+                                <span>⚙️</span>
+                                <span>ניהול קורסים וסילבוס</span>
+                            </button>
+                            <button class="dropdown-item" onclick="handleCleanDuplicates(); closeOptionsMenu();">
+                                <span>🧹</span>
+                                <span>ניקוי כפילויות ביומן Google</span>
+                            </button>
+                            <div class="dropdown-divider"></div>
+                            <button class="dropdown-item danger" onclick="resetAllProgress(); closeOptionsMenu();">
+                                <span>🔄</span>
+                                <span>איפוס כל הסימונים בלוח</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Question Mark Icon Button (?) -->
+                    <button class="btn-icon-round" onclick="showWelcomeScreen()" title="דף כניסה והסבר על ראשקט">
+                        ?
+                    </button>
+                </div>
+
+                <!-- Account Connect Button -->
+                <button class="btn btn-google btn-compact-auth" id="googleAuthBtn" onclick="handleAuthClick()">
+                    <span>🔑</span> <span>התחבר לחשבון Google</span>
                 </button>
 
-                <!-- Course Settings & Syllabus Upload -->
-                <button class="btn btn-mini-subtle" onclick="openCourseSettingsModal()" title="ניהול קורסים פעילים בסמסטר או העלאת סילבוס מעודכן" style="min-height: 40px; padding: 8px 14px; font-size: 13.5px; border-radius: 12px;">
-                    <span>⚙️</span> <span>נהל קורסים / סילבוס</span>
-                </button>
-
-                <!-- Google Connect / Status -->
-                <button class="btn btn-google" id="googleAuthBtn" onclick="handleAuthClick()" style="min-height: 40px; padding: 8px 16px; font-size: 13.5px; border-radius: 12px;">
-                    <span>🔑</span> <span>התחבר לנתונים (Google)</span>
-                </button>
-                <button class="btn btn-logout" id="googleLogoutBtn" onclick="handleLogoutClick()" style="display: none; min-height: 40px; padding: 8px 14px; font-size: 13.5px; border-radius: 12px;">
+                <!-- Logout Button (Shown only when connected) -->
+                <button class="btn-compact-logout" id="googleLogoutBtn" onclick="handleLogoutClick()" style="display: none;">
                     🚪 התנתק
                 </button>
-                
-                <!-- Options Dropdown Menu (3 Dots) for Secondary Tools -->
-                <div class="menu-dropdown-wrap">
-                    <button class="btn-menu-trigger" onclick="toggleOptionsMenu(event)" title="פעולות נוספות" style="width: 40px; height: 40px; border-radius: 12px;">
-                        ⋮
-                    </button>
-                    <div class="dropdown-panel" id="optionsDropdownMenu">
-                        <button class="dropdown-item" onclick="handleCleanDuplicates(); closeOptionsMenu();">
-                            <span>🧹</span>
-                            <span>ניקוי כפילויות ביומן Google</span>
-                        </button>
-                        <div class="dropdown-divider"></div>
-                        <button class="dropdown-item danger" onclick="resetAllProgress(); closeOptionsMenu();">
-                            <span>🔄</span>
-                            <span>איפוס כל הסימונים בלוח</span>
-                        </button>
-                    </div>
-                </div>
             </div>
         </div>
     </header>
@@ -2240,19 +2315,11 @@ function updateSyncUI() {
         btn.innerHTML = '<span>🟢</span> <span>מחובר לחשבון</span>';
         btn.classList.add('connected');
         if (logoutBtn) logoutBtn.style.display = 'inline-flex';
-        if (appModeBadge) {
-            appModeBadge.className = 'user-live-badge';
-            appModeBadge.innerHTML = '👤 נתונים אישיים מסונכרנים';
-        }
     } else {
         isUserLoggedIn = false;
         btn.innerHTML = '<span>🔑</span> <span>התחבר לחשבון Google</span>';
         btn.classList.remove('connected');
         if (logoutBtn) logoutBtn.style.display = 'none';
-        if (appModeBadge) {
-            appModeBadge.className = 'demo-pill-badge';
-            appModeBadge.innerHTML = '🎭 מצב התנסות (דמו)';
-        }
     }
 }
 
