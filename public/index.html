@@ -1403,28 +1403,31 @@
                 </div>
             </div>
             
-            <div class="header-actions" style="display: flex; align-items: center; gap: 8px;">
-                <button class="btn btn-google" id="googleAuthBtn" onclick="handleAuthClick()">
+            <div class="header-actions" style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <!-- Explanation / Welcome Screen Trigger -->
+                <button class="btn btn-mini-subtle" onclick="showWelcomeScreen()" title="הסבר על המערכת ודף כניסה" style="min-height: 40px; padding: 8px 14px; font-size: 13.5px; border-radius: 12px;">
+                    <span>ℹ️</span> <span>הסבר</span>
+                </button>
+
+                <!-- Course Settings & Syllabus Upload -->
+                <button class="btn btn-mini-subtle" onclick="openCourseSettingsModal()" title="ניהול קורסים פעילים בסמסטר או העלאת סילבוס מעודכן" style="min-height: 40px; padding: 8px 14px; font-size: 13.5px; border-radius: 12px;">
+                    <span>⚙️</span> <span>נהל קורסים / סילבוס</span>
+                </button>
+
+                <!-- Google Connect / Status -->
+                <button class="btn btn-google" id="googleAuthBtn" onclick="handleAuthClick()" style="min-height: 40px; padding: 8px 16px; font-size: 13.5px; border-radius: 12px;">
                     <span>🔑</span> <span>התחבר לנתונים (Google)</span>
                 </button>
-                <button class="btn btn-logout" id="googleLogoutBtn" onclick="handleLogoutClick()" style="display: none;">
+                <button class="btn btn-logout" id="googleLogoutBtn" onclick="handleLogoutClick()" style="display: none; min-height: 40px; padding: 8px 14px; font-size: 13.5px; border-radius: 12px;">
                     🚪 התנתק
                 </button>
                 
-                <!-- Options Dropdown Menu (3 Dots) -->
+                <!-- Options Dropdown Menu (3 Dots) for Secondary Tools -->
                 <div class="menu-dropdown-wrap">
-                    <button class="btn-menu-trigger" onclick="toggleOptionsMenu(event)" title="אפשרויות והגדרות נוספות">
+                    <button class="btn-menu-trigger" onclick="toggleOptionsMenu(event)" title="פעולות נוספות" style="width: 40px; height: 40px; border-radius: 12px;">
                         ⋮
                     </button>
                     <div class="dropdown-panel" id="optionsDropdownMenu">
-                        <button class="dropdown-item" onclick="showWelcomeScreen(); closeOptionsMenu();">
-                            <span>🏠</span>
-                            <span>דף כניסה והסבר על ראשקט</span>
-                        </button>
-                        <button class="dropdown-item" onclick="openCourseSettingsModal(); closeOptionsMenu();">
-                            <span>⚙️</span>
-                            <span>ניהול קורסים וסילבוס</span>
-                        </button>
                         <button class="dropdown-item" onclick="handleCleanDuplicates(); closeOptionsMenu();">
                             <span>🧹</span>
                             <span>ניקוי כפילויות ביומן Google</span>
