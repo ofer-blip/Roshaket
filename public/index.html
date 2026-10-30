@@ -6,7 +6,9 @@
     <title>Roshaket 🎓 | ראש שקט לתואר | D-Dialog</title>
     
     <!-- PWA & Mobile Meta -->
-    <meta name="theme-color" content="#1e1b4b">
+    <meta name="theme-color" content="#f2f0ea">
+    <meta name="color-scheme" content="light">
+    <meta name="supported-color-schemes" content="light">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Roshaket">
@@ -27,7 +29,9 @@
 
     <style>
         :root {
-            --bg: #f8fafc;
+            color-scheme: light !important;
+            supported-color-schemes: light !important;
+            --bg: #f2f0ea;
             --card-bg: #ffffff;
             --text-main: #0f172a;
             --text-muted: #64748b;
@@ -67,39 +71,42 @@
         }
 
         body {
-            background-color: var(--bg);
-            color: var(--text-main);
+            color-scheme: light !important;
+            background-color: var(--bg) !important;
+            color: var(--text-main) !important;
             line-height: 1.6;
             padding: 16px;
-            padding-bottom: 90px;
+            padding-bottom: 36px;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 860px;
             margin: 0 auto;
         }
 
-        /* Top Header */
+        /* Top Header (D-Dialog Brand Purple Theme) */
         header {
-            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 60%, #312e81 100%);
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 60%, #4338ca 100%);
             color: white;
-            padding: 24px 28px;
+            padding: 22px 26px;
             border-radius: 20px;
-            box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.25);
+            box-shadow: 0 10px 25px -5px rgba(30, 27, 75, 0.25);
             margin-bottom: 20px;
             position: relative;
-            overflow: hidden;
+            overflow: visible;
+            z-index: 50;
         }
 
         header::after {
             content: '';
             position: absolute;
-            top: -50px;
-            left: -50px;
-            width: 200px;
-            height: 200px;
-            background: rgba(255, 255, 255, 0.04);
-            border-radius: 50%;
+            top: 0;
+            left: 0;
+            width: 140px;
+            height: 100%;
+            background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.08), transparent 70%);
+            border-radius: 20px;
+            pointer-events: none;
         }
 
         .header-content {
@@ -136,12 +143,14 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            color: #ffffff;
         }
 
         .header-title p {
             color: #cbd5e1;
             font-size: 14.5px;
             margin-top: 3px;
+            font-weight: 600;
         }
 
         .header-actions {
@@ -152,9 +161,9 @@
         }
 
         .btn {
-            background: rgba(255, 255, 255, 0.14);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.25);
+            background: #f8fafc;
+            color: #334155;
+            border: 1.5px solid #e2e8f0;
             padding: 10px 18px;
             border-radius: 12px;
             cursor: pointer;
@@ -169,20 +178,23 @@
         }
 
         .btn:hover {
-            background: white;
-            color: #0f172a;
+            background: #ffffff;
+            color: #1e1b4b;
+            border-color: #cbd5e1;
             transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
         .btn-primary {
-            background: #ffffff;
-            color: #1e1b4b;
+            background: linear-gradient(135deg, #4338ca 0%, #6366f1 100%);
+            color: #ffffff;
             border: none;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
         }
 
         .btn-primary:hover {
-            background: #f1f5f9;
-            color: #4338ca;
+            background: linear-gradient(135deg, #3730a3 0%, #4f46e5 100%);
+            color: #ffffff;
         }
 
         .btn-google {
@@ -355,41 +367,111 @@
             transition: width 0.4s ease;
         }
 
-        /* Controls & Filters (Scrollable on mobile) */
+        /* Refined Filter Controls (Soul & Character - No generic pill overload) */
         .controls-card {
-            background: var(--card-bg);
-            padding: 12px 16px;
-            border-radius: 16px;
-            border: 1px solid var(--border);
-            margin-bottom: 20px;
-            overflow-x: auto;
-            white-space: nowrap;
-            -webkit-overflow-scrolling: touch;
+            background: #ffffff;
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 3px 10px rgba(15, 23, 42, 0.03);
+            margin-bottom: 14px;
         }
 
-        .filter-group {
-            display: inline-flex;
+        .filter-row-primary {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 8px;
+            margin-bottom: 8px;
         }
 
-        .filter-chip {
-            padding: 8px 14px;
-            border-radius: 20px;
-            font-size: 13px;
+        .filter-btn-hero {
+            padding: 10px 14px;
+            border-radius: 11px;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            border: 1.5px solid #e2e8f0;
+            background: #f8fafc;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.18s ease;
+            outline: none;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        .filter-btn-hero:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+            transform: translateY(-1px);
+        }
+
+        .filter-btn-hero.active {
+            background: #0f172a;
+            color: #ffffff;
+            border-color: #0f172a;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.22);
+        }
+
+        .filter-btn-hero.chip-urgent {
+            color: #b91c1c;
+            background: #fff5f5;
+            border-color: #fecaca;
+        }
+
+        .filter-btn-hero.chip-urgent:hover {
+            background: #fee2e2;
+            border-color: #fca5a5;
+        }
+
+        .filter-btn-hero.chip-urgent.active {
+            background: #dc2626;
+            color: #ffffff;
+            border-color: #b91c1c;
+            box-shadow: 0 4px 14px rgba(220, 38, 38, 0.28);
+        }
+
+        .filter-row-secondary {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            padding-top: 6px;
+            border-top: 1px dashed #e2e8f0;
+        }
+
+        .filter-chip-mini {
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 12.5px;
             font-weight: 700;
             cursor: pointer;
-            border: 1px solid var(--border);
-            background: white;
-            color: var(--text-muted);
-            min-height: 40px;
+            border: 1px solid #e2e8f0;
+            background: #ffffff;
+            color: #475569;
             display: inline-flex;
             align-items: center;
+            gap: 4px;
+            transition: all 0.15s ease;
         }
 
-        .filter-chip.active { background: #0f172a; color: white; border-color: #0f172a; }
-        .filter-chip.chip-mor.active { background: var(--c-mor-primary); border-color: var(--c-mor-primary); }
-        .filter-chip.chip-wassel.active { background: var(--c-wassel-primary); border-color: var(--c-wassel-primary); }
-        .filter-chip.chip-levy.active { background: var(--c-levy-primary); border-color: var(--c-levy-primary); }
+        .filter-chip-mini:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+        }
+
+        .filter-chip-mini.active {
+            background: #1e1b4b;
+            color: #ffffff;
+            border-color: #1e1b4b;
+        }
+
+        .filter-chip-mini.chip-mor.active { background: var(--c-mor-primary); border-color: var(--c-mor-primary); color: white; }
+        .filter-chip-mini.chip-wassel.active { background: var(--c-wassel-primary); border-color: var(--c-wassel-primary); color: white; }
+        .filter-chip-mini.chip-levy.active { background: var(--c-levy-primary); border-color: var(--c-levy-primary); color: white; }
+
 
         /* Weeks Timeline */
         .weeks-list {
@@ -695,13 +777,13 @@
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(4px);
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(6px);
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
-            z-index: 1000;
+            z-index: 10020;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.2s;
@@ -763,28 +845,33 @@
             margin-top: 8px;
         }
 
-        /* Mobile Bottom Nav Bar */
-        .mobile-bottom-bar {
-            display: none;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            border-top: 1px solid var(--border);
-            padding: 10px 16px;
-            box-shadow: 0 -4px 15px rgba(0,0,0,0.06);
-            z-index: 99;
-            justify-content: space-around;
+        .btn-compact-sync {
+            font-size: 11.5px;
+            padding: 4px 10px;
+            min-height: 26px;
+            border-radius: 8px;
+            background: rgba(99, 102, 241, 0.28);
+            color: #e0e7ff;
+            border: 1px solid rgba(165, 180, 252, 0.45);
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
             align-items: center;
+            gap: 4px;
+            transition: all 0.2s;
+        }
+
+        .btn-compact-sync:hover {
+            background: #4f46e5;
+            color: white;
+            border-color: #6366f1;
         }
 
         @media (max-width: 768px) {
-            body { padding: 12px; }
+            body { padding: 12px; padding-bottom: 28px; }
             header { padding: 18px 20px; }
             .header-title h1 { font-size: 22px; }
             .tasks-container { grid-template-columns: 1fr; }
-            .mobile-bottom-bar { display: flex; }
             .course-strip { grid-template-columns: 1fr; }
             .sync-status-banner { flex-direction: column; align-items: stretch; text-align: center; }
             .sync-banner-text { justify-content: center; text-align: right; }
@@ -1083,25 +1170,188 @@
             margin: 4px 0;
         }
 
-        /* Simplified full-width quick status bar */
-        .quick-status-bar {
-            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
-            border-radius: 16px;
-            padding: 16px 24px;
-            margin-bottom: 22px;
+        
+        .tap-icon-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.22);
+            border: 1.5px solid rgba(255, 255, 255, 0.45);
+            color: #ffffff;
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            flex-shrink: 0;
+            transition: transform 0.2s ease, background 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+        }
+        .quick-status-bar:hover .tap-icon-pill {
+            transform: scale(1.08);
+            background: rgba(255, 255, 255, 0.32);
+        }
+        .tap-icon-pill-light {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #e0e7ff;
+            border: 1.5px solid #a5b4fc;
+            color: #3730a3;
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            flex-shrink: 0;
+            transition: transform 0.2s ease, background 0.2s ease;
+            box-shadow: 0 2px 6px rgba(67, 56, 202, 0.12);
+        }
+        .curriculum-accordion-header:hover .tap-icon-pill-light,
+        .past-weeks-toggle-bar:hover .tap-icon-pill-light {
+            transform: scale(1.08);
+            background: #c7d2fe;
+        }
+        .slim-progress-strip {
+            background: var(--card-bg);
+            padding: 10px 16px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .slim-progress-label {
+            font-size: 13px;
+            font-weight: 800;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+        .slim-progress-bar-wrap {
+            flex: 1;
+            min-width: 120px;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        
+        /* 3-Button Hub & Tasks Accordion (Round 7) */
+        .tasks-accordion {
+            background: #ffffff;
+            border: 2px solid #10b981;
+            border-radius: 18px;
+            margin-bottom: 14px;
+            overflow: hidden;
+            box-shadow: 0 8px 22px -6px rgba(16, 185, 129, 0.22);
+            transition: all 0.25s ease;
+        }
+        .tasks-accordion-header {
+            padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            color: white;
             cursor: pointer;
-            box-shadow: 0 10px 25px -5px rgba(49, 46, 129, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1);
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            user-select: none;
+            gap: 12px;
+            transition: all 0.2s ease;
+        }
+        .tasks-accordion-header:hover {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            transform: translateY(-1px);
+        }
+        .tasks-accordion-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            font-size: 20px;
+            color: #064e3b;
+            letter-spacing: -0.2px;
+        }
+        .tap-icon-pill-green {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #059669;
+            border: 1.5px solid #047857;
+            color: #ffffff;
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            flex-shrink: 0;
+            transition: transform 0.2s ease, background 0.2s ease;
+            box-shadow: 0 3px 8px rgba(5, 150, 105, 0.28);
+        }
+        .tasks-accordion-header:hover .tap-icon-pill-green {
+            transform: scale(1.08);
+            background: #047857;
+        }
+        .tasks-accordion-body {
+            display: none;
+            padding: 14px 14px 16px;
+            border-top: 1.5px solid #a7f3d0;
+            background: #f8fafc;
+        }
+        .tasks-accordion.open .tasks-accordion-body {
+            display: block;
+            animation: fadeInDown 0.2s ease-out;
+        }
+
+        /* Compact Mode for Top Bars when Tasks Accordion is Open */
+        body.tasks-focus-mode #curriculumAccordion .curriculum-accordion-header {
+            padding: 8px 14px !important;
+        }
+        body.tasks-focus-mode #curriculumAccordion .curriculum-accordion-title span {
+            font-size: 19px !important;
+        }
+        body.tasks-focus-mode #curriculumAccordion .curriculum-accordion-title div {
+            font-size: 15.5px !important;
+        }
+        body.tasks-focus-mode #curriculumAccordion .tap-icon-pill-light {
+            width: 34px !important;
+            height: 34px !important;
+        }
+        body.tasks-focus-mode #quickStatusBar {
+            padding: 8px 14px !important;
+        }
+        body.tasks-focus-mode #quickStatusBar .quick-status-bar-icon {
+            width: 34px !important;
+            height: 34px !important;
+            font-size: 19px !important;
+        }
+        body.tasks-focus-mode #quickStatusBar h3 {
+            font-size: 16px !important;
+        }
+        body.tasks-focus-mode #quickStatusBar .tap-icon-pill {
+            width: 34px !important;
+            height: 34px !important;
+        }
+
+        /* Simplified full-width quick status bar (Bright & Warm) */
+        .quick-status-bar {
+            background: #ffffff;
+            border: 2px solid #6366f1;
+            border-radius: 16px;
+            padding: 12px 18px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #1e1b4b;
+            cursor: pointer;
+            box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.12), 0 0 0 1px rgba(99, 102, 241, 0.05);
             transition: all 0.25s ease;
         }
 
         .quick-status-bar:hover {
             transform: translateY(-2px);
-            box-shadow: 0 14px 30px -5px rgba(49, 46, 129, 0.35);
-            background: linear-gradient(135deg, #2e1065 0%, #3730a3 100%);
+            box-shadow: 0 14px 30px -5px rgba(99, 102, 241, 0.22);
+            border-color: #4f46e5;
         }
 
         .quick-status-bar-info {
@@ -1112,7 +1362,8 @@
 
         .quick-status-bar-icon {
             font-size: 26px;
-            background: rgba(255, 255, 255, 0.15);
+            background: #eef2ff;
+            color: #4338ca;
             width: 46px;
             height: 46px;
             border-radius: 12px;
@@ -1120,27 +1371,27 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            border: 1px solid rgba(255, 255, 255, 0.25);
+            border: 1.5px solid #c7d2fe;
         }
 
         .quick-status-bar-texts h3 {
             font-size: 16.5px;
             font-weight: 800;
-            color: #ffffff;
+            color: #1e1b4b;
             margin-bottom: 3px;
         }
 
         .quick-status-bar-texts p {
             font-size: 13px;
-            color: #c7d2fe;
+            color: #64748b;
             margin: 0;
-            font-weight: 500;
+            font-weight: 600;
         }
 
         .quick-status-bar-arrow {
             font-size: 20px;
-            color: #ffffff;
-            opacity: 0.8;
+            color: #6366f1;
+            opacity: 0.9;
             transition: transform 0.2s ease, opacity 0.2s ease;
             margin-left: 10px;
         }
@@ -1152,22 +1403,25 @@
 
 
 
-        /* Welcome Screen (Landing Gate) */
+        /* Welcome Screen (Bright & Warm Educational Theme) */
         .welcome-screen-wrap {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: radial-gradient(circle at top right, #1e1b4b 0%, #0f172a 100%);
+            height: 100dvh;
+            background: rgba(242, 240, 234, 0.95);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             z-index: 9999;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 12px 16px;
             box-sizing: border-box;
             overflow-y: auto;
-            transition: opacity 0.4s ease, visibility 0.4s ease;
+            transition: opacity 0.35s ease, visibility 0.35s ease;
         }
 
         .welcome-screen-wrap.hidden {
@@ -1177,157 +1431,390 @@
         }
 
         .welcome-card {
-            background: rgba(30, 27, 75, 0.75);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            border-radius: 28px;
-            max-width: 680px;
+            position: relative;
+            background: #ffffff;
+            border: 1.5px solid rgba(99, 102, 241, 0.16);
+            border-radius: 26px;
+            max-width: 650px;
             width: 100%;
-            padding: 40px 32px;
-            color: white;
+            margin: auto;
+            padding: 24px 26px 20px;
+            color: #0f172a;
             text-align: center;
-            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(99, 102, 241, 0.3);
-            animation: welcomeScaleIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 25px 60px -15px rgba(99, 102, 241, 0.16), 0 0 0 1px rgba(99, 102, 241, 0.06);
+            animation: welcomeScaleIn 0.38s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .welcome-top-bar {
+            display: grid;
+            grid-template-columns: 42px 1fr 42px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .welcome-close-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f1f5f9;
+            border: 1.5px solid #cbd5e1;
+            color: #475569;
+            font-size: 18px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            z-index: 10;
+            line-height: 1;
+            justify-self: end;
+        }
+
+        .welcome-close-btn:hover {
+            background: #ef4444;
+            color: #ffffff;
+            border-color: #dc2626;
+            transform: scale(1.08);
         }
 
         @keyframes welcomeScaleIn {
-            from { transform: scale(0.92) translateY(20px); opacity: 0; }
+            from { transform: scale(0.95) translateY(12px); opacity: 0; }
             to { transform: scale(1) translateY(0); opacity: 1; }
         }
 
         .welcome-app-icon {
-            width: 96px;
-            height: 96px;
-            border-radius: 24px;
-            margin: 0 auto 18px;
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), 0 0 25px rgba(245, 158, 11, 0.4);
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            width: 74px;
+            height: 74px;
+            border-radius: 20px;
+            margin: 0 auto;
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.2);
+            border: 2px solid #e0e7ff;
             display: block;
             transition: transform 0.3s ease;
         }
 
         .welcome-app-icon:hover {
-            transform: scale(1.08) rotate(3deg);
+            transform: scale(1.06) rotate(3deg);
         }
 
         .welcome-title {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: 800;
             letter-spacing: -0.5px;
             margin-bottom: 8px;
-            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #fde68a 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #1e1b4b;
         }
 
         .welcome-subtitle {
-            font-size: 15px;
-            color: #c7d2fe;
-            margin-bottom: 26px;
-            line-height: 1.55;
-            max-width: 540px;
+            font-size: 15.5px;
+            font-weight: 600;
+            color: #334155;
+            background: #f8fafc;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 11px 16px;
+            margin-bottom: 16px;
+            line-height: 1.5;
+            max-width: 580px;
             margin-left: auto;
             margin-right: auto;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
         }
 
         .welcome-pillars-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 14px;
-            margin-bottom: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 18px;
             text-align: right;
         }
 
         .welcome-pillar-card {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 16px;
-            padding: 16px 14px;
-            transition: all 0.25s;
+            position: relative;
+            background: #ffffff;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 12px 16px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
         }
 
-        .welcome-pillar-card:hover {
-            background: rgba(255, 255, 255, 0.14);
-            border-color: rgba(99, 102, 241, 0.5);
-            transform: translateY(-3px);
+        .welcome-pillar-card:hover, .welcome-pillar-card:active {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.12);
+        }
+
+        /* 3 Distinct & Warm Thematic Cards */
+        .welcome-pillar-card.pillar-sync {
+            background: #f0f9ff;
+            border-color: #bae6fd;
+        }
+        .welcome-pillar-card.pillar-sync:hover {
+            border-color: #38bdf8;
+            background: #e0f2fe;
+        }
+        .welcome-pillar-card.pillar-sync .pillar-card-title {
+            color: #0369a1;
+        }
+        .welcome-pillar-card.pillar-sync .pillar-zoom-badge {
+            background: #0284c7;
+            color: #ffffff;
+            border: none;
+        }
+
+        .welcome-pillar-card.pillar-tasks {
+            background: #ecfdf5;
+            border-color: #a7f3d0;
+        }
+        .welcome-pillar-card.pillar-tasks:hover {
+            border-color: #34d399;
+            background: #d1fae5;
+        }
+        .welcome-pillar-card.pillar-tasks .pillar-card-title {
+            color: #047857;
+        }
+        .welcome-pillar-card.pillar-tasks .pillar-zoom-badge {
+            background: #10b981;
+            color: #ffffff;
+            border: none;
+        }
+
+        .welcome-pillar-card.pillar-status {
+            background: #f5f3ff;
+            border-color: #ddd6fe;
+        }
+        .welcome-pillar-card.pillar-status:hover {
+            border-color: #a78bfa;
+            background: #ede9fe;
+        }
+        .welcome-pillar-card.pillar-status .pillar-card-title {
+            color: #4338ca;
+        }
+        .welcome-pillar-card.pillar-status .pillar-zoom-badge {
+            background: #6366f1;
+            color: #ffffff;
+            border: none;
+        }
+
+        .pillar-zoom-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13.5px;
+            font-weight: 800;
+            padding: 5px 12px;
+            border-radius: 10px;
+            white-space: nowrap;
+            flex-shrink: 0;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* High-Contrast Accessible Zoom Overlay inside Welcome Screen */
+        .welcome-zoom-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 10050;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            box-sizing: border-box;
+        }
+
+        .welcome-zoom-overlay.open {
+            display: flex;
+            animation: welcomeScaleIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .welcome-zoom-card {
+            background: #ffffff;
+            color: #0f172a;
+            border-radius: 24px;
+            max-width: 580px;
+            width: 100%;
+            padding: 26px 24px 22px;
+            text-align: right;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 0 3px #6366f1;
+            position: relative;
+            max-height: 92dvh;
+            overflow-y: auto;
+        }
+
+        .welcome-zoom-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 14px;
+            margin-bottom: 16px;
+        }
+
+        .welcome-zoom-title {
+            font-size: 23px;
+            font-weight: 800;
+            color: #1e1b4b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.25;
+        }
+
+        .welcome-zoom-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .welcome-zoom-step-box {
+            background: #f8fafc;
+            border: 2px solid #cbd5e1;
+            border-radius: 16px;
+            padding: 14px 16px;
+            font-size: 19px;
+            line-height: 1.5;
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .welcome-zoom-step-box strong {
+            color: #4338ca;
+            font-weight: 800;
+            font-size: 20px;
+        }
+
+        .btn-zoom-action {
+            width: 100%;
+            background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 16px;
+            padding: 16px 20px;
+            font-size: 19px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.4);
+            margin-bottom: 10px;
+            transition: all 0.2s;
+        }
+
+        .btn-zoom-action:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, #4338ca 0%, #3730a3 100%);
+        }
+
+        .btn-zoom-back {
+            width: 100%;
+            background: #f1f5f9;
+            color: #334155;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 14px;
+            padding: 12px 16px;
+            font-size: 16.5px;
+            font-weight: 800;
+            cursor: pointer;
+            text-align: center;
         }
 
         .welcome-pillar-icon {
-            font-size: 26px;
-            margin-bottom: 8px;
+            font-size: 22px;
+            margin-bottom: 4px;
             display: inline-block;
         }
 
         .welcome-pillar-card h4 {
-            font-size: 14px;
+            font-size: 13.5px;
             font-weight: 800;
             color: #ffffff;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
         }
 
         .welcome-pillar-card p {
-            font-size: 12px;
-            color: #94a3b8;
-            line-height: 1.45;
+            font-size: 11.5px;
+            color: #cbd5e1;
+            line-height: 1.38;
             margin: 0;
         }
 
         .welcome-actions-wrap {
             display: flex;
-            gap: 14px;
+            gap: 10px;
             justify-content: center;
             flex-wrap: wrap;
         }
 
         .btn-welcome-primary {
-            background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
-            color: white;
+            background: linear-gradient(135deg, #4338ca 0%, #6366f1 100%);
+            color: #ffffff;
             border: none;
-            padding: 14px 26px;
-            border-radius: 14px;
-            font-size: 15px;
+            padding: 12px 22px;
+            border-radius: 12px;
+            font-size: 14.5px;
             font-weight: 800;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.5);
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 8px 20px -5px rgba(79, 70, 229, 0.4);
             transition: all 0.2s;
             text-decoration: none;
         }
 
         .btn-welcome-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 14px 30px -5px rgba(79, 70, 229, 0.7);
-            background: linear-gradient(135deg, #4338ca 0%, #4f46e5 100%);
+            box-shadow: 0 12px 25px -5px rgba(79, 70, 229, 0.6);
+            background: linear-gradient(135deg, #3730a3 0%, #4f46e5 100%);
         }
 
         .btn-welcome-secondary {
-            background: rgba(255, 255, 255, 0.12);
-            color: #f8fafc;
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            padding: 14px 24px;
-            border-radius: 14px;
-            font-size: 14.5px;
+            background: #ffffff;
+            color: #334155;
+            border: 1.5px solid #cbd5e1;
+            padding: 11px 20px;
+            border-radius: 12px;
+            font-size: 14px;
             font-weight: 700;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
             transition: all 0.2s;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
         }
 
         .btn-welcome-secondary:hover {
-            background: rgba(255, 255, 255, 0.22);
-            border-color: rgba(255, 255, 255, 0.45);
+            background: #f8fafc;
+            color: #1e1b4b;
+            border-color: #94a3b8;
             transform: translateY(-2px);
         }
 
         .welcome-footer-tag {
-            font-size: 11.5px;
+            font-size: 12px;
             color: #64748b;
-            margin-top: 22px;
+            font-weight: 600;
+            margin-top: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1335,25 +1822,28 @@
         }
 
 
-        /* Vertical Stacked Actions Column (Left-Aligned) */
+        /* Vertical Stacked Actions Column (Left-Aligned in RTL) */
         .header-actions-col {
             display: flex;
             flex-direction: column;
             gap: 7px;
-            align-items: flex-start;
+            align-items: flex-end;
             justify-content: center;
+            margin-right: auto;
+            text-align: left;
         }
 
         .header-top-subrow {
             display: flex;
             align-items: center;
+            justify-content: flex-end;
             gap: 8px;
         }
 
         .btn-icon-round {
-            background: rgba(255, 255, 255, 0.14);
+            background: rgba(255, 255, 255, 0.16);
             color: #ffffff;
-            border: 1px solid rgba(255, 255, 255, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             width: 38px;
             height: 38px;
             border-radius: 12px;
@@ -1407,6 +1897,585 @@
             border-color: #dc2626;
         }
 
+
+        /* Urgent Filter Chip */
+        .filter-chip.chip-urgent {
+            border-color: #fca5a5;
+            background: #fef2f2;
+            color: #b91c1c;
+        }
+        .filter-chip.chip-urgent.active {
+            background: #dc2626;
+            color: #ffffff;
+            border-color: #b91c1c;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+        }
+
+        /* Curriculum & Courses Accordion */
+        .curriculum-accordion {
+            background: #ffffff;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 16px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+            transition: all 0.25s ease;
+        }
+
+        .curriculum-accordion-header {
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
+            user-select: none;
+            gap: 12px;
+            transition: background 0.2s;
+        }
+
+        .curriculum-accordion-header:hover {
+            background: linear-gradient(135deg, #f1f5f9 0%, #e0e7ff 100%);
+        }
+
+        .curriculum-accordion-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            font-size: 15.5px;
+            color: #1e1b4b;
+        }
+
+        .curriculum-accordion-arrow {
+            font-size: 14px;
+            font-weight: 800;
+            color: #4f46e5;
+            background: #e0e7ff;
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.25s ease;
+            flex-shrink: 0;
+        }
+
+        .curriculum-accordion.open .curriculum-accordion-arrow {
+            transform: rotate(180deg);
+        }
+
+        .curriculum-accordion-body {
+            display: none;
+            padding: 18px 20px;
+            border-top: 1px solid #e2e8f0;
+            background: #ffffff;
+        }
+
+        .curriculum-accordion.open .curriculum-accordion-body {
+            display: block;
+            animation: fadeInDown 0.2s ease-out;
+        }
+
+        .curriculum-section-title {
+            font-size: 14px;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .academic-dates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .academic-date-item {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 10px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            font-size: 12.5px;
+        }
+
+        .academic-date-item strong {
+            color: #0f172a;
+            font-weight: 800;
+        }
+
+        .academic-date-badge {
+            background: #e0e7ff;
+            color: #4338ca;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 11.5px;
+            white-space: nowrap;
+        }
+
+        /* Past Weeks Dropdown Section */
+        .past-weeks-wrapper {
+            background: #f8fafc;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 16px;
+            margin-bottom: 18px;
+            overflow: hidden;
+        }
+
+        .past-weeks-toggle-bar {
+            padding: 14px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            background: #f1f5f9;
+            font-weight: 800;
+            font-size: 15px;
+            color: #334155;
+            user-select: none;
+            transition: background 0.2s;
+        }
+
+        .past-weeks-toggle-bar:hover {
+            background: #e2e8f0;
+        }
+
+        .past-weeks-list-inner {
+            display: none;
+            padding: 12px;
+            flex-direction: column;
+            gap: 10px;
+            background: #f8fafc;
+            border-top: 1px solid #cbd5e1;
+        }
+
+        .past-weeks-wrapper.open .past-weeks-list-inner {
+            display: flex;
+        }
+
+        .past-week-compact-card {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 14px;
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+
+        .past-week-compact-header {
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .past-week-compact-header:hover {
+            background: #f8fafc;
+        }
+
+        .past-week-compact-body {
+            display: none;
+            padding: 14px 16px;
+            border-top: 1px solid #e2e8f0;
+            background: #fcfcfd;
+        }
+
+        .past-week-compact-card.open .past-week-compact-body {
+            display: block;
+        }
+
+        .missing-tasks-dot {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            font-size: 11.5px;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 999px;
+        }
+
+        .red-circle-dot {
+            width: 10px;
+            height: 10px;
+            background: #ef4444;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.22);
+            animation: pulseRedDot 1.8s infinite;
+        }
+
+        @keyframes pulseRedDot {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
+            70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        .mode-tour { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+
+        .modal-close-x {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            color: #334155;
+            font-size: 18px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .modal-close-x:hover {
+            background: #ef4444;
+            color: white;
+            border-color: #dc2626;
+        }
+
+        /* Full Year Sunday Schedule Table Styles */
+        .sunday-schedule-table-wrap {
+            max-height: 440px;
+            overflow-y: auto;
+            overflow-x: auto;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            margin-top: 10px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .sunday-schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12.5px;
+            text-align: right;
+            background: #ffffff;
+        }
+
+        .sunday-schedule-table thead th {
+            position: sticky;
+            top: 0;
+            background: #1e1b4b;
+            color: #ffffff;
+            font-weight: 800;
+            padding: 10px 12px;
+            font-size: 12px;
+            z-index: 2;
+            white-space: nowrap;
+        }
+
+        .sunday-schedule-table tbody td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #1e293b;
+            vertical-align: middle;
+        }
+
+        .sunday-schedule-table tbody tr:nth-child(even) td {
+            background: #f8fafc;
+        }
+
+        .sunday-schedule-table tbody tr.row-holiday td {
+            background: #fefce8;
+            color: #854d0e;
+            font-weight: 700;
+        }
+
+        .sunday-schedule-table tbody tr.row-current-sunday td {
+            background: #eef2ff;
+            border-top: 2px solid #4f46e5;
+            border-bottom: 2px solid #4f46e5;
+            font-weight: 800;
+        }
+
+        .sched-pill {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-weight: 800;
+            font-size: 11.5px;
+        }
+        .sched-campus { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+        .sched-digital { background: #e0f2fe; color: #075985; border: 1px solid #bae6fd; }
+        .sched-tour { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+        .sched-break { background: #f1f5f9; color: #64748b; }
+
+        @media (max-width: 768px) {
+            .welcome-screen-wrap {
+                padding: 8px 12px;
+            }
+            .welcome-card {
+                padding: 16px 14px 14px;
+                border-radius: 20px;
+            }
+            .welcome-top-bar {
+                margin-bottom: 6px;
+            }
+            .welcome-app-icon {
+                width: 58px;
+                height: 58px;
+                border-radius: 16px;
+            }
+            .welcome-close-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
+            }
+            .welcome-title {
+                font-size: 21px;
+                margin-bottom: 6px;
+            }
+            .welcome-subtitle {
+                font-size: 14px;
+                padding: 9px 12px;
+                margin-bottom: 10px;
+                line-height: 1.42;
+            }
+            .welcome-pillars-grid {
+                grid-template-columns: 1fr;
+                gap: 7px;
+                margin-bottom: 12px;
+            }
+            .welcome-pillar-card {
+                padding: 8px 11px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                border-radius: 12px;
+            }
+            .welcome-pillar-icon {
+                font-size: 20px;
+                margin-bottom: 0;
+                flex-shrink: 0;
+            }
+            .welcome-pillar-card h4 {
+                font-size: 13px;
+                margin-bottom: 1px;
+            }
+            .welcome-pillar-card p {
+                font-size: 11px;
+                line-height: 1.3;
+            }
+            .welcome-actions-wrap {
+                flex-direction: column;
+                gap: 8px;
+            }
+            .btn-welcome-primary, .btn-welcome-secondary {
+                width: 100%;
+                padding: 11px 16px;
+                font-size: 14px;
+            }
+            .welcome-footer-tag {
+                margin-top: 10px;
+                font-size: 10.5px;
+            }
+            .header-content {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .header-actions-col {
+                align-items: flex-end;
+                width: 100%;
+                border-top: 1px solid rgba(255, 255, 255, 0.14);
+                padding-top: 12px;
+                margin-top: 4px;
+            }
+            .btn-compact-auth {
+                max-width: 100%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            #quickStatusModal .modal-card {
+                padding: 18px 14px;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+            .status-table th, .status-table td {
+                padding: 8px 6px;
+                font-size: 12px;
+            }
+            .course-mini-pill {
+                font-size: 11px;
+                padding: 2px 6px;
+            }
+            #longTermCardsWrap {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+
+        /* Portfolio Modal & Tracking Space - Wassel Innovation */
+        #portfolioModal .modal-card {
+            max-width: 740px;
+            width: 95%;
+            max-height: 90vh;
+            max-height: 90dvh;
+            overflow-y: auto;
+            padding: 24px 22px;
+            border-radius: 24px;
+            background: #ffffff;
+            border: 2px solid #0284c7;
+            box-shadow: 0 25px 60px -10px rgba(2, 132, 199, 0.25);
+            text-align: right;
+        }
+
+        .portfolio-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 12px;
+            margin-bottom: 14px;
+            gap: 12px;
+        }
+
+        .portfolio-progress-bar-wrap {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border: 1.5px solid #bae6fd;
+            border-radius: 16px;
+            padding: 14px 18px;
+            margin-bottom: 16px;
+        }
+
+        .portfolio-docs-bar {
+            background: #f8fafc;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 14px;
+            padding: 12px 14px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .portfolio-docs-input {
+            flex-grow: 1;
+            padding: 8px 12px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 13.5px;
+            outline: none;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .portfolio-docs-input:focus {
+            border-color: #0284c7;
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+        }
+
+        .portfolio-task-card {
+            background: #ffffff;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
+        }
+
+        .portfolio-task-card.status-completed {
+            border-color: #10b981;
+            background: #f0fdf4;
+        }
+
+        .portfolio-task-card.status-draft {
+            border-color: #f59e0b;
+            background: #fffbeb;
+        }
+
+        .portfolio-status-selector {
+            display: flex;
+            gap: 6px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .portfolio-status-btn {
+            border: 1.5px solid #cbd5e1;
+            background: #ffffff;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12.5px;
+            font-weight: 700;
+            cursor: pointer;
+            color: #475569;
+            transition: all 0.15s ease;
+        }
+
+        .portfolio-status-btn:hover {
+            border-color: #94a3b8;
+            background: #f8fafc;
+        }
+
+        .portfolio-status-btn.active.btn-not-started {
+            background: #f1f5f9;
+            border-color: #64748b;
+            color: #1e293b;
+        }
+
+        .portfolio-status-btn.active.btn-draft {
+            background: #fef3c7;
+            border-color: #f59e0b;
+            color: #b45309;
+        }
+
+        .portfolio-status-btn.active.btn-completed {
+            background: #dcfce7;
+            border-color: #10b981;
+            color: #15803d;
+        }
+
+        .portfolio-details-box {
+            margin-top: 10px;
+            padding: 12px 14px;
+            background: #ffffff;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 13.5px;
+            line-height: 1.55;
+            color: #334155;
+        }
+
+        .portfolio-direct-pill {
+            background: #e0f2fe;
+            color: #0369a1;
+            border: 1px solid #7dd3fc;
+            border-radius: 8px;
+            padding: 3px 9px;
+            font-size: 11.5px;
+            font-weight: 800;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-right: 6px;
+            transition: all 0.15s ease;
+            vertical-align: middle;
+        }
+        .portfolio-direct-pill:hover {
+            background: #0284c7;
+            color: #ffffff;
+        }
+
     </style>
 </head>
 <body>
@@ -1415,7 +2484,11 @@
 <!-- Welcome Screen (Landing Gate) -->
 <div class="welcome-screen-wrap" id="welcomeScreen">
     <div class="welcome-card">
-        <img src="icon-192.png" alt="Roshaket Icon" class="welcome-app-icon">
+        <div class="welcome-top-bar">
+            <div></div>
+            <img src="icon-192.png" alt="Roshaket Icon" class="welcome-app-icon">
+            <button class="welcome-close-btn" onclick="hideWelcomeScreen()" title="סגור חלון פתיחה" aria-label="סגור">✕</button>
+        </div>
         <h1 class="welcome-title">Roshaket | ראש שקט לתואר</h1>
         <p class="welcome-subtitle">
             המרחב הדיגיטלי לניהול שבוע-אחרי-שבוע של תוכנית המהפכה לתואר שני בחינוך (מכללת בית ברל).
@@ -1423,20 +2496,26 @@
         </p>
 
         <div class="welcome-pillars-grid">
-            <div class="welcome-pillar-card">
-                <span class="welcome-pillar-icon">📅</span>
-                <h4>סנכרון מיידי ליומן Google</h4>
-                <p>כל סימון משימה כבוצעה מעדכן את יומן הלימודים ב-Google Calendar לאירוע ירוק הושלם.</p>
+            <div class="welcome-pillar-card pillar-sync" onclick="openPillarZoom('sync')" title="לחץ להסבר ולסנכרון מודרך">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 23px;">📅</span>
+                    <span class="pillar-card-title" style="font-size: 17px; font-weight: 800;">סנכרון חכם ליומן</span>
+                </div>
+                <span class="pillar-zoom-badge">הסבר <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 6.5a4.5 4.5 0 0 1 9 0"/><circle cx="12" cy="6.5" r="1.6" fill="currentColor" stroke="none"/><path d="M10.5 13V7.5a1.5 1.5 0 0 1 3 0V12h1.5a1.5 1.5 0 0 1 1.5 1.5v.5h1a1.5 1.5 0 0 1 1.5 1.5v3a4 4 0 0 1-4 4h-4.5a4 4 0 0 1-3.4-1.9L5.2 17a1.4 1.4 0 0 1 2-1.8L10.5 17V13z"/></svg></span>
             </div>
-            <div class="welcome-pillar-card">
-                <span class="welcome-pillar-icon">🎯</span>
-                <h4>מעקב משימות ארוכות טווח</h4>
-                <p>תלקיט פיתוח חדשנות (27.01), מפות מושגים ופרויקטי סיום עם ספירת ימים לאחור.</p>
+            <div class="welcome-pillar-card pillar-tasks" onclick="openPillarZoom('tasks')" title="לחץ להסבר על משימות הסמסטר">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 23px;">🎯</span>
+                    <span class="pillar-card-title" style="font-size: 17px; font-weight: 800;">מעקב משימות ותלקיט</span>
+                </div>
+                <span class="pillar-zoom-badge">הסבר <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 6.5a4.5 4.5 0 0 1 9 0"/><circle cx="12" cy="6.5" r="1.6" fill="currentColor" stroke="none"/><path d="M10.5 13V7.5a1.5 1.5 0 0 1 3 0V12h1.5a1.5 1.5 0 0 1 1.5 1.5v.5h1a1.5 1.5 0 0 1 1.5 1.5v3a4 4 0 0 1-4 4h-4.5a4 4 0 0 1-3.4-1.9L5.2 17a1.4 1.4 0 0 1 2-1.8L10.5 17V13z"/></svg></span>
             </div>
-            <div class="welcome-pillar-card">
-                <span class="welcome-pillar-icon">📊</span>
-                <h4>דוח סטטוס כמותי</h4>
-                <p>טבלה מרוכזת המציגה איפה אתה עומד בכל קורס ביחס לתאריך של היום ולשבוע האקדמי.</p>
+            <div class="welcome-pillar-card pillar-status" onclick="openPillarZoom('status')" title="לחץ להסבר על מה המצב שלי כרגע">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 23px;">🧘‍♂️</span>
+                    <span class="pillar-card-title" style="font-size: 17px; font-weight: 800;">מה המצב שלי כרגע?</span>
+                </div>
+                <span class="pillar-zoom-badge">הסבר <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 6.5a4.5 4.5 0 0 1 9 0"/><circle cx="12" cy="6.5" r="1.6" fill="currentColor" stroke="none"/><path d="M10.5 13V7.5a1.5 1.5 0 0 1 3 0V12h1.5a1.5 1.5 0 0 1 1.5 1.5v.5h1a1.5 1.5 0 0 1 1.5 1.5v3a4 4 0 0 1-4 4h-4.5a4 4 0 0 1-3.4-1.9L5.2 17a1.4 1.4 0 0 1 2-1.8L10.5 17V13z"/></svg></span>
             </div>
         </div>
 
@@ -1451,6 +2530,13 @@
             </button>
         </div>
 
+        <div style="text-align: center; margin-top: 14px;">
+            <button type="button" onclick="openRegistrationModal()" style="background: none; border: none; color: #4338ca; font-weight: 700; font-size: 13.5px; text-decoration: underline; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-family: inherit;">
+                <span>📝</span>
+                <span>עדיין לא רשום/ה לקורס? הגישו בקשת הצטרפות</span>
+            </button>
+        </div>
+
         <div class="welcome-footer-tag">
             <span>מבית D-Dialog</span>
             <span>•</span>
@@ -1458,6 +2544,25 @@
             <span>•</span>
             <span>מותאם מלא למובייל ומחשב</span>
         </div>
+    </div>
+</div>
+
+<!-- Accessible Large-Print Zoom Modal for Welcome Pillars -->
+<div class="welcome-zoom-overlay" id="pillarZoomOverlay" onclick="if(event.target === this) closePillarZoom()">
+    <div class="welcome-zoom-card">
+        <div class="welcome-zoom-header">
+            <div class="welcome-zoom-title" id="pillarZoomTitle">📅 סנכרון חכם ליומן Google</div>
+            <button class="modal-close-x" style="width: 42px; height: 42px; font-size: 20px;" onclick="closePillarZoom()" title="סגור הגדלה">✕</button>
+        </div>
+        <div class="welcome-zoom-steps" id="pillarZoomBody">
+            <!-- Injected dynamically -->
+        </div>
+        <div id="pillarZoomActions">
+            <!-- Action button injected dynamically -->
+        </div>
+        <button class="btn-zoom-back" onclick="closePillarZoom()">
+            🔙 חזרה למסך הפתיחה
+        </button>
     </div>
 </div>
 
@@ -1475,27 +2580,44 @@
             
             <!-- Left-aligned Vertical Stack: 3-Dots & Info on top, Account & Logout underneath -->
             <div class="header-actions-col">
-                <!-- Top Mini Row: 3-Dots Menu & Question Mark (?) -->
+                <!-- Top Mini Row: 3-Dots Menu (Admin Only) & Question Mark (?) -->
                 <div class="header-top-subrow">
                     <!-- 3-Dots Options Menu -->
-                    <div class="menu-dropdown-wrap">
-                        <button class="btn-icon-round" onclick="toggleOptionsMenu(event)" title="תפריט אפשרויות והגדרות">
+                    <div class="menu-dropdown-wrap" id="adminMenuWrap" style="display: none;">
+                        <button class="btn-icon-round" onclick="toggleOptionsMenu(event)" title="תפריט הגדרות ומשתמש">
                             ⋮
                         </button>
                         <div class="dropdown-panel" id="optionsDropdownMenu">
-                            <button class="dropdown-item" onclick="openCourseSettingsModal(); closeOptionsMenu();">
-                                <span>⚙️</span>
-                                <span>ניהול קורסים וסילבוס</span>
-                            </button>
-                            <button class="dropdown-item" onclick="handleCleanDuplicates(); closeOptionsMenu();">
-                                <span>🧹</span>
-                                <span>ניקוי כפילויות ביומן Google</span>
+                            <!-- User Account Details Header -->
+                            <div style="padding: 10px 14px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; font-size: 12px; color: #475569;">
+                                <div style="font-weight: 800; color: #1e1b4b; font-size: 13px;" id="menuUserDisplayName">משתמש מחובר</div>
+                                <div style="font-size: 11.5px; color: #64748b; direction: ltr; text-align: right; word-break: break-all;" id="menuUserEmail"></div>
+                            </div>
+                            <button class="dropdown-item" onclick="promptEditUserName(); closeOptionsMenu();">
+                                <span>✏️</span>
+                                <span>עריכת שם אישי</span>
                             </button>
                             <div class="dropdown-divider"></div>
-                            <button class="dropdown-item danger" onclick="resetAllProgress(); closeOptionsMenu();">
-                                <span>🔄</span>
-                                <span>איפוס כל הסימונים בלוח</span>
-                            </button>
+                            <!-- Admin-only vs Regular user items -->
+                            <div id="adminMenuItems" style="display: none;">
+                                <button class="dropdown-item" onclick="openCourseSettingsModal(); closeOptionsMenu();">
+                                    <span>⚙️</span>
+                                    <span>ניהול קורסים וסילבוס (מנהל)</span>
+                                </button>
+                                <button class="dropdown-item" onclick="handleCleanDuplicates(); closeOptionsMenu();">
+                                    <span>🧹</span>
+                                    <span>ניקוי כפילויות ביומן Google</span>
+                                </button>
+                                <div class="dropdown-divider"></div>
+                                <button class="dropdown-item danger" onclick="resetAllProgress(); closeOptionsMenu();">
+                                    <span>🔄</span>
+                                    <span>איפוס כל הסימונים בלוח</span>
+                                </button>
+                            </div>
+                            <div id="userUpcomingItem" style="padding: 10px 14px; color: #94a3b8; font-size: 12.5px; font-weight: 700; display: flex; align-items: center; justify-content: space-between;">
+                                <span>⚙️ ניהול קורסים וסילבוס</span>
+                                <span style="background: #f1f5f9; color: #64748b; font-size: 11px; padding: 2px 7px; border-radius: 6px;">בקרוב</span>
+                            </div>
                         </div>
                     </div>
 
@@ -1510,129 +2632,385 @@
                     <span>🔑</span> <span>התחבר לחשבון Google</span>
                 </button>
 
-                <!-- Logout Button (Shown only when connected) -->
-                <button class="btn-compact-logout" id="googleLogoutBtn" onclick="handleLogoutClick()" style="display: none;">
-                    🚪 התנתק
-                </button>
+                <!-- Connected Action Sub-row: Sync to Calendar + Logout (Shown only when connected) -->
+                <div id="connectedActionsRow" style="display: none; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: flex-end;">
+                    <button class="btn-compact-sync" onclick="handleSyncAllToGoogle()" title="שתול או עדכן את כל 39 משימות הסמסטר ביומן Google שלך">
+                        🔄 סנכרן משימות ליומן
+                    </button>
+                    <button class="btn-compact-logout" id="googleLogoutBtn" onclick="handleLogoutClick()">
+                        🚪 התנתק
+                    </button>
+                </div>
             </div>
         </div>
     </header>
 
-    <!-- Full-Width Clean Quick Status Bar -->
-    <div class="quick-status-bar" onclick="openQuickStatusModal()" title="לחץ לפתיחת דוח סטטוס מהיר ותמונת מצב מפורטת">
+    <!-- 1. Full-Width Clean Quick Status Bar -->
+    <div class="quick-status-bar" id="quickStatusBar" style="padding: 15px 20px; margin-bottom: 20px;" onclick="openQuickStatusModal()" title="מה המצב שלי כרגע?">
         <div class="quick-status-bar-info">
-            <div class="quick-status-bar-icon">📊</div>
-            <div class="quick-status-bar-texts">
-                <h3>דוח סטטוס מהיר ותמונת מצב שבועית</h3>
-                <p id="barSubText">לחץ כאן לצפייה מלאה בסטטוס התקדמות הקורסים, פער השבועות ומועדי ההגשה לתלקיט</p>
+            <div class="quick-status-bar-icon" style="width: 44px; height: 44px; font-size: 25px;">🧘‍♂️</div>
+            <div class="quick-status-bar-texts" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <h3 style="margin-bottom: 0; font-size: 20px; font-weight: 800; letter-spacing: -0.2px;">מה המצב שלי כרגע?</h3>
+                <span id="progressPercent" style="background: #ecfdf5; border: 1.5px solid #10b981; color: #047857; font-size: 13.5px; font-weight: 800; padding: 2px 9px; border-radius: 999px;">0%</span>
             </div>
         </div>
-        <div class="quick-status-bar-arrow">⬅️</div>
+        <div class="tap-icon-pill" title="לחץ לפתיחה"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 6.5a4.5 4.5 0 0 1 9 0"/><circle cx="12" cy="6.5" r="1.6" fill="currentColor" stroke="none"/><path d="M10.5 13V7.5a1.5 1.5 0 0 1 3 0V12h1.5a1.5 1.5 0 0 1 1.5 1.5v.5h1a1.5 1.5 0 0 1 1.5 1.5v3a4 4 0 0 1-4 4h-4.5a4 4 0 0 1-3.4-1.9L5.2 17a1.4 1.4 0 0 1 2-1.8L10.5 17V13z"/></svg></div>
     </div>
 
-    <!-- 3 Course Strips -->
-    <div class="course-strip">
-        <div class="course-card-badge badge-mor">
-            <span>
-                🟣 הערכת תוכניות – מור
-                <span class="hint-bubble" data-tooltip="הכנה למפגשי יום ראשון, מפות מושגים ופרויקט סיום (שלבים א'-ה')">?</span>
-            </span>
-            <span style="font-size: 12px; font-weight: 600;">מפגשי ראשון (זום/קמפוס)</span>
+    <!-- 2. Collapsible Accordion: Courses & Academic Year Curriculum (Cohort D) -->
+    <div class="curriculum-accordion" id="curriculumAccordion">
+        <div class="curriculum-accordion-header" style="padding: 15px 20px;" onclick="toggleCurriculumAccordion()">
+            <div class="curriculum-accordion-title">
+                <span style="font-size: 26px;">🎒</span>
+                <div style="font-size: 20px; font-weight: 800; color: #1e1b4b; letter-spacing: -0.2px;">קורסים ותוכנית הלימודים תשפ"ז</div>
+            </div>
+            <div class="tap-icon-pill-light" id="curriculumTapIcon" title="לחץ לפתיחה"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 6.5a4.5 4.5 0 0 1 9 0"/><circle cx="12" cy="6.5" r="1.6" fill="currentColor" stroke="none"/><path d="M10.5 13V7.5a1.5 1.5 0 0 1 3 0V12h1.5a1.5 1.5 0 0 1 1.5 1.5v.5h1a1.5 1.5 0 0 1 1.5 1.5v3a4 4 0 0 1-4 4h-4.5a4 4 0 0 1-3.4-1.9L5.2 17a1.4 1.4 0 0 1 2-1.8L10.5 17V13z"/></svg></div>
         </div>
-        <div class="course-card-badge badge-wassel">
-            <span>
-                🔵 פיתוח חדשנות – ואסל
-                <span class="hint-bubble" data-tooltip="5 משימות א-סינכרוניות מצטברות להגשה מרוכזת ב-27.01.2027">?</span>
-            </span>
-            <span style="font-size: 12px; font-weight: 600;">משימות תלקיט מצטבר (27.01)</span>
-        </div>
-        <div class="course-card-badge badge-levy">
-            <span>
-                🟢 סוגיות בהערכה – לוי-ורד
-                <span class="hint-bubble" data-tooltip="חובת כתיבת רפלקציה שבועית בקיר השיתופי בכל שיעור ונייר עמדה בזוגות">?</span>
-            </span>
-            <span style="font-size: 12px; font-weight: 600;">חובת רפלקציה שבועית בקיר</span>
-        </div>
-    </div>
+        <div class="curriculum-accordion-body">
+            <div class="curriculum-section-title">
+                <span>🎨</span>
+                <span>שלושת קורסי הסמסטר:</span>
+            </div>
+            <!-- 3 Course Strips -->
+            <div class="course-strip" style="margin-bottom: 16px;">
+                <div class="course-card-badge badge-mor">
+                    <span>
+                        🟣 הערכת תוכניות – מור
+                        <span class="hint-bubble" data-tooltip="הכנה למפגשי יום ראשון, מפות מושגים ופרויקט סיום (שלבים א'-ה')">?</span>
+                    </span>
+                    <span style="font-size: 12px; font-weight: 600;">מפגשי ראשון (בקמפוס/מרחוק)</span>
+                </div>
+                <div class="course-card-badge badge-wassel">
+                    <span>
+                        🔵 פיתוח חדשנות – ואסל
+                        <span class="hint-bubble" data-tooltip="5 משימות א-סינכרוניות מצטברות להגשה מרוכזת ב-27.01.2027">?</span>
+                    </span>
+                    <span style="font-size: 12px; font-weight: 600;">משימות תלקיט מצטבר (27.01)</span>
+                </div>
+                <div class="course-card-badge badge-levy">
+                    <span>
+                        🟢 סוגיות בהערכה – לוי-ורד
+                        <span class="hint-bubble" data-tooltip="חובת כתיבת רפלקציה שבועית בקיר השיתופי בכל שיעור ונייר עמדה בזוגות">?</span>
+                    </span>
+                    <span style="font-size: 12px; font-weight: 600;">חובת רפלקציה שבועית בקיר</span>
+                </div>
+            </div>
 
-    <!-- Top Stats -->
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-icon" style="background: #eef2ff; color: #4f46e5;">🎯</div>
-            <div class="stat-info">
-                <h4>סה"כ משימות</h4>
-                <div class="stat-val" id="totalTasksCount">0</div>
+            <!-- Wassel Portfolio Dedicated Quick Banner -->
+            <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 1.5px solid #bae6fd; border-radius: 14px; padding: 12px 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 26px;">📁</span>
+                    <div>
+                        <div style="font-weight: 800; font-size: 15.5px; color: #0369a1;">מעקב תלקיט פיתוח חדשנות (ואסל)</div>
+                        <div style="font-size: 12.5px; color: #075985;">ריכוז 5 המשימות הסופיות • יעד הגשה במודל: <strong>27 בינואר 2027</strong></div>
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="openPortfolioModal()" style="background: #0284c7; color: white; padding: 8px 16px; font-size: 13.5px; border-radius: 10px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);">
+                    📁 פתח מרחב תלקיט
+                </button>
+            </div>
+
+            <div style="border-top: 1px dashed #cbd5e1; padding-top: 14px;">
+                <div class="curriculum-section-title" style="justify-content: space-between; flex-wrap: wrap;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span>🗓️</span>
+                        <span>תכנון מפגשי ימי ראשון בסמסטר א' ובסמסטר ב' (תשפ"ז 2026-2027)</span>
+                    </div>
+                    <div style="font-size: 12px; color: #4338ca; background: #e0e7ff; padding: 3px 10px; border-radius: 8px; font-weight: 800;">
+                        סמסטר א': יום א' – 13 מפגשים | סמסטר ב': ימים א' – 14 מפגשים
+                    </div>
+                </div>
+                <p style="font-size: 12px; color: #64748b; margin-bottom: 8px; font-weight: 600;">
+                    בטבלה זו מרוכזים כל ימי הראשון לאורך השנה (בקמפוס 09:00–18:00 בניין מייזר, למידה דיגיטלית וסיורים):
+                </p>
+                <div class="sunday-schedule-table-wrap">
+                    <table class="sunday-schedule-table">
+                        <thead>
+                            <tr>
+                                <th>תאריך</th>
+                                <th>שלב בשנה</th>
+                                <th>פעילות מחזור ד' (שנה שניה)</th>
+                                <th>פעילות מחזור ה' (שנה ראשונה)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>11.10.26</strong></td>
+                                <td>יום גיבוש - משעה 10:00 עד שעה 18:00</td>
+                                <td><span class="sched-pill sched-break">—</span></td>
+                                <td><span class="sched-pill sched-campus">בקמפוס (משעה 10:00 עד 18:00)</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>18.10.26</strong></td>
+                                <td>פתיחת סמסטר א' (שבוע 1)</td>
+                                <td><span class="sched-pill sched-campus">🏛️ בקמפוס</span></td>
+                                <td>בקמפוס</td>
+                            </tr>
+                            <tr class="row-current-sunday">
+                                <td><strong>25.10.26</strong></td>
+                                <td>סמסטר א' (שבוע 2)</td>
+                                <td><span class="sched-pill sched-digital">💻 למידה דיגיטלי</span></td>
+                                <td>בקמפוס (הכרות) + דיגיטלי (משעה 9:00 עד 18:00)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>01.11.26</strong></td>
+                                <td>סמסטר א' (שבוע 3)</td>
+                                <td><span class="sched-pill sched-campus">🏛️ בקמפוס</span></td>
+                                <td>בקמפוס</td>
+                            </tr>
+                            <tr>
+                                <td><strong>08.11.26</strong></td>
+                                <td>סמסטר א' (שבוע 4)</td>
+                                <td><span class="sched-pill sched-digital">💻 זום</span></td>
+                                <td>בקמפוס (הכרות משעה 9:00 עד 18:00) + דיגיטלי</td>
+                            </tr>
+                            <tr>
+                                <td><strong>15.11.26</strong></td>
+                                <td>סמסטר א' (שבוע 5)</td>
+                                <td><span class="sched-pill sched-campus">🏛️ בקמפוס</span></td>
+                                <td>בקמפוס</td>
+                            </tr>
+                            <tr>
+                                <td><strong>22.11.26</strong></td>
+                                <td>סמסטר א' (שבוע 6)</td>
+                                <td><span class="sched-pill sched-digital">💻 דיגיטלי</span></td>
+                                <td>דיגיטלי</td>
+                            </tr>
+                            <tr>
+                                <td><strong>29.11.26</strong></td>
+                                <td>סמסטר א' (שבוע 7)</td>
+                                <td><span class="sched-pill sched-campus">🏛️ בקמפוס</span></td>
+                                <td>בקמפוס</td>
+                            </tr>
+                            <tr class="row-holiday">
+                                <td><strong>06.12.26</strong></td>
+                                <td>🕎 חופשת חנוכה</td>
+                                <td><span class="sched-pill sched-break">חופשה</span></td>
+                                <td><span class="sched-pill sched-break">חופשה</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>13.12.26</strong></td>
+                                <td>סמסטר א' (שבוע 8)</td>
+                                <td><span class="sched-pill sched-campus">🏛️ בקמפוס</span></td>
+                                <td>בקמפוס</td>
+                            </tr>
+                            <tr>
+                                <td><strong>20.12.26</strong></td>
+                                <td>סמסטר א' (שבוע 9)</td>
+                                <td><span class="sched-pill sched-digital">💻 דיגיטלי</span></td>
+                                <td>דיגיטלי + תכנון סמסטר שני</td>
+                            </tr>
+                            <tr>
+                                <td><strong>27.12.26</strong></td>
+                                <td>סמסטר א' (שבוע 10)</td>
+                                <td><span class="sched-pill sched-campus">🏛️ בקמפוס</span></td>
+                                <td>בקמפוס</td>
+                            </tr>
+                            <tr>
+                                <td><strong>03.01.27</strong></td>
+                                <td>סמסטר א' (שבוע 11)</td>
+                                <td><span class="sched-pill sched-tour">🚌 דיגיטלי + סיור</span></td>
+                                <td>דיגיטלי + סיור</td>
+                            </tr>
+                            <tr>
+                                <td><strong>10.01.27</strong></td>
+                                <td>שבוע עבודה מעשית (שבוע 12)</td>
+                                <td><span class="sched-pill sched-campus">🏛️ בקמפוס</span></td>
+                                <td>בקמפוס</td>
+                            </tr>
+                            <tr>
+                                <td><strong>17.01.27</strong></td>
+                                <td>סמסטר א' (אחרון – שבוע 13)</td>
+                                <td><span class="sched-pill sched-digital">💻 דיגיטלי</span></td>
+                                <td>דיגיטלי</td>
+                            </tr>
+                            <tr class="row-holiday">
+                                <td><strong>24.01.27</strong></td>
+                                <td>תקופת בחינות / חופשת סמסטר</td>
+                                <td><span class="sched-pill sched-break">—</span></td>
+                                <td><span class="sched-pill sched-break">—</span></td>
+                            </tr>
+                            <tr class="row-holiday">
+                                <td><strong>31.01.27</strong></td>
+                                <td>תקופת בחינות / חופשת סמסטר</td>
+                                <td><span class="sched-pill sched-break">—</span></td>
+                                <td><span class="sched-pill sched-break">—</span></td>
+                            </tr>
+                            <tr class="row-holiday">
+                                <td><strong>07.02.27</strong></td>
+                                <td>תקופת בחינות / חופשת סמסטר</td>
+                                <td><span class="sched-pill sched-break">—</span></td>
+                                <td><span class="sched-pill sched-break">—</span></td>
+                            </tr>
+                            <tr class="row-holiday">
+                                <td><strong>14.02.27</strong></td>
+                                <td>תקופת בחינות / חופשת סמסטר</td>
+                                <td><span class="sched-pill sched-break">—</span></td>
+                                <td><span class="sched-pill sched-break">—</span></td>
+                            </tr>
+                            <tr class="row-holiday">
+                                <td><strong>21.02.27</strong></td>
+                                <td>תקופת בחינות / חופשת סמסטר</td>
+                                <td><span class="sched-pill sched-break">—</span></td>
+                                <td><span class="sched-pill sched-break">—</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>28.02.27</strong></td>
+                                <td>פתיחת סמסטר ב'</td>
+                                <td><span class="sched-pill sched-campus">🏛️ בקמפוס</span></td>
+                                <td>בקמפוס</td>
+                            </tr>
+                            <tr>
+                                <td><strong>07.03.27</strong></td>
+                                <td>סמסטר ב'</td>
+                                <td><span class="sched-pill sched-campus">🏛️ בקמפוס</span></td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td><strong>14.03.27</strong></td>
+                                <td>סמסטר ב'</td>
+                                <td><span class="sched-pill sched-tour">🚌 סיור 1</span></td>
+                                <td>בקמפוס</td>
+                            </tr>
+                            <tr>
+                                <td><strong>21.03.27</strong></td>
+                                <td>סמסטר ב'</td>
+                                <td><span class="sched-pill sched-tour">🚌 סיור 2</span></td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td><strong>28.03.27</strong></td>
+                                <td>סמסטר ב'</td>
+                                <td><span class="sched-pill sched-tour">🚌 סיור 3</span></td>
+                                <td>בקמפוס</td>
+                            </tr>
+                            <tr>
+                                <td><strong>04.04.27</strong></td>
+                                <td>סמסטר ב'</td>
+                                <td><span class="sched-pill sched-tour">🚌 סיור 4</span></td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td><strong>11.04.27</strong></td>
+                                <td>סמסטר ב'</td>
+                                <td><span class="sched-pill sched-tour">🚌 סיור 5</span></td>
+                                <td>בקמפוס</td>
+                            </tr>
+                            <tr class="row-holiday">
+                                <td><strong>18.04.27</strong></td>
+                                <td>🌸 חופשת פסח</td>
+                                <td><span class="sched-pill sched-break">חופשה</span></td>
+                                <td><span class="sched-pill sched-break">חופשה</span></td>
+                            </tr>
+                            <tr class="row-holiday">
+                                <td><strong>25.04.27</strong></td>
+                                <td>🌸 חופשת פסח</td>
+                                <td><span class="sched-pill sched-break">חופשה</span></td>
+                                <td><span class="sched-pill sched-break">חופשה</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>02.05.27</strong></td>
+                                <td>סמסטר ב'</td>
+                                <td><span class="sched-pill sched-tour">🚌 סיור 6</span></td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td><strong>09.05.27</strong></td>
+                                <td>סמסטר ב'</td>
+                                <td><span class="sched-pill sched-tour">🚌 סיור 7</span></td>
+                                <td>בקמפוס</td>
+                            </tr>
+                            <tr class="row-holiday">
+                                <td><strong>16.05.27</strong></td>
+                                <td>חג הקורבן (משוער)</td>
+                                <td><span class="sched-pill sched-break">חופשה</span></td>
+                                <td><span class="sched-pill sched-break">חופשה</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>23.05.27</strong></td>
+                                <td>סמסטר ב'</td>
+                                <td><span class="sched-pill sched-tour">🚌 סיור 8</span></td>
+                                <td>בקמפוס</td>
+                            </tr>
+                            <tr>
+                                <td><strong>30.05.27</strong></td>
+                                <td>סמסטר ב'</td>
+                                <td><span class="sched-pill sched-tour">🚌 סיור 9</span></td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td><strong>06.06.27</strong></td>
+                                <td>סמסטר ב'</td>
+                                <td><span class="sched-pill sched-campus">🏛️ בקמפוס</span></td>
+                                <td>בקמפוס</td>
+                            </tr>
+                            <tr>
+                                <td><strong>13.06.27</strong></td>
+                                <td>סמסטר ב' (אחרון)</td>
+                                <td><span class="sched-pill sched-campus">🎓 בקמפוס - אירוע סיום שנה</span></td>
+                                <td>בקמפוס - אירוע סיום שנה</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-        <div class="stat-card">
-            <div class="stat-icon" style="background: #ecfdf5; color: #10b981;">✅</div>
-            <div class="stat-info">
-                <h4>בוצעו</h4>
-                <div class="stat-val" id="doneTasksCount">0</div>
+    </div>
+
+    <!-- 3. Collapsible Accordion: Tasks & Weekly Checklist ("יאללה בוא נלמד") -->
+    <div class="tasks-accordion" id="tasksAccordion">
+        <div class="tasks-accordion-header" onclick="toggleTasksAccordion()">
+            <div class="tasks-accordion-title">
+                <span style="font-size: 26px;">🚀</span>
+                <div>יאללה בוא נלמד</div>
+            </div>
+            <div class="tap-icon-pill-green" id="tasksTapIcon" title="לחץ לפתיחת המשימות"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 6.5a4.5 4.5 0 0 1 9 0"/><circle cx="12" cy="6.5" r="1.6" fill="currentColor" stroke="none"/><path d="M10.5 13V7.5a1.5 1.5 0 0 1 3 0V12h1.5a1.5 1.5 0 0 1 1.5 1.5v.5h1a1.5 1.5 0 0 1 1.5 1.5v3a4 4 0 0 1-4 4h-4.5a4 4 0 0 1-3.4-1.9L5.2 17a1.4 1.4 0 0 1 2-1.8L10.5 17V13z"/></svg></div>
+        </div>
+        <div class="tasks-accordion-body">
+            <!-- Refined 2-Row Filter Bar: Hero Row 1 (Equal & Balanced) + Compact Row 2 (Courses) -->
+            <div class="controls-card">
+                <div class="filter-row-primary">
+                    <button class="filter-btn-hero active" data-filter="all" onclick="setFilter('all', this)">
+                        <span>📅</span>
+                        <span>הכל</span>
+                    </button>
+                    <button class="filter-btn-hero chip-urgent" data-filter="urgent" onclick="setFilter('urgent', this)">
+                        <span>🔥</span>
+                        <span>אוי, זה לעכשיו!</span>
+                    </button>
+                </div>
+                <div class="filter-row-secondary">
+                    <span style="font-size: 11px; font-weight: 800; color: #94a3b8; margin-left: 4px;">סינון:</span>
+                    <button class="filter-chip-mini" data-filter="deliverables" onclick="setFilter('deliverables', this)">🎯 ציון בלבד</button>
+                    <button class="filter-chip-mini chip-mor" data-filter="mor" onclick="setFilter('mor', this)">🟣 מור</button>
+                    <button class="filter-chip-mini chip-wassel" data-filter="wassel" onclick="setFilter('wassel', this)">🔵 ואסל</button>
+                    <button class="filter-chip-mini chip-levy" data-filter="levy" onclick="setFilter('levy', this)">🟢 לוי-ורד</button>
+                </div>
+            </div>
+
+            <!-- Weeks Timeline -->
+            <div class="weeks-list" id="weeksList">
+                <!-- Injected via JavaScript -->
             </div>
         </div>
-        <div class="stat-card">
-            <div class="stat-icon" style="background: #fffbeb; color: #f59e0b;">⏳</div>
-            <div class="stat-info">
-                <h4>נותרו</h4>
-                <div class="stat-val" id="pendingTasksCount">0</div>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon" style="background: #fdf2f8; color: #db2777;">📦</div>
-            <div class="stat-info">
-                <h4>יעד תלקיט ואסל</h4>
-                <div class="stat-val" style="font-size: 15px;">27 בינואר 2027</div>
-            </div>
-        </div>
     </div>
 
-    <!-- Progress Bar -->
-    <div class="progress-box">
-        <div class="progress-header">
-            <span>התקדמות סמסטריאלית כוללת</span>
-            <span id="progressPercent">0%</span>
-        </div>
-        <div class="progress-track">
-            <div class="progress-fill" id="progressBar"></div>
-        </div>
+    <!-- Hidden counters for internal state -->
+    <div style="display: none;">
+        <span id="doneTasksCount">0</span>
+        <span id="totalTasksCount">0</span>
+        <span id="pendingTasksCount">0</span>
+        <div id="progressBar"></div>
     </div>
 
-    <!-- Controls & Filters -->
-    <div class="controls-card">
-        <div class="filter-group">
-            <button class="filter-chip active" onclick="setFilter('all', this)">כל השבועות</button>
-            <button class="filter-chip" onclick="setFilter('deliverables', this)">מטלות עם ציון בלבד 🎯</button>
-            <button class="filter-chip chip-mor" onclick="setFilter('mor', this)">🟣 הערכת תוכניות – מור</button>
-            <button class="filter-chip chip-wassel" onclick="setFilter('wassel', this)">🔵 פיתוח חדשנות – ואסל</button>
-            <button class="filter-chip chip-levy" onclick="setFilter('levy', this)">🟢 סוגיות בהערכה – לוי-ורד</button>
-        </div>
-    </div>
-
-    <!-- Weeks Timeline -->
-    <div class="weeks-list" id="weeksList">
-        <!-- Injected via JavaScript -->
-    </div>
-
-    <!-- Footer with D-Dialog Branding -->
-    <footer>
-        <div class="footer-brand">
-            <span>🚀 D-Dialog | דיאלוג דיגיטלי</span>
-        </div>
-        <p style="font-weight: 600; color: #475569;">
-            Roshaket (ראשקט) – מערכת ניהול משימות ולוח זמנים בראש שקט ללימודים מתקדמים
-        </p>
-        <div class="footer-links">
-            <a href="https://d-dialog.co.il" target="_blank" rel="noopener">אתר הבית D-Dialog</a>
+    <!-- Minimalist 1-Line Footer -->
+    <footer style="padding: 14px 16px; margin-top: 24px; border-radius: 14px;">
+        <div style="font-size: 12.5px; font-weight: 700; color: #64748b; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;">
+            <span>🚀 <strong>Roshaket</strong></span>
             <span>•</span>
-            <span>תוכנית המהפכה - בית ברל</span>
+            <a href="https://d-dialog.co.il" target="_blank" rel="noopener" style="color: #4f46e5; text-decoration: none;">D-Dialog</a>
             <span>•</span>
-            <span>תשפ"ז (2026-2027)</span>
-            <span>•</span>
-            <span>גרסה 1.1.0</span>
-        </div>
-        <div class="footer-copy">
-            כל הזכויות שמורות © 2026 D-Dialog | פותח עבור עופר ועמיתי התואר השני
+            <span>בית ברל תשפ"ז</span>
         </div>
     </footer>
 </div>
@@ -1651,7 +3029,8 @@
 
 <!-- Sync Progress Modal -->
 <div class="modal-overlay" id="syncProgressModal">
-    <div class="modal-card" style="text-align: center; max-width: 440px;">
+    <div class="modal-card" style="text-align: center; max-width: 440px; position: relative;">
+        <button class="modal-close-x" onclick="closeSyncProgressModal()" title="סגור חלון" aria-label="סגור חלון" style="position: absolute; top: 14px; left: 14px;">✕</button>
         <div style="font-size: 42px; margin-bottom: 12px;" id="syncModalIcon">⏳</div>
         <h3 id="syncModalTitle" style="font-size: 20px; font-weight: 800; margin-bottom: 8px; color: var(--text-main);">מסנכרן משימות ל-Google Calendar</h3>
         <p id="syncModalTargetCal" style="font-size: 13px; color: #4338ca; font-weight: 700; margin-bottom: 16px; background: #e0e7ff; padding: 6px 14px; border-radius: 8px; display: inline-block;">
@@ -1694,61 +3073,170 @@
     </div>
 </div>
 
+<!-- Registration Request Modal -->
+<div class="modal-overlay" id="registrationModal" onclick="if(event.target === this) closeRegistrationModal()">
+    <div class="modal-card" style="max-width: 440px; text-align: right; padding: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h3 style="font-size: 19px; font-weight: 800; color: #1e1b4b; margin: 0; display: flex; align-items: center; gap: 8px;">
+                <span>🎓</span>
+                <span>הצטרפות לראשקט</span>
+            </h3>
+            <button onclick="closeRegistrationModal()" style="background: none; border: none; font-size: 20px; color: #94a3b8; cursor: pointer; padding: 4px 8px; border-radius: 8px;" title="סגור">✕</button>
+        </div>
+        <p style="font-size: 13.5px; color: #64748b; line-height: 1.5; margin-bottom: 16px;">
+            המערכת פתוחה לסטודנטים בתוכנית המהפכה (שנה ב'). מלא/י את הפרטים, ובקשתך תועבר לאישור של עופר:
+        </p>
 
-<!-- Executive Quick Status Modal (Tala Quantitative Dashboard) -->
-<div class="modal-overlay" id="quickStatusModal">
-    <div class="modal-card" style="max-width: 650px; text-align: right;">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid var(--border); padding-bottom: 12px; margin-bottom: 14px;">
-            <div>
-                <h3 style="font-size: 20px; font-weight: 800; color: #1e1b4b; display: flex; align-items: center; gap: 8px;">
-                    <span>📊</span>
-                    <span>דוח סטטוס מהיר ותמונת מצב</span>
-                </h3>
-                <p id="currentWeekDateInfo" style="font-size: 13px; color: #64748b; margin-top: 4px; font-weight: 600;">
-                    מחשב שבוע אקדמי נוכחי...
-                </p>
-            </div>
-            <button onclick="closeQuickStatusModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #94a3b8; padding: 4px;">&times;</button>
+        <div style="margin-bottom: 14px;">
+            <label style="display: block; font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 5px;">שם מלא:</label>
+            <input type="text" id="regFullNameInput" placeholder="שם פרטי ומשפחה"
+                   style="width: 100%; box-sizing: border-box; padding: 11px 14px; border-radius: 10px; border: 1.5px solid #cbd5e1; font-size: 14px; font-family: inherit; outline: none;">
         </div>
 
-        <!-- 3 Courses Quantitative Table -->
-        <table class="status-table">
-            <thead>
-                <tr>
-                    <th>קורס</th>
-                    <th style="text-align: center;">בוצע בפועל</th>
-                    <th style="text-align: center;">יעד לתאריך היום</th>
-                    <th style="text-align: center;">סטטוס קצב</th>
-                    <th style="text-align: center;">התקדמות</th>
-                </tr>
-            </thead>
-            <tbody id="quickStatusTbody">
-                <!-- Dynamically generated rows -->
-            </tbody>
-        </table>
-
-        <!-- Long-term Deliverables Focus (Vassel Portfolio & Mor Capstone) -->
-        <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 14px; margin-bottom: 16px;">
-            <div style="font-weight: 800; font-size: 13.5px; color: #1e293b; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
-                <span>📦 משימות לטווח ארוך (תלקיט ופרויקטי סיום)</span>
-                <span id="vasselDaysCountdown" style="font-size: 12px; font-weight: 700; color: #4338ca; background: #e0e7ff; padding: 2px 8px; border-radius: 10px;">סופר ימים...</span>
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;" id="longTermCardsWrap">
-                <!-- Dynamic cards -->
-            </div>
+        <div style="margin-bottom: 16px;">
+            <label style="display: block; font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 5px;">כתובת אימייל (חשבון Google):</label>
+            <input type="email" id="regEmailInput" placeholder="your.name@gmail.com" dir="ltr"
+                   style="width: 100%; box-sizing: border-box; padding: 11px 14px; border-radius: 10px; border: 1.5px solid #cbd5e1; font-size: 14px; font-family: inherit; outline: none; text-align: left;">
+            <span style="font-size: 11.5px; color: #94a3b8; margin-top: 4px; display: block;">הכתובת שאיתה תתחבר/י לסנכרון יומן Google</span>
         </div>
 
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-            <div style="font-size: 12px; color: #64748b; font-weight: 600;">
-                💡 לחץ על שורת קורס בטבלה לסינון מהיר של המשימות שלו
-            </div>
-            <button class="btn btn-primary" style="background: #1e1b4b; color: white;" onclick="closeQuickStatusModal()">
-                סגור דוח
+        <div id="regErrorMsg" style="display: none; color: #ef4444; font-size: 13px; font-weight: 700; margin-bottom: 12px; background: #fef2f2; padding: 8px 12px; border-radius: 8px;"></div>
+
+        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+            <button onclick="closeRegistrationModal()" style="padding: 10px 18px; border-radius: 10px; border: 1px solid #cbd5e1; background: #fff; color: #64748b; font-size: 13.5px; font-weight: 700; cursor: pointer;">
+                ביטול
+            </button>
+            <button id="regSubmitBtn" onclick="submitRegistrationRequest()" style="padding: 10px 22px; border-radius: 10px; border: none; background: linear-gradient(135deg, #4338ca 0%, #6366f1 100%); color: #fff; font-size: 13.5px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                <span>שלח בקשת הצטרפות</span>
+                <span>🚀</span>
             </button>
         </div>
     </div>
 </div>
 
+<!-- Pending Approval Modal -->
+<div class="modal-overlay" id="pendingApprovalModal" onclick="if(event.target === this) closePendingApprovalModal()">
+    <div class="modal-card" style="max-width: 440px; text-align: center; padding: 32px 24px;">
+        <div style="font-size: 50px; margin-bottom: 12px;">⏳</div>
+        <h3 style="font-size: 21px; font-weight: 800; color: #1e1b4b; margin-bottom: 10px;">
+            הבקשה שלך בבדיקה
+        </h3>
+        <p style="font-size: 14.5px; color: #475569; line-height: 1.65; margin-bottom: 24px;">
+            היי <strong id="pendingUserName" style="color: #4338ca;"></strong>!<br>
+            בקשת ההצטרפות שלך לקורס נקלטה במערכת ונמצאת כרגע בבדיקה ובאישור של עופר.<br>
+            ברגע שהיא תאושר בגיליון, תוכל/י להתחבר ולסנכרן את היומן באופן מיידי.
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+            <button onclick="continueFromPendingToDemo()" style="padding: 13px 22px; border-radius: 12px; border: none; background: linear-gradient(135deg, #4338ca 0%, #6366f1 100%); color: #fff; font-size: 14.5px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(67, 56, 202, 0.25);">
+                <span>🎭</span>
+                <span>המשך בינתיים במצב התנסות (דמו)</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<!-- Executive Quick Status Modal (Ultra-Clean & Minimalist) -->
+<div class="modal-overlay" id="quickStatusModal" onclick="if(event.target === this) closeQuickStatusModal()">
+    <div class="modal-card" style="max-width: 560px; text-align: right; padding: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid var(--border); padding-bottom: 10px; margin-bottom: 10px; gap: 10px;">
+            <div>
+                <h3 style="font-size: 20px; font-weight: 800; color: #1e1b4b; display: flex; align-items: center; gap: 8px;">
+                    <span>🧘‍♂️</span>
+                    <span>מה המצב שלי כרגע?</span>
+                </h3>
+                <p id="currentWeekDateInfo" style="font-size: 13.5px; color: #475569; margin-top: 2px; font-weight: 700;">
+                    מחשב שבוע אקדמי נוכחי...
+                </p>
+            </div>
+            <button class="modal-close-x" onclick="closeQuickStatusModal()" title="סגור" aria-label="סגור">✕</button>
+        </div>
+
+        <!-- Personal Friendly Status Briefing Bubble -->
+        <div id="quickStatusPersonalBubble" style="background: linear-gradient(135deg, #ede9fe 0%, #f0fdf4 100%); border: 1.5px solid #c4b5fd; border-radius: 14px; padding: 14px 18px; margin-bottom: 14px; box-shadow: 0 2px 8px rgba(99, 102, 241, 0.07);">
+            <div style="font-weight: 800; font-size: 15.5px; color: #4338ca; display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
+                <span style="font-size: 20px;">💬</span>
+                <span id="personalBubbleGreeting">היי עופר, בקצרה זה המצב שלך:</span>
+            </div>
+            <div id="personalBubbleText" style="font-size: 14px; color: #1e293b; line-height: 1.5; font-weight: 600;">
+                מנתח את קצב הלמידה שלך...
+            </div>
+        </div>
+
+        <!-- 3 Courses Quantitative Table -->
+        <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+            <table class="status-table" style="margin-top: 4px; margin-bottom: 12px;">
+                <thead>
+                    <tr>
+                        <th style="font-size: 13.5px;">קורס</th>
+                        <th style="text-align: center; font-size: 13.5px;">סטטוס קצב</th>
+                        <th style="text-align: center; font-size: 13.5px;">התקדמות</th>
+                    </tr>
+                </thead>
+                <tbody id="quickStatusTbody">
+                    <!-- Dynamically generated rows -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Hidden placeholders for removed widgets so JS stays clean -->
+        <div style="display: none;">
+            <span id="vasselDaysCountdown"></span>
+            <div id="longTermCardsWrap"></div>
+        </div>
+
+        <button class="btn btn-primary" style="background: #1e1b4b; color: white; width: 100%; justify-content: center; font-size: 15px;" onclick="closeQuickStatusModal()">
+            סגור
+        </button>
+    </div>
+</div>
+
+
+
+<!-- Portfolio Tracking Modal (Wassel Innovation) -->
+<div class="modal-overlay" id="portfolioModal" onclick="if(event.target === this) closePortfolioModal()">
+    <div class="modal-card">
+        <div class="portfolio-header">
+            <div>
+                <h3 style="font-size: 20px; font-weight: 800; color: #0369a1; display: flex; align-items: center; gap: 8px; margin-bottom: 2px;">
+                    <span>📁</span>
+                    <span>מרחב מעקב תלקיט פיתוח חדשנות</span>
+                </h3>
+                <p style="font-size: 13px; color: #64748b; margin: 0; font-weight: 600;">
+                    ד"ר חנין ואסל • 5 משימות א-סינכרוניות מצטברות • יעד הגשה במודל: <strong>27.01.2027</strong>
+                </p>
+            </div>
+            <button class="modal-close-x" onclick="closePortfolioModal()" title="סגור" aria-label="סגור">✕</button>
+        </div>
+
+        <!-- Progress Summary -->
+        <div class="portfolio-progress-bar-wrap">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <div style="font-size: 14.5px; font-weight: 800; color: #075985;" id="portfolioProgressLabel">
+                    התקדמות תלקיט: 0 מתוך 5 משימות מוכנות
+                </div>
+                <div style="font-size: 13px; font-weight: 800; color: #0284c7; background: #ffffff; padding: 2px 10px; border-radius: 999px; border: 1px solid #bae6fd;" id="portfolioDaysLeftLabel">
+                    יעד: 27.01.2027
+                </div>
+            </div>
+            <div style="height: 10px; background: #ffffff; border-radius: 999px; overflow: hidden; border: 1px solid #bae6fd;">
+                <div id="portfolioProgressBar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #0284c7, #10b981); transition: width 0.25s ease;"></div>
+            </div>
+        </div>
+
+
+
+        <!-- 5 Task Cards Container -->
+        <div id="portfolioTasksContainer">
+            <!-- Dynamically populated via renderPortfolioModal() -->
+        </div>
+
+        <button class="btn btn-primary" style="background: #0f172a; color: white; width: 100%; justify-content: center; font-size: 15px; margin-top: 10px;" onclick="closePortfolioModal()">
+            סגור
+        </button>
+    </div>
+</div>
 
 <!-- Course Settings & Syllabus Upload Modal -->
 <div class="modal-overlay" id="courseSettingsModal">
@@ -1811,22 +3299,55 @@
     </div>
 </div>
 
-<!-- Mobile Sticky Bottom Actions -->
-<div class="mobile-bottom-bar">
-    <button class="btn btn-primary" style="background: #1e1b4b; color: white; width: 100%; justify-content: center;" onclick="handleAuthClick()">
-        ⚡ התחבר ל-Google לסנכרון חי
-    </button>
+<!-- First-Time Sync Onboarding Modal -->
+<div class="modal-overlay" id="onboardingSyncModal" onclick="if(event.target === this) closeOnboardingSyncModal()">
+    <div class="modal-card" style="max-width: 460px; text-align: center; position: relative;">
+        <button class="modal-close-x" style="position: absolute; top: 14px; left: 14px;" onclick="closeOnboardingSyncModal()" title="סגור">✕</button>
+        <div style="font-size: 44px; margin-bottom: 10px;">🎉</div>
+        <h3 style="font-size: 20px; font-weight: 800; color: #1e1b4b; margin-bottom: 8px;">התחברת בהצלחה ל-Google!</h3>
+        <p style="font-size: 13.5px; color: #334155; line-height: 1.55; margin-bottom: 14px; text-align: right; background: #f8fafc; padding: 12px 14px; border-radius: 12px; border: 1px solid #e2e8f0;">
+            <strong>איך עובד הסנכרון ליומן?</strong><br>
+            1. המערכת יוצרת ביומן Google שלך תת-יומן ייעודי ונקי בשם <strong>"Roshaket - לימודים"</strong> (כדי שלא יתערבב עם האירועים הפרטיים שלך).<br>
+            2. בלחיצה על הכפתור למטה, כל <strong>39 משימות הסמסטר</strong> יישתלו ביומן לפי התאריכים שלהן.<br>
+            3. מעכשיו, כל סימון <strong>V</strong> באפליקציה יהפוך אוטומטית את המשימה ביומן לירוקה (<code>✅ הושלם</code>)!
+        </p>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+            <button class="btn btn-primary" style="background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%); color: white; width: 100%; justify-content: center; font-size: 15px; padding: 12px;" onclick="startInitialSyncFromModal()">
+                📅 שתול את משימות הסמסטר ביומן עכשיו
+            </button>
+            <button class="btn" style="background: #f1f5f9; color: #475569; width: 100%; justify-content: center; font-size: 13px; min-height: 38px;" onclick="closeOnboardingSyncModal()">
+                אחר כך (תמיד ניתן לסנכרן מהכפתור למעלה)
+            </button>
+        </div>
+    </div>
 </div>
 
 <script>
 // Google OAuth & Calendar API Configuration
 const DEFAULT_CLIENT_ID = '889823725975-l5p1o8nnnsffqpc9lb9dr5vfdq15vsrn.apps.googleusercontent.com';
 localStorage.setItem('roshaket_client_id', DEFAULT_CLIENT_ID);
-const SCOPES = 'https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar';
+const SCOPES = 'https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile';
 
 let tokenClient = null;
 let googleAccessToken = localStorage.getItem('roshaket_g_token') || null;
 let roshaketCalendarId = localStorage.getItem('roshaket_cal_id') || null;
+let googleUserEmail = localStorage.getItem('roshaket_user_email') || null;
+let googleUserName = localStorage.getItem('roshaket_user_name') || null;
+if (!googleUserName && googleUserEmail) {
+    const em = googleUserEmail.toLowerCase().trim();
+    if (em === PRIMARY_ADMIN_EMAIL || em.includes('saritofer') || em.includes('ofer')) googleUserName = 'עופר';
+    else if (em.includes('sarit')) googleUserName = 'שרית';
+    else googleUserName = googleUserEmail.split('@')[0];
+    localStorage.setItem('roshaket_user_name', googleUserName);
+}
+if (!googleUserEmail || googleUserEmail === 'undefined' || googleUserEmail === 'null') {
+    googleUserEmail = null;
+    localStorage.removeItem('roshaket_user_email');
+}
+if (!googleUserName || googleUserName === 'undefined' || googleUserName === 'null') {
+    googleUserName = null;
+// Keep user name persistent across sessions
+}
 
 // Sanitize localStorage values
 if (!roshaketCalendarId || roshaketCalendarId === 'undefined' || roshaketCalendarId === 'null') {
@@ -1843,7 +3364,7 @@ const semesterSchedule = [
     {
         weekNum: 1,
         dateStr: "18.10.2026",
-        modeC1: "קמפוס (פנים אל פנים)",
+        modeC1: "🏛️ בקמפוס (פתיחת סמסטר א')",
         modeClass: "mode-campus",
         tasks: [
             { id: "w1_c1", courseKey: "mor", course: "הערכת תוכניות – מור", courseClass: "task-mor", emoji: "🟣", title: "אתגר המגדל והגדרת מטרות", desc: "הכנה למפגש פנים אל פנים: קריאת נספח א' (אתגר המגדל) ורפלקציה קבוצתית בכיתה.", weight: "הכנה למפגש", tagType: "tag-deliverable" },
@@ -1854,18 +3375,19 @@ const semesterSchedule = [
     {
         weekNum: 2,
         dateStr: "25.10.2026",
-        modeC1: "מקוון (זום)",
+        modeC1: "💻 מרחוק (למידה דיגיטלית)",
         modeClass: "mode-zoom",
         tasks: [
             { id: "w2_c1", courseKey: "mor", course: "הערכת תוכניות – מור", courseClass: "task-mor", emoji: "🟣", title: "חזון הפרויקט וגיבוש רעיון", desc: "אפיון דמות מוטב (Persona), הפקת סרטון קצר, ופתיחת רשומת יומן למידה מס' 1.", weight: "הכנה למפגש", tagType: "tag-deliverable" },
-            { id: "w2_c2", courseKey: "wassel", course: "פיתוח חדשנות – ואסל", courseClass: "task-wassel", emoji: "🔵", title: "שיעור 2: ניהול שינוי ותפקיד היוזם (חלק א')", desc: "קריאת חומר עזר על מטריצה לפרישת חזון ומעבר מתכנון ליישום.", weight: "תלקיט (27.01)", tagType: "tag-deliverable" },
+            { id: "w2_c2", courseKey: "wassel", course: "פיתוח חדשנות – ואסל", courseClass: "task-wassel", emoji: "🔵", title: "שיעור 2: ניהול שינוי ותפקיד היוזם (חלק א')", desc: "קריאת חומר עזר על מטריצה לפרישת חזון ומעבר מתכנון ליישום.", weight: "חומר רקע", tagType: "tag-deliverable" },
+            { id: "w2_c2_portfolio", courseKey: "wassel", course: "פיתוח חדשנות – ואסל", courseClass: "task-wassel", emoji: "🔵", title: "📝 משימה לתלקיט: מעבר מתכנון המיזם ליישומו", desc: "היקף: עד עמוד אחד. תיאור המעבר משלב התכנון ליישום, פירוט שינויים לעומת שנה א', תרומת התוכנית ונקודת מבט אישית בצוות.", weight: "תלקיט (27.01)", tagType: "tag-deliverable" },
             { id: "w2_c3", courseKey: "levy", course: "סוגיות בהערכה – לוי-ורד", courseClass: "task-levy", emoji: "🟢", title: "שיעור 2: הערכה כדיאלוג + רפלקציה", desc: "למידת יחידה 2, קריאת נבו (2003) וכתיבת רפלקציה אישית בקיר השיתופי.", weight: "חובת שבוע (-8 נק')", tagType: "tag-penalty" }
         ]
     },
     {
         weekNum: 3,
         dateStr: "01.11.2026",
-        modeC1: "קמפוס (פנים אל פנים)",
+        modeC1: "🏛️ בקמפוס",
         modeClass: "mode-campus",
         tasks: [
             { id: "w3_c1", courseKey: "mor", course: "הערכת תוכניות – מור", courseClass: "task-mor", emoji: "🟣", title: "תיאוריית השינוי (Theory of Change)", desc: "קריאת מאמר גינדי (2011) על מודל לוגי וסדנת ניתוח מקרים בכיתה.", weight: "הכנה למפגש", tagType: "tag-deliverable" },
@@ -1876,7 +3398,7 @@ const semesterSchedule = [
     {
         weekNum: 4,
         dateStr: "08.11.2026",
-        modeC1: "מקוון (זום)",
+        modeC1: "💻 מרחוק (זום)",
         modeClass: "mode-zoom",
         tasks: [
             { id: "w4_c1", courseKey: "mor", course: "הערכת תוכניות – מור", courseClass: "task-mor", emoji: "🟣", title: "🎯 הגשה: מפת מושגים אישית (10% מהציון)", desc: "מיפוי מושגי של עולם ההערכה וקישורו למיזם האישי + קריאת מור (תשנ\"ג).", weight: "10% מהציון", tagType: "tag-weight" },
@@ -1887,7 +3409,7 @@ const semesterSchedule = [
     {
         weekNum: 5,
         dateStr: "15.11.2026",
-        modeC1: "קמפוס (פנים אל פנים)",
+        modeC1: "🏛️ בקמפוס",
         modeClass: "mode-campus",
         tasks: [
             { id: "w5_c1", courseKey: "mor", course: "הערכת תוכניות – מור", courseClass: "task-mor", emoji: "🟣", title: "מודל ה-CIPP להערכה מערכתית", desc: "סדנת מיפוי רכיבי CIPP על המיזמים האישיים + קריאת Stufflebeam (2003).", weight: "הכנה למפגש", tagType: "tag-deliverable" },
@@ -1898,7 +3420,7 @@ const semesterSchedule = [
     {
         weekNum: 6,
         dateStr: "22.11.2026",
-        modeC1: "מקוון (זום)",
+        modeC1: "💻 מרחוק (דיגיטלי)",
         modeClass: "mode-zoom",
         tasks: [
             { id: "w6_c1", courseKey: "mor", course: "הערכת תוכניות – מור", courseClass: "task-mor", emoji: "🟣", title: "🎯 הגשה: פרויקט סיום – שלב א' (15% מהציון)", desc: "הצעה ראשונית לתוכנית ההערכה: תיאור המיזם, בחירת מודל ושאלות הערכה.", weight: "15% מהציון", tagType: "tag-weight" },
@@ -1909,7 +3431,7 @@ const semesterSchedule = [
     {
         weekNum: 7,
         dateStr: "29.11.2026",
-        modeC1: "קמפוס (פנים אל פנים)",
+        modeC1: "🏛️ בקמפוס (לפני חופשת חנוכה 06.12)",
         modeClass: "mode-campus",
         tasks: [
             { id: "w7_c1", courseKey: "mor", course: "הערכת תוכניות – מור", courseClass: "task-mor", emoji: "🟣", title: "🎯 הגשה: פרויקט סיום – שלב ב' משוב עמיתים (10%)", desc: "מתן משוב עמיתים מעמיק ומובנה להצעה הראשונית (שלב א') של עמית/ה.", weight: "10% מהציון", tagType: "tag-weight" },
@@ -1920,7 +3442,7 @@ const semesterSchedule = [
     {
         weekNum: 8,
         dateStr: "13.12.2026",
-        modeC1: "קמפוס (פנים אל פנים)",
+        modeC1: "🏛️ בקמפוס",
         modeClass: "mode-campus",
         tasks: [
             { id: "w8_c1", courseKey: "mor", course: "הערכת תוכניות – מור", courseClass: "task-mor", emoji: "🟣", title: "מעבדת פיתוח כלי הערכה כמותני", desc: "עבודה בכיתה על הכנת טיוטה ראשונה של שאלון/מחוון כמותני מתוקף.", weight: "הכנה למפגש", tagType: "tag-deliverable" },
@@ -1931,7 +3453,7 @@ const semesterSchedule = [
     {
         weekNum: 9,
         dateStr: "20.12.2026",
-        modeC1: "מקוון (זום)",
+        modeC1: "💻 מרחוק (דיגיטלי)",
         modeClass: "mode-zoom",
         tasks: [
             { id: "w9_c1", courseKey: "mor", course: "הערכת תוכניות – מור", courseClass: "task-mor", emoji: "🟣", title: "🎯 הגשה: כלי הערכה כמותני (20% מהציון)", desc: "הגשת כלי כמותני מתוקף (שאלון, מחוון, מדד) מלווה ברציונל מתודולוגי.", weight: "20% מהציון", tagType: "tag-weight" },
@@ -1942,7 +3464,7 @@ const semesterSchedule = [
     {
         weekNum: 10,
         dateStr: "27.12.2026",
-        modeC1: "קמפוס (פנים אל פנים)",
+        modeC1: "🏛️ בקמפוס",
         modeClass: "mode-campus",
         tasks: [
             { id: "w10_c1", courseKey: "mor", course: "הערכת תוכניות – מור", courseClass: "task-mor", emoji: "🟣", title: "🎯 הגשה: פרויקט סיום – שלב ג' (15% מהציון)", desc: "מערך איסוף הנתונים השלם: שילוב הכלי הכמותני, תוכנית ניתוח ואתיקה.", weight: "15% מהציון", tagType: "tag-weight" },
@@ -1953,8 +3475,8 @@ const semesterSchedule = [
     {
         weekNum: 11,
         dateStr: "03.01.2027",
-        modeC1: "מקוון (זום)",
-        modeClass: "mode-zoom",
+        modeC1: "🚌 מרחוק (דיגיטלי) + סיור",
+        modeClass: "mode-tour",
         tasks: [
             { id: "w11_c1", courseKey: "mor", course: "הערכת תוכניות – מור", courseClass: "task-mor", emoji: "🟣", title: "🎯 הגשה: פרויקט סיום – שלב ד' משוב עמיתים (10%)", desc: "מתן משוב עמיתים מובנה על טיוטת מערך ההערכה המלא (שלב ג') של עמית/ה.", weight: "10% מהציון", tagType: "tag-weight" },
             { id: "w11_c2", courseKey: "wassel", course: "פיתוח חדשנות – ואסל", courseClass: "task-wassel", emoji: "🔵", title: "שיעור 11 (א-סינכרוני): מודל CASEL / SEL", desc: "קריאת מודל CASEL (יסודי ועל-יסודי), מצגת SEL, והכנת המשימה לתלקיט.", weight: "תלקיט (27.01)", tagType: "tag-deliverable" },
@@ -1964,7 +3486,7 @@ const semesterSchedule = [
     {
         weekNum: 12,
         dateStr: "10.01.2027",
-        modeC1: "קמפוס (פנים אל פנים)",
+        modeC1: "🏛️ בקמפוס (שבוע עבודה מעשית)",
         modeClass: "mode-campus",
         tasks: [
             { id: "w12_c1", courseKey: "mor", course: "הערכת תוכניות – מור", courseClass: "task-mor", emoji: "🟣", title: "פאנל מומחים והשלמת יומן למידה", desc: "גיבוש תיקונים סופיים לתוכנית ההערכה בעקבות משוב העמיתים + השלמת יומן למידה.", weight: "הכנה למפגש", tagType: "tag-deliverable" },
@@ -1975,7 +3497,7 @@ const semesterSchedule = [
     {
         weekNum: 13,
         dateStr: "17.01.2027",
-        modeC1: "מקוון (זום)",
+        modeC1: "💻 מרחוק (דיגיטלי – מפגש אחרון לסמסטר א')",
         modeClass: "mode-zoom",
         tasks: [
             { id: "w13_c1", courseKey: "mor", course: "הערכת תוכניות – מור", courseClass: "task-mor", emoji: "🟣", title: "🎯 הגשה: פרויקט סיום שלב ה' (10%) + יומן למידה (10%)", desc: "הגשה סופית ואינטגרטיבית של תוכנית ההערכה השלמה + יומן הלמידה הרפלקטיבי!", weight: "20% מהציון", tagType: "tag-weight" },
@@ -1998,18 +3520,157 @@ let userTaskNotes = isUserLoggedIn
     : JSON.parse(sessionStorage.getItem('roshaket_demo_user_notes') || '{}');
 
 let currentFilter = 'all';
+let isPastWeeksWrapperOpen = false;
+let openPastWeekNums = {};
+
+const PRESS_FINGER_ICON_HTML = `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 6.5a4.5 4.5 0 0 1 9 0"/><circle cx="12" cy="6.5" r="1.6" fill="currentColor" stroke="none"/><path d="M10.5 13V7.5a1.5 1.5 0 0 1 3 0V12h1.5a1.5 1.5 0 0 1 1.5 1.5v.5h1a1.5 1.5 0 0 1 1.5 1.5v3a4 4 0 0 1-4 4h-4.5a4 4 0 0 1-3.4-1.9L5.2 17a1.4 1.4 0 0 1 2-1.8L10.5 17V13z"/></svg>`;
+const UP_ARROW_ICON_HTML = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>`;
+
+function toggleCurriculumAccordion() {
+    const acc = document.getElementById('curriculumAccordion');
+    const tasksAcc = document.getElementById('tasksAccordion');
+    if (acc) {
+        const willOpen = !acc.classList.contains('open');
+        acc.classList.toggle('open', willOpen);
+        const icon = document.getElementById('curriculumTapIcon');
+        if (icon) icon.innerHTML = willOpen ? UP_ARROW_ICON_HTML : PRESS_FINGER_ICON_HTML;
+
+        // If opening Curriculum, automatically close Tasks Accordion so only one section is open
+        if (willOpen && tasksAcc && tasksAcc.classList.contains('open')) {
+            tasksAcc.classList.remove('open');
+            const tIcon = document.getElementById('tasksTapIcon');
+            if (tIcon) tIcon.innerHTML = PRESS_FINGER_ICON_HTML;
+            document.body.classList.remove('tasks-focus-mode');
+        }
+    }
+}
+
+function toggleTasksAccordion(forceOpen) {
+    const tasksAcc = document.getElementById('tasksAccordion');
+    const currAcc = document.getElementById('curriculumAccordion');
+    if (!tasksAcc) return;
+
+    const willOpen = typeof forceOpen === 'boolean' ? forceOpen : !tasksAcc.classList.contains('open');
+    tasksAcc.classList.toggle('open', willOpen);
+    const tIcon = document.getElementById('tasksTapIcon');
+    if (tIcon) tIcon.innerHTML = willOpen ? UP_ARROW_ICON_HTML : PRESS_FINGER_ICON_HTML;
+
+    // When Tasks Accordion is open, close Curriculum Accordion and shrink the top 2 bars into compact mode
+    if (willOpen) {
+        if (currAcc && currAcc.classList.contains('open')) {
+            currAcc.classList.remove('open');
+            const cIcon = document.getElementById('curriculumTapIcon');
+            if (cIcon) cIcon.innerHTML = PRESS_FINGER_ICON_HTML;
+        }
+        document.body.classList.add('tasks-focus-mode');
+    } else {
+        document.body.classList.remove('tasks-focus-mode');
+    }
+}
+
+function toggleCourseFiltersRow() {
+    const row = document.getElementById('courseFiltersSubRow');
+    const arrow = document.getElementById('courseFilterArrow');
+    if (!row) return;
+    const isHidden = row.style.display === 'none' || !row.style.display;
+    row.style.display = isHidden ? 'flex' : 'none';
+    if (arrow) arrow.innerText = isHidden ? '－' : '＋';
+}
+
+function togglePastWeeksWrapper() {
+    isPastWeeksWrapperOpen = !isPastWeeksWrapperOpen;
+    render();
+}
+
+function toggleSinglePastWeek(weekNum, event) {
+    if (event) event.stopPropagation();
+    openPastWeekNums[weekNum] = !openPastWeekNums[weekNum];
+    render();
+}
+
+function renderTaskCardHtml(t) {
+    const isDone = doneTasks.includes(t.id);
+    return `
+        <div class="task-item ${t.courseClass} ${isDone ? 'done' : ''}" id="card_${t.id}">
+            <div class="task-top">
+                <label class="task-checkbox-wrap">
+                    <input type="checkbox" class="task-checkbox" 
+                           ${isDone ? 'checked' : ''} 
+                           onchange="toggleTask('${t.id}')">
+                </label>
+                <div class="task-content">
+                    <span class="task-course-pill">${t.emoji} ${t.course}</span>
+                    ${['w1_c2', 'w2_c2_portfolio', 'w5_c2', 'w7_c2', 'w11_c2'].includes(t.id) ? `
+                        <button class="portfolio-direct-pill" onclick="event.stopPropagation(); openPortfolioModalToTask('${t.id}')" title="לחץ לפתיחת מרחב והנחיות התלקיט">
+                            📁 תלקיט ואסל ↗
+                        </button>
+                    ` : ''}
+                    ${['w1_c2', 'w2_c2', 'w5_c2', 'w7_c2', 'w11_c2'].includes(t.id) ? `
+                        <button class="portfolio-direct-pill" onclick="event.stopPropagation(); openPortfolioModalToTask('${t.id}')" title="לחץ לפתיחת מרחב והנחיות התלקיט">
+                            📁 תלקיט ואסל ↗
+                        </button>
+                    ` : ''}
+                    <div class="task-title">${t.title}</div>
+                    <div class="task-desc">${t.desc}</div>
+                </div>
+            </div>
+            <div class="task-user-note-wrap">
+                ${userTaskNotes[t.id] ? `
+                    <div class="task-user-note-display task-user-note-badge" onclick="editTaskNote('${t.id}')" title="לחץ לעריכת ההערה">
+                        <span>📝</span>
+                        <span style="flex-grow: 1; word-break: break-word;">${escapeHtml(userTaskNotes[t.id])}</span>
+                        <span style="font-size: 10px; color: #047857; text-decoration: underline;">ערוך</span>
+                    </div>
+                ` : `
+                    <div class="task-user-note-display task-user-note-empty" onclick="editTaskNote('${t.id}')" title="לחץ להוספת הערה או שינוי למשימה">
+                        <span>✏️</span>
+                        <span>הוסף הערה או עדכון...</span>
+                    </div>
+                `}
+                <div id="noteEditBox_${t.id}" style="display: none; margin-top: 6px;">
+                    <div style="display: flex; gap: 6px;">
+                        <input type="text" id="noteInput_${t.id}" class="task-user-note-input" 
+                               placeholder="הקלד הערה או שינוי (למשל: שיעור א-סינכרוני / הגשה נדחתה)..."
+                               value="${escapeHtml(userTaskNotes[t.id] || '')}"
+                               onkeydown="if(event.key === 'Enter') saveTaskNote('${t.id}')">
+                        <button class="btn btn-primary" style="padding: 4px 10px; min-height: 32px; font-size: 12px; background: #6366f1; color: white;" onclick="saveTaskNote('${t.id}')">שמור</button>
+                        <button class="btn" style="padding: 4px 8px; min-height: 32px; font-size: 12px; background: #f1f5f9; color: #475569;" onclick="cancelEditTaskNote('${t.id}')">ביטול</button>
+                    </div>
+                </div>
+            </div>
+            <div class="task-footer">
+                <span class="${t.tagType}">${t.weight}</span>
+                <span style="font-weight: 700; font-size: 11px; color: ${isDone ? '#059669' : '#64748b'};">
+                    ${isDone ? '✓ בוצע' : '⏳ פתוח'}
+                </span>
+            </div>
+        </div>
+    `;
+}
 
 function render() {
     const list = document.getElementById('weeksList');
     list.innerHTML = '';
 
+    const currentAcademicW = getCurrentAcademicWeek();
     let totalTasks = 0;
     let doneCount = 0;
 
+    const pastWeeksElements = [];
+    let totalPastMissingTasks = 0;
+
     semesterSchedule.forEach(w => {
-        let matchingTasks = w.tasks.filter(t => {
-            if (hiddenCourses.includes(t.courseKey)) return false;
+        const visibleWeekTasks = w.tasks.filter(t => !hiddenCourses.includes(t.courseKey));
+        totalTasks += visibleWeekTasks.length;
+        visibleWeekTasks.forEach(t => {
+            if (doneTasks.includes(t.id)) doneCount++;
+        });
+
+        let matchingTasks = visibleWeekTasks.filter(t => {
             if (currentFilter === 'all') return true;
+            if (currentFilter === 'urgent') {
+                return w.weekNum <= currentAcademicW && !doneTasks.includes(t.id);
+            }
             if (currentFilter === 'deliverables') return t.tagType === 'tag-weight';
             if (currentFilter === 'mor') return t.courseKey === 'mor';
             if (currentFilter === 'wassel') return t.courseKey === 'wassel';
@@ -2017,86 +3678,125 @@ function render() {
             return true;
         });
 
-        totalTasks += w.tasks.length;
-        w.tasks.forEach(t => {
-            if (doneTasks.includes(t.id)) doneCount++;
-        });
-
         if (matchingTasks.length === 0) return;
 
-        const isCurrentWeek = w.weekNum === 1;
+        const isPastWeek = w.weekNum < currentAcademicW;
+        const isCurrentWeek = w.weekNum === currentAcademicW;
+
+        if (isPastWeek && currentFilter !== 'urgent') {
+            const missingInWeek = visibleWeekTasks.filter(t => !doneTasks.includes(t.id)).length;
+            totalPastMissingTasks += missingInWeek;
+            const isExpanded = Boolean(openPastWeekNums[w.weekNum]);
+
+            const pastCard = document.createElement('div');
+            pastCard.className = `past-week-compact-card ${isExpanded ? 'open' : ''}`;
+            pastCard.innerHTML = `
+                <div class="past-week-compact-header" onclick="toggleSinglePastWeek(${w.weekNum}, event)">
+                    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                        <div class="week-num" style="width: 30px; height: 30px; font-size: 13.5px; background: #475569;">${w.weekNum}</div>
+                        <span style="font-weight: 800; font-size: 15.5px; color: #1e293b;">שבוע ${w.weekNum}</span>
+                        <span style="font-size: 12.5px; color: #64748b; font-weight: 600;">(${w.dateStr})</span>
+                        ${missingInWeek > 0 ? `
+                            <span class="missing-tasks-dot" title="יש ${missingInWeek} משימות להשלמה בשבוע זה">
+                                <span class="red-circle-dot"></span>
+                                <span>${missingInWeek} להשלמה</span>
+                            </span>
+                        ` : `
+                            <span style="font-size: 11.5px; font-weight: 800; color: #15803d; background: #dcfce7; padding: 2px 8px; border-radius: 999px;">✓ הושלם</span>
+                        `}
+                    </div>
+                    <div class="tap-icon-pill-light" style="width: 38px; height: 38px;">
+                        ${isExpanded ? '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>' : '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 6.5a4.5 4.5 0 0 1 9 0"/><circle cx="12" cy="6.5" r="1.6" fill="currentColor" stroke="none"/><path d="M10.5 13V7.5a1.5 1.5 0 0 1 3 0V12h1.5a1.5 1.5 0 0 1 1.5 1.5v.5h1a1.5 1.5 0 0 1 1.5 1.5v3a4 4 0 0 1-4 4h-4.5a4 4 0 0 1-3.4-1.9L5.2 17a1.4 1.4 0 0 1 2-1.8L10.5 17V13z"/></svg>'}
+                    </div>
+                </div>
+                <div class="past-week-compact-body">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px dashed #cbd5e1;">
+                        <div style="font-size: 13px; font-weight: 700; color: #334155;">
+                            📅 מתכונת לימודים שבוע ${w.weekNum} (יום א', ${w.dateStr}):
+                        </div>
+                        <div class="mode-pill ${w.modeClass}">
+                            ${w.modeC1}
+                        </div>
+                    </div>
+                    <div class="tasks-container">
+                        ${matchingTasks.map(t => renderTaskCardHtml(t)).join('')}
+                    </div>
+                </div>
+            `;
+            pastWeeksElements.push(pastCard);
+            return;
+        }
 
         const card = document.createElement('div');
         card.className = `week-card ${isCurrentWeek ? 'current-week' : ''}`;
         
+        const missingInPastUrgent = isPastWeek ? visibleWeekTasks.filter(t => !doneTasks.includes(t.id)).length : 0;
+
         card.innerHTML = `
             ${isCurrentWeek ? '<div class="current-badge">השבוע הנוכחי</div>' : ''}
             <div class="week-header">
                 <div class="week-num-title">
                     <div class="week-num">${w.weekNum}</div>
                     <div>
-                        <div style="font-weight: 800; font-size: 17px;">שבוע ${w.weekNum}</div>
+                        <div style="font-weight: 800; font-size: 17px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                            <span>שבוע ${w.weekNum}</span>
+                            ${isPastWeek && missingInPastUrgent > 0 ? `
+                                <span class="missing-tasks-dot">
+                                    <span class="red-circle-dot"></span>
+                                    <span>בפיגור (${missingInPastUrgent} להשלמה)</span>
+                                </span>
+                            ` : ''}
+                        </div>
                         <div class="week-date">יום א', ${w.dateStr}</div>
                     </div>
                 </div>
                 <div class="mode-pill ${w.modeClass}">
-                    מפגש מור: ${w.modeC1}
+                    ${w.modeC1}
                 </div>
             </div>
             <div class="tasks-container">
-                ${matchingTasks.map(t => {
-                    const isDone = doneTasks.includes(t.id);
-                    return `
-                        <div class="task-item ${t.courseClass} ${isDone ? 'done' : ''}" id="card_${t.id}">
-                            <div class="task-top">
-                                <label class="task-checkbox-wrap">
-                                    <input type="checkbox" class="task-checkbox" 
-                                           ${isDone ? 'checked' : ''} 
-                                           onchange="toggleTask('${t.id}')">
-                                </label>
-                                <div class="task-content">
-                                    <span class="task-course-pill">${t.emoji} ${t.course}</span>
-                                    <div class="task-title">${t.title}</div>
-                                    <div class="task-desc">${t.desc}</div>
-                                </div>
-                            </div>
-                            <div class="task-user-note-wrap">
-                                ${userTaskNotes[t.id] ? `
-                                    <div class="task-user-note-display task-user-note-badge" onclick="editTaskNote('${t.id}')" title="לחץ לעריכת ההערה">
-                                        <span>📝</span>
-                                        <span style="flex-grow: 1; word-break: break-word;">${escapeHtml(userTaskNotes[t.id])}</span>
-                                        <span style="font-size: 10px; color: #047857; text-decoration: underline;">ערוך</span>
-                                    </div>
-                                ` : `
-                                    <div class="task-user-note-display task-user-note-empty" onclick="editTaskNote('${t.id}')" title="לחץ להוספת הערה או שינוי למשימה">
-                                        <span>✏️</span>
-                                        <span>הוסף הערה או עדכון...</span>
-                                    </div>
-                                `}
-                                <div id="noteEditBox_${t.id}" style="display: none; margin-top: 6px;">
-                                    <div style="display: flex; gap: 6px;">
-                                        <input type="text" id="noteInput_${t.id}" class="task-user-note-input" 
-                                               placeholder="הקלד הערה או שינוי (למשל: שיעור א-סינכרוני / הגשה נדחתה)..."
-                                               value="${escapeHtml(userTaskNotes[t.id] || '')}"
-                                               onkeydown="if(event.key === 'Enter') saveTaskNote('${t.id}')">
-                                        <button class="btn btn-primary" style="padding: 4px 10px; min-height: 32px; font-size: 12px; background: #6366f1; color: white;" onclick="saveTaskNote('${t.id}')">שמור</button>
-                                        <button class="btn" style="padding: 4px 8px; min-height: 32px; font-size: 12px; background: #f1f5f9; color: #475569;" onclick="cancelEditTaskNote('${t.id}')">ביטול</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="task-footer">
-                                <span class="${t.tagType}">${t.weight}</span>
-                                <span style="font-weight: 700; font-size: 11px; color: ${isDone ? '#059669' : '#64748b'};">
-                                    ${isDone ? '✓ בוצע' : '⏳ פתוח'}
-                                </span>
-                            </div>
-                        </div>
-                    `;
-                }).join('')}
+                ${matchingTasks.map(t => renderTaskCardHtml(t)).join('')}
             </div>
         `;
         list.appendChild(card);
     });
+
+    // If there are past weeks (when not in urgent filter), prepend the collapsible past weeks dropdown at the top of the timeline
+    if (pastWeeksElements.length > 0) {
+        const wrapper = document.createElement('div');
+        wrapper.className = `past-weeks-wrapper ${isPastWeeksWrapperOpen ? 'open' : ''}`;
+        wrapper.innerHTML = `
+            <div class="past-weeks-toggle-bar" style="padding: 13px 18px;" onclick="togglePastWeeksWrapper()">
+                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                    <span style="font-size: 23px;">🦖</span>
+                    <span style="font-size: 18.5px; font-weight: 800; color: #1e293b;">שבועות שחלפו (${pastWeeksElements.length})</span>
+                    ${totalPastMissingTasks > 0 ? `
+                        <span class="missing-tasks-dot" title="יש משימות שטרם הושלמו בשבועות שחלפו">
+                            <span class="red-circle-dot"></span>
+                            <span>${totalPastMissingTasks} להשלמה</span>
+                        </span>
+                    ` : `
+                        <span style="font-size: 12.5px; font-weight: 800; color: #15803d; background: #dcfce7; padding: 2px 8px; border-radius: 999px;">✓ הושלם</span>
+                    `}
+                </div>
+                <div class="tap-icon-pill-light" title="לחץ לפתיחה/סגירה">
+                    ${isPastWeeksWrapperOpen ? '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>' : '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 6.5a4.5 4.5 0 0 1 9 0"/><circle cx="12" cy="6.5" r="1.6" fill="currentColor" stroke="none"/><path d="M10.5 13V7.5a1.5 1.5 0 0 1 3 0V12h1.5a1.5 1.5 0 0 1 1.5 1.5v.5h1a1.5 1.5 0 0 1 1.5 1.5v3a4 4 0 0 1-4 4h-4.5a4 4 0 0 1-3.4-1.9L5.2 17a1.4 1.4 0 0 1 2-1.8L10.5 17V13z"/></svg>'}
+                </div>
+            </div>
+            <div class="past-weeks-list-inner" id="pastWeeksInnerContainer"></div>
+        `;
+        list.insertBefore(wrapper, list.firstChild);
+        const innerContainer = wrapper.querySelector('#pastWeeksInnerContainer');
+        pastWeeksElements.forEach(el => innerContainer.appendChild(el));
+    }
+
+    if (list.children.length === 0) {
+        list.innerHTML = `
+            <div style="background: white; border: 1px solid var(--border); border-radius: 16px; padding: 28px; text-align: center; color: #475569; font-weight: 700;">
+                🎉 אין משימות פתוחות בסינון זה! כל הכבוד!
+            </div>
+        `;
+    }
 
     // Update Counters
     document.getElementById('totalTasksCount').innerText = totalTasks;
@@ -2278,8 +3978,13 @@ function resetAllProgress() {
 
 function setFilter(filterType, element) {
     currentFilter = filterType;
-    document.querySelectorAll('.filter-chip').forEach(el => el.classList.remove('active'));
-    if (element) element.classList.add('active');
+    document.querySelectorAll('.filter-btn-hero, .filter-chip-mini, .filter-chip').forEach(el => el.classList.remove('active'));
+    if (element) {
+        element.classList.add('active');
+    } else {
+        const found = document.querySelector(`[data-filter="${filterType}"]`);
+        if (found) found.classList.add('active');
+    }
     render();
 }
 
@@ -2305,21 +4010,112 @@ function getNextDay(dateFormatted) {
     return `${y}-${m}-${day}`;
 }
 
+async function fetchGoogleUserEmail() {
+    if (!googleAccessToken) return;
+    try {
+        // Primary calendar ID in Google Calendar is always the user's primary Google account email
+        const calRes = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary', {
+            headers: { Authorization: `Bearer ${googleAccessToken}` }
+        });
+        if (calRes.ok) {
+            const calData = await calRes.json();
+            if (calData && calData.id && calData.id.includes('@')) {
+                googleUserEmail = calData.id;
+                localStorage.setItem('roshaket_user_email', googleUserEmail);
+                updateSyncUI();
+                return;
+            }
+        }
+        // Fetch user profile info (name + email)
+        const infoRes = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+            headers: { Authorization: `Bearer ${googleAccessToken}` }
+        });
+        if (infoRes.ok) {
+            const infoData = await infoRes.json();
+            if (infoData) {
+                if (infoData.email) {
+                    googleUserEmail = infoData.email;
+                    localStorage.setItem('roshaket_user_email', googleUserEmail);
+                }
+                let resolvedName = infoData.given_name || (infoData.name ? infoData.name.split(' ')[0] : null);
+                if (!resolvedName && infoData.email) {
+                    const em = infoData.email.toLowerCase().trim();
+                    if (em === PRIMARY_ADMIN_EMAIL || em.includes('saritofer') || em.includes('ofer')) resolvedName = 'עופר';
+                    else if (em.includes('sarit')) resolvedName = 'שרית';
+                    else resolvedName = infoData.email.split('@')[0];
+                }
+                if (resolvedName) {
+                    googleUserName = resolvedName;
+                    localStorage.setItem('roshaket_user_name', googleUserName);
+                }
+                updateSyncUI();
+            }
+        }
+    } catch (e) {
+        console.warn('Could not fetch user email:', e);
+    }
+}
+
+function isOferAdmin() {
+    if (!googleAccessToken) return false;
+    if (!googleUserEmail) return false;
+    const emailLower = googleUserEmail.toLowerCase().trim();
+    return emailLower === PRIMARY_ADMIN_EMAIL || localStorage.getItem('roshaket_is_admin') === 'true';
+}
+
+function openOnboardingSyncModal() {
+    const modal = document.getElementById('onboardingSyncModal');
+    if (modal) modal.classList.add('open');
+}
+
+function closeOnboardingSyncModal() {
+    const modal = document.getElementById('onboardingSyncModal');
+    if (modal) modal.classList.remove('open');
+}
+
+function startInitialSyncFromModal() {
+    localStorage.setItem('roshaket_initial_sync_done', 'true');
+    closeOnboardingSyncModal();
+    handleSyncAllToGoogle();
+}
+
 function updateSyncUI() {
     const btn = document.getElementById('googleAuthBtn');
-    const logoutBtn = document.getElementById('googleLogoutBtn');
-    const appModeBadge = document.getElementById('appModeBadge');
+    const connectedRow = document.getElementById('connectedActionsRow');
+    const adminMenuWrap = document.getElementById('adminMenuWrap');
 
     if (googleAccessToken) {
         isUserLoggedIn = true;
-        btn.innerHTML = '<span>🟢</span> <span>מחובר לחשבון</span>';
+        const displayName = googleUserName || (googleUserEmail ? googleUserEmail.split('@')[0] : 'חשבון Google');
+        const accountLabel = `מחובר: ${displayName}`;
+        btn.innerHTML = `<span>🟢</span> <span style="display: inline-block;">${escapeHtml(accountLabel)}</span>`;
         btn.classList.add('connected');
-        if (logoutBtn) logoutBtn.style.display = 'inline-flex';
+        btn.title = googleUserEmail ? `מחובר לחשבון: ${googleUserEmail}` : 'מחובר ל-Google Calendar';
+        if (connectedRow) connectedRow.style.display = 'flex';
+        if (adminMenuWrap) {
+            adminMenuWrap.style.display = 'inline-block';
+            const nameEl = document.getElementById('menuUserDisplayName');
+            const emailEl = document.getElementById('menuUserEmail');
+            if (nameEl) nameEl.innerText = `👤 ${displayName}`;
+            if (emailEl) emailEl.innerText = googleUserEmail || '';
+            const adminItems = document.getElementById('adminMenuItems');
+            const userUpcoming = document.getElementById('userUpcomingItem');
+            const isAdmin = isOferAdmin();
+            if (adminItems) adminItems.style.display = isAdmin ? 'block' : 'none';
+            if (userUpcoming) userUpcoming.style.display = isAdmin ? 'none' : 'flex';
+        }
+        if (!googleUserEmail) {
+            fetchGoogleUserEmail();
+        }
     } else {
         isUserLoggedIn = false;
         btn.innerHTML = '<span>🔑</span> <span>התחבר לחשבון Google</span>';
         btn.classList.remove('connected');
-        if (logoutBtn) logoutBtn.style.display = 'none';
+        btn.title = 'התחבר לחשבון Google לסנכרון אוטומטי עם היומן';
+        if (connectedRow) connectedRow.style.display = 'none';
+        if (adminMenuWrap) {
+            adminMenuWrap.style.display = 'none';
+        }
     }
 }
 
@@ -2335,8 +4131,12 @@ function handleLogoutClick() {
     }
     googleAccessToken = null;
     roshaketCalendarId = null;
+    googleUserEmail = null;
+    googleUserName = null;
     localStorage.removeItem('roshaket_g_token');
     localStorage.removeItem('roshaket_cal_id');
+    localStorage.removeItem('roshaket_user_email');
+// Keep user name persistent across sessions
     isUserLoggedIn = false;
     doneTasks = JSON.parse(sessionStorage.getItem('roshaket_demo_done_tasks') || '[]');
     userTaskNotes = JSON.parse(sessionStorage.getItem('roshaket_demo_user_notes') || '{}');
@@ -2371,23 +4171,67 @@ function handleAuthClick() {
                     throw resp;
                 }
                 googleAccessToken = resp.access_token;
+
+                showToast('🔍 מאמת הרשאות כניסה לקורס...');
+                await fetchGoogleUserEmail();
+
+                // Check access authorization in Google Sheet
+                const approval = await checkUserAccessApproval(googleUserEmail);
+                if (approval.status === 'not_found') {
+                    googleAccessToken = null;
+                    isUserLoggedIn = false;
+                    localStorage.removeItem('roshaket_g_token');
+                    localStorage.removeItem('roshaket_user_email');
+                    updateSyncUI();
+                    // Keep welcome screen visible underneath, pop up registration modal
+                    openRegistrationModal();
+                    showToast('כתובת המייל אינה רשומה עדיין. אנא שלח/י בקשת הצטרפות לקורס.');
+                    return;
+                } else if (approval.approvalStatus === 'ממתין לאישור') {
+                    googleAccessToken = null;
+                    isUserLoggedIn = false;
+                    localStorage.removeItem('roshaket_g_token');
+                    localStorage.removeItem('roshaket_user_email');
+                    updateSyncUI();
+                    // Keep welcome screen visible underneath, pop up pending approval modal
+                    openPendingApprovalModal(approval.name || googleUserName || '', googleUserEmail);
+                    return;
+                } else if (approval.approvalStatus === 'נדחה') {
+                    googleAccessToken = null;
+                    isUserLoggedIn = false;
+                    localStorage.removeItem('roshaket_g_token');
+                    localStorage.removeItem('roshaket_user_email');
+                    updateSyncUI();
+                    alert('הגישה למערכת לא אושרה עבור חשבון זה. לבירורים ניתן לפנות לעופר.');
+                    return;
+                }
+
+                // ONLY IF APPROVED: unlock the gate and enter the app!
+                sessionStorage.setItem('roshaket_gate_passed', 'true');
+                hideWelcomeScreen();
+
                 localStorage.setItem('roshaket_g_token', googleAccessToken);
                 isUserLoggedIn = true;
                 doneTasks = JSON.parse(localStorage.getItem('roshaket_done_tasks') || '[]');
                 userTaskNotes = JSON.parse(localStorage.getItem('roshaket_user_notes') || '{}');
-                showToast('🔑 התחברת בהצלחה! הנתונים האישיים שלך נטענו.');
+                showToast('🔑 התחברת בהצלחה! ברוך הבא לראשקט.');
                 updateSyncUI();
 
-    // Update strip badge visibility
-    ['mor', 'wassel', 'levy'].forEach(cKey => {
-        const badge = document.querySelector(`.badge-${cKey}`);
-        if (badge) {
-            badge.style.display = hiddenCourses.includes(cKey) ? 'none' : 'flex';
-        }
-    });
+                // Update strip badge visibility
+                ['mor', 'wassel', 'levy'].forEach(cKey => {
+                    const badge = document.querySelector(`.badge-${cKey}`);
+                    if (badge) {
+                        badge.style.display = hiddenCourses.includes(cKey) ? 'none' : 'flex';
+                    }
+                });
 
                 render();
-                await ensureRoshaketCalendarExists();
+                if (pendingGuidedSync || !localStorage.getItem('roshaket_initial_sync_done')) {
+                    pendingGuidedSync = false;
+                    openOnboardingSyncModal();
+                } else {
+                    ensureRoshaketCalendarExists();
+                }
             },
         });
         tokenClient.requestAccessToken({ prompt: 'consent' });
@@ -2398,9 +4242,10 @@ function handleAuthClick() {
 }
 
 function openSyncProgressModal() {
+    const totalTasksCount = semesterSchedule.reduce((acc, w) => acc + w.tasks.length, 0);
     document.getElementById('syncProgressModal').classList.add('open');
     document.getElementById('syncModalProgressBar').style.width = '0%';
-    document.getElementById('syncModalCounter').innerText = '0 / 39 משימות סונכרנו';
+    document.getElementById('syncModalCounter').innerText = `0 / ${totalTasksCount} משימות סונכרנו`;
     document.getElementById('syncModalIcon').innerText = '⏳';
     document.getElementById('syncModalTitle').innerText = 'מסנכרן משימות ל-Google Calendar';
     document.getElementById('syncModalTargetCal').innerText = 'מאתר יומן יעד...';
@@ -2412,7 +4257,23 @@ function closeSyncProgressModal() {
     document.getElementById('syncProgressModal').classList.remove('open');
 }
 
+let calendarResolutionPromise = null;
+let isSyncingAll = false;
+
 async function getValidCalendarId() {
+    if (!googleAccessToken) return null;
+    if (calendarResolutionPromise) {
+        return calendarResolutionPromise;
+    }
+    calendarResolutionPromise = _resolveValidCalendarIdImpl();
+    try {
+        return await calendarResolutionPromise;
+    } finally {
+        calendarResolutionPromise = null;
+    }
+}
+
+async function _resolveValidCalendarIdImpl() {
     if (!googleAccessToken) return null;
 
     const res = await fetch('https://www.googleapis.com/calendar/v3/users/me/calendarList', {
@@ -2427,20 +4288,55 @@ async function getValidCalendarId() {
         throw new Error(`שגיאה בגישה ליומנים: ${msg}`);
     }
     const data = await res.json();
+    const items = data.items || [];
 
-    // Priority 1: 'Roshaket - לימודים'
-    // Priority 2: 'לימודים בית ברל'
-    // Priority 3: any summary containing Roshaket
-    const existing = data.items && (
-        data.items.find(c => c.summary === 'Roshaket - לימודים') ||
-        data.items.find(c => c.summary === 'לימודים בית ברל') ||
-        data.items.find(c => c.summary && c.summary.includes('Roshaket'))
+    // Find all matching Roshaket secondary calendars (excluding primary email calendar)
+    const roshaketCals = items.filter(c =>
+        !c.primary && (
+            c.summary === 'Roshaket - לימודים' ||
+            c.summary === 'לימודים בית ברל' ||
+            (c.summary && c.summary.includes('Roshaket'))
+        )
     );
 
-    if (existing) {
-        roshaketCalendarId = existing.id;
-        localStorage.setItem('roshaket_cal_id', existing.id);
-        return { id: existing.id, summary: existing.summary };
+    if (roshaketCals.length > 0) {
+        // Prefer the one already stored in roshaketCalendarId if it exists in the list, otherwise take the first
+        const chosen = roshaketCals.find(c => c.id === roshaketCalendarId) || roshaketCals[0];
+
+        // Automatically delete any duplicate Roshaket calendars so the user has only ONE clean calendar!
+        const duplicatesToRemove = roshaketCals.filter(c => c.id !== chosen.id);
+        for (const dup of duplicatesToRemove) {
+            try {
+                await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(dup.id)}`, {
+                    method: 'DELETE',
+                    headers: { Authorization: `Bearer ${googleAccessToken}` }
+                });
+                console.log('Deleted duplicate Roshaket calendar:', dup.id);
+            } catch (delErr) {
+                console.warn('Could not delete duplicate calendar:', dup.id, delErr);
+            }
+        }
+
+        roshaketCalendarId = chosen.id;
+        localStorage.setItem('roshaket_cal_id', chosen.id);
+        return { id: chosen.id, summary: chosen.summary, deletedDuplicates: duplicatesToRemove.length };
+    }
+
+    // If we already have a stored roshaketCalendarId that hasn't propagated to calendarList yet, verify it directly!
+    if (roshaketCalendarId && roshaketCalendarId !== 'primary' && !roshaketCalendarId.includes('@gmail.com')) {
+        try {
+            const checkRes = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(roshaketCalendarId)}`, {
+                headers: { Authorization: `Bearer ${googleAccessToken}` }
+            });
+            if (checkRes.ok) {
+                const calMeta = await checkRes.json();
+                if (calMeta && calMeta.id) {
+                    return { id: calMeta.id, summary: calMeta.summary || 'Roshaket - לימודים', deletedDuplicates: 0 };
+                }
+            }
+        } catch (e) {
+            console.warn('Stored calendar check failed, will create fresh:', e);
+        }
     }
 
     // If none found, create 'Roshaket - לימודים'
@@ -2463,7 +4359,7 @@ async function getValidCalendarId() {
     const created = await createRes.json();
     roshaketCalendarId = created.id;
     localStorage.setItem('roshaket_cal_id', created.id);
-    return { id: created.id, summary: created.summary };
+    return { id: created.id, summary: created.summary, deletedDuplicates: 0 };
 }
 
 async function ensureRoshaketCalendarExists() {
@@ -2478,8 +4374,8 @@ async function ensureRoshaketCalendarExists() {
 
 function getTaskEventId(taskObj, weekNum) {
     const weekStr = String(weekNum).padStart(2, '0');
-    const cNum = taskObj.id.split('_c')[1] || '1';
-    return `roshaket2026s${weekStr}c${cNum}`;
+    const rawSuffix = (taskObj.id.split('_c')[1] || '1').toLowerCase().replace(/[^a-v0-9]/g, '0');
+    return `roshaket2026s${weekStr}c${rawSuffix}`;
 }
 
 async function getAllCalendarEvents(calId) {
@@ -2529,6 +4425,7 @@ async function handleCleanDuplicates() {
     }
 
     const calId = targetCal.id;
+    const dupCalRemoved = targetCal.deletedDuplicates || 0;
     document.getElementById('syncModalTargetCal').innerText = `יומן: ${targetCal.summary}`;
 
     try {
@@ -2557,13 +4454,16 @@ async function handleCleanDuplicates() {
 
         if (toDelete.length === 0) {
             document.getElementById('syncModalIcon').innerText = '✨';
-            document.getElementById('syncModalTitle').innerText = 'היומן נקי לחלוטין!';
-            document.getElementById('syncModalCurrentTask').innerText = 'לא נמצאו אירועים כפולים ביומן Google.';
+            document.getElementById('syncModalTitle').innerText = dupCalRemoved > 0 ? 'היומן הכפול הוסר בהצלחה!' : 'היומן נקי לחלוטין!';
+            document.getElementById('syncModalCurrentTask').innerText = dupCalRemoved > 0
+                ? `נמחקו ${dupCalRemoved} יומנים כפולים של Roshaket. ביומן הפעיל כל האירועים תקינים וללא כפילויות!`
+                : 'לא נמצאו יומנים כפולים או אירועים כפולים ביומן Google.';
             document.getElementById('syncModalCounter').innerText = `${events.length} אירועים תקינים`;
             document.getElementById('syncModalProgressBar').style.width = '100%';
             document.getElementById('syncModalCloseBtn').innerText = 'סגור';
             document.getElementById('syncModalCloseBtn').style.display = 'inline-flex';
             document.getElementById('syncModalCloseBtn').onclick = closeSyncProgressModal;
+            if (dupCalRemoved > 0) showToast(`🧹 נמחק יומן כפול בהצלחה!`);
             return;
         }
 
@@ -2587,7 +4487,7 @@ async function handleCleanDuplicates() {
 
         document.getElementById('syncModalIcon').innerText = '🎉';
         document.getElementById('syncModalTitle').innerText = 'ניקוי הכפילויות הושלם!';
-        document.getElementById('syncModalCurrentTask').innerText = `נמחקו בהצלחה ${deleted} כפילויות. נותרו ${seen.size} משימות יחידות ונקיות!`;
+        document.getElementById('syncModalCurrentTask').innerText = `נמחקו בהצלחה ${deleted} אירועים כפולים${dupCalRemoved > 0 ? ` ו-${dupCalRemoved} יומנים כפולים` : ''}. נותרו ${seen.size} משימות יחידות ונקיות!`;
         document.getElementById('syncModalCloseBtn').innerText = 'מעולה! פתח את יומן Google';
         document.getElementById('syncModalCloseBtn').style.display = 'inline-flex';
         document.getElementById('syncModalCloseBtn').onclick = () => {
@@ -2611,6 +4511,11 @@ async function handleSyncAllToGoogle() {
         handleAuthClick();
         return;
     }
+    if (isSyncingAll) {
+        showToast('⏳ סנכרון ליומן כבר מתבצע כעת...');
+        return;
+    }
+    isSyncingAll = true;
 
     openSyncProgressModal();
 
@@ -2618,6 +4523,7 @@ async function handleSyncAllToGoogle() {
     try {
         targetCal = await getValidCalendarId();
     } catch (err) {
+        isSyncingAll = false;
         console.error('Calendar resolution error:', err);
         if (err.message === 'AUTH_EXPIRED') {
             document.getElementById('syncModalIcon').innerText = '⚠️';
@@ -2642,6 +4548,7 @@ async function handleSyncAllToGoogle() {
     }
 
     const calId = targetCal.id;
+    const dupCalRemoved = targetCal.deletedDuplicates || 0;
     document.getElementById('syncModalTargetCal').innerText = `יומן יעד: ${targetCal.summary} 🎯`;
     document.getElementById('syncModalCurrentTask').innerText = 'טוען אירועים קיימים למניעת כפילויות...';
 
@@ -2653,7 +4560,7 @@ async function handleSyncAllToGoogle() {
         console.warn('Could not pre-fetch existing events:', e);
     }
 
-    const totalTasks = 39;
+    const totalTasks = semesterSchedule.reduce((acc, w) => acc + w.tasks.length, 0);
     let synced = 0;
     let createdCount = 0;
     let updatedCount = 0;
@@ -2749,6 +4656,7 @@ async function handleSyncAllToGoogle() {
                 }
             } catch (e) {
                 if (e.message === 'AUTH_EXPIRED') {
+                    isSyncingAll = false;
                     document.getElementById('syncModalIcon').innerText = '⚠️';
                     document.getElementById('syncModalTitle').innerText = 'פג תוקף ההתחברות לגוגל';
                     document.getElementById('syncModalCurrentTask').innerText = 'החיבור התנתק באמצע הסנכרון. אנא התחבר מחדש.';
@@ -2771,10 +4679,13 @@ async function handleSyncAllToGoogle() {
         }
     }
 
+    isSyncingAll = false;
+
     if (synced > 0) {
+        localStorage.setItem('roshaket_initial_sync_done', 'true');
         document.getElementById('syncModalIcon').innerText = '🎉';
         document.getElementById('syncModalTitle').innerText = 'הסנכרון הושלם בהצלחה!';
-        document.getElementById('syncModalCurrentTask').innerText = `עודכנו ${updatedCount} משימות, נוצרו ${createdCount} חדשות. אפס כפילויות!`;
+        document.getElementById('syncModalCurrentTask').innerText = `עודכנו ${updatedCount} משימות, נוצרו ${createdCount} חדשות.${dupCalRemoved > 0 ? ` (נמחק אוטומטית יומן כפול)` : ' אפס כפילויות!'}`;
         document.getElementById('syncModalCloseBtn').innerText = 'פתח את יומן Google לצפייה 📅';
         document.getElementById('syncModalCloseBtn').style.display = 'inline-flex';
         document.getElementById('syncModalCloseBtn').onclick = () => {
@@ -2961,11 +4872,21 @@ function downloadICS() {
     showToast('קובץ היומן הורד בהצלחה!');
 }
 
-// Service Worker Registration for PWA
+// Service Worker Registration for PWA (with instant update detection)
 if ('serviceWorker' in navigator) {
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!refreshing) {
+            refreshing = true;
+            window.location.reload();
+        }
+    });
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-            .then(reg => console.log('Roshaket SW Registered!', reg))
+        navigator.serviceWorker.register('./sw.js?v=42', { updateViaCache: 'none' })
+            .then(reg => {
+                reg.update();
+                console.log('Roshaket SW v37 Registered!', reg);
+            })
             .catch(err => console.log('SW Registration failed: ', err));
     });
 }
@@ -2989,6 +4910,24 @@ function getCurrentAcademicWeek() {
     return targetWeek;
 }
 
+
+
+
+
+function promptEditUserName() {
+    const current = googleUserName || '';
+    const newName = prompt('איך תרצה/י שנקרא לך בראשקט?', current);
+    if (newName && newName.trim()) {
+        const clean = newName.trim();
+        googleUserName = clean;
+        localStorage.setItem('roshaket_user_name', clean);
+        updateSyncUI();
+        const greetingEl = document.getElementById('personalBubbleGreeting');
+        if (greetingEl) greetingEl.innerText = `היי ${clean}, בקצרה זה המצב שלך:`;
+        showToast(`השם עודכן בהצלחה ל-${clean}!`);
+    }
+}
+
 function openQuickStatusModal() {
     const modal = document.getElementById('quickStatusModal');
     if (!modal) return;
@@ -2998,6 +4937,12 @@ function openQuickStatusModal() {
     const todayStr = `${today.getDate().toString().padStart(2, '0')}.${(today.getMonth() + 1).toString().padStart(2, '0')}.${today.getFullYear()}`;
     
     document.getElementById('currentWeekDateInfo').innerText = `היום: ${todayStr} | שבוע אקדמי נוכחי בלוח: שבוע ${currentW}`;
+    const totalVis = document.getElementById('totalTasksCount')?.innerText || '39';
+    const doneVis = document.getElementById('doneTasksCount')?.innerText || '0';
+    const pendVis = document.getElementById('pendingTasksCount')?.innerText || '39';
+    if (document.getElementById('modalTotalTasks')) document.getElementById('modalTotalTasks').innerText = totalVis;
+    if (document.getElementById('modalDoneTasks')) document.getElementById('modalDoneTasks').innerText = doneVis;
+    if (document.getElementById('modalPendingTasks')) document.getElementById('modalPendingTasks').innerText = pendVis;
 
     // Calculate per-course status
     const courses = [
@@ -3005,6 +4950,19 @@ function openQuickStatusModal() {
         { key: 'wassel', name: 'פיתוח חדשנות (ואסל)', color: '#1d4ed8', bg: '#dbeafe', classFilter: 'filter-wassel' },
         { key: 'levy', name: 'סוגיות בהערכה (לוי-ורד)', color: '#047857', bg: '#d1fae5', classFilter: 'filter-levy' }
     ];
+
+    // Personal name & dynamic briefing computation
+    const userName = googleUserName || (googleUserEmail ? googleUserEmail.split('@')[0] : (sessionStorage.getItem('roshaket_custom_name') || 'חבר/ה'));
+    const greetingEl = document.getElementById('personalBubbleGreeting');
+    if (greetingEl) {
+        greetingEl.innerText = `היי ${userName}, בקצרה זה המצב שלך:`;
+    }
+
+    let behindCourses = [];
+    let aheadCourses = [];
+    let okCourses = [];
+    let totalDoneTasks = 0;
+    let totalAllTasks = 0;
 
     const tbody = document.getElementById('quickStatusTbody');
     tbody.innerHTML = '';
@@ -3033,15 +4991,21 @@ function openQuickStatusModal() {
 
         // Target for today: expected to have completed up to currentW
         let statusBadge = '';
+        totalDoneTasks += doneC;
+        totalAllTasks += totalC;
+
         if (latestDoneWeek >= currentW) {
             if (latestDoneWeek > currentW) {
                 statusBadge = `<span class="badge-gap-ahead">🚀 מקדים (שבוע ${latestDoneWeek})</span>`;
+                aheadCourses.push(c.name.split(' ')[0]);
             } else {
                 statusBadge = `<span class="badge-gap-ok">✅ בקצב (שבוע ${currentW})</span>`;
+                okCourses.push(c.name.split(' ')[0]);
             }
         } else {
             const diff = currentW - latestDoneWeek;
             statusBadge = `<span class="badge-gap-behind">⚠️ פיגור של ${diff} שבועות</span>`;
+            behindCourses.push({ name: c.name.split(' ')[0], diff: diff });
         }
 
         const tr = document.createElement('tr');
@@ -3049,36 +5013,76 @@ function openQuickStatusModal() {
         tr.title = `לחץ כדי לסנן רק את משימות ${c.name}`;
         tr.onclick = () => {
             closeQuickStatusModal();
-            const btn = document.querySelector(`.filter-btn[data-filter="${c.key}"]`);
-            if (btn) btn.click();
+            toggleTasksAccordion(true);
+            const subRow = document.getElementById('courseFiltersSubRow');
+            if (subRow) subRow.style.display = 'flex';
+            const chip = document.querySelector(`[data-filter="${c.key}"]`);
+            setFilter(c.key, chip);
         };
 
         tr.innerHTML = `
             <td>
-                <span class="course-mini-pill" style="background: ${c.bg}; color: ${c.color};">
+                <span class="course-mini-pill" style="background: ${c.bg}; color: ${c.color}; font-size: 13.5px; padding: 4px 10px;">
                     ${c.name}
                 </span>
-            </td>
-            <td style="text-align: center; font-weight: 700;">
-                ${latestDoneWeek > 0 ? `שבוע ${latestDoneWeek}` : 'טרם הוחל'}
-            </td>
-            <td style="text-align: center; font-weight: 700; color: #475569;">
-                שבוע ${currentW}
             </td>
             <td style="text-align: center;">
                 ${statusBadge}
             </td>
             <td style="text-align: center;">
-                <div style="display: flex; align-items: center; gap: 8px; justify-content: center;">
-                    <div style="width: 70px; background: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden;">
-                        <div style="width: ${pct}%; background: ${c.color}; height: 100%;"></div>
-                    </div>
-                    <span style="font-size: 11px; font-weight: 800; min-width: 30px;">${pct}%</span>
-                </div>
+                <span style="font-size: 14px; font-weight: 800; color: #1e293b;">${doneC}/${totalC} (${pct}%)</span>
             </td>
         `;
         tbody.appendChild(tr);
     });
+
+    // Generate dynamic personal briefing
+    const bubbleTextEl = document.getElementById('personalBubbleText');
+    if (bubbleTextEl) {
+        const overallPct = totalAllTasks > 0 ? Math.round((totalDoneTasks / totalAllTasks) * 100) : 0;
+        let summaryMsg = `השלמת <strong>${totalDoneTasks} מתוך ${totalAllTasks}</strong> משימות בסמסטר (${overallPct}%). `;
+
+        if (behindCourses.length === 0) {
+            if (aheadCourses.length > 0) {
+                summaryMsg += `את/ה <strong>מקדים/ה את הקצב</strong> בקורס ${aheadCourses.join(', ')} – ביצועים מעולים! 🚀 תואר שני קטן עליך!`;
+            } else {
+                summaryMsg += `את/ה <strong>בול בקצב של הסמסטר</strong> בכל הקורסים! ראש שקט לחלוטין 🧘‍♂️✨`;
+            }
+        } else if (behindCourses.length === 1) {
+            const bc = behindCourses[0];
+            summaryMsg += `סך הכל המצב בשליטה טובה! יש לך השלמה קטנה של שבוע ${bc.diff === 1 ? 'אחד' : bc.diff + ' שבועות'} בקורס <strong>${bc.name}</strong> וכדאי לסגור אותה השבוע כדי להיות בראש שקט.`;
+        } else {
+            const bNames = behindCourses.map(b => b.name).join(' ו-');
+            summaryMsg += `יש כמה משימות פתוחות להשלמה ב-${bNames}. כדאי לסמן לעצמך שעה השבוע להשלים אותן כדי לחזור לקצב מלא בלי לחץ! 💪`;
+        }
+        bubbleTextEl.innerHTML = summaryMsg;
+    }
+
+    // Dedicated Portfolio row for Wassel's portfolio
+    const portfolioCompleted = WASSEL_PORTFOLIO_TASKS.filter(t => getPortfolioStatus(t.taskId) === 'completed').length;
+    const portfolioPct = Math.round((portfolioCompleted / WASSEL_PORTFOLIO_TASKS.length) * 100);
+    const pTr = document.createElement('tr');
+    pTr.style.cursor = 'pointer';
+    pTr.style.background = '#f0f9ff';
+    pTr.onclick = () => { closeQuickStatusModal(); openPortfolioModal(); };
+    pTr.title = "לחץ לפתיחת מרחב התלקיט";
+    pTr.innerHTML = `
+        <td style="font-weight: 800; color: #0369a1;">
+            <span class="course-mini-pill" style="background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; font-weight: 800;">
+                📁 תלקיט חדשנות (ואסל)
+            </span>
+        </td>
+        <td style="text-align: center;">
+            <span class="status-badge-inline" style="background: ${portfolioCompleted === 5 ? '#dcfce7' : '#ffffff'}; color: ${portfolioCompleted === 5 ? '#15803d' : '#0369a1'}; border: 1.5px solid ${portfolioCompleted === 5 ? '#86efac' : '#7dd3fc'};">
+                ${portfolioCompleted === 5 ? '✅ הושלם לתלקיט' : `⏳ ${portfolioCompleted}/5 מוכנות`}
+            </span>
+        </td>
+        <td style="text-align: center; font-weight: 700;">
+            <div style="font-size: 13.5px; color: #0284c7; font-weight: 800;">${portfolioPct}%</div>
+            <div style="font-size: 11px; color: #64748b; font-weight: 700;">יעד: 27.01</div>
+        </td>
+    `;
+    tbody.appendChild(pTr);
 
     // Long-Term Deliverables Cards
     // 1. Vassel Portfolio
@@ -3195,6 +5199,113 @@ document.addEventListener('click', (e) => {
 });
 
 
+// Accessible Pillar Zoom & Guided Process Router
+let pendingGuidedSync = false;
+
+function openPillarZoom(type) {
+    const overlay = document.getElementById('pillarZoomOverlay');
+    const titleEl = document.getElementById('pillarZoomTitle');
+    const bodyEl = document.getElementById('pillarZoomBody');
+    const actionsEl = document.getElementById('pillarZoomActions');
+    if (!overlay || !titleEl || !bodyEl || !actionsEl) return;
+
+    if (type === 'sync') {
+        titleEl.innerHTML = '<span>📅</span> <span>איך עובד הסנכרון ליומן?</span>';
+        bodyEl.innerHTML = `
+            <div class="welcome-zoom-step-box">
+                <strong>שלב 1 – מתחברים לחשבון Google:</strong><br>
+                לוחצים על הכפתור הכחול למטה ומאשרים חיבור חד-פעמי לחשבון הגוגל שלכם.
+            </div>
+            <div class="welcome-zoom-step-box">
+                <strong>שלב 2 – שתילת משימות הסמסטר ביומן:</strong><br>
+                המערכת תיצור ביומן שלכם תת-יומן נקי בשם <strong>"Roshaket - לימודים"</strong> (בלי לבלגן את האירועים הפרטיים שלכם) ותשתול בו את כל 39 משימות הסמסטר!
+            </div>
+            <div class="welcome-zoom-step-box">
+                <strong>שלב 3 – סימון V הופך לירוק ביומן:</strong><br>
+                בכל פעם שתסמנו משימה כבוצעה באפליקציה, היא תתעדכן אוטומטית ביומן הטלפון והמחשב שלכם ל-<strong>✅ [הושלם]</strong> בצבע ירוק!
+            </div>
+        `;
+        actionsEl.innerHTML = `
+            <button class="btn-zoom-action" onclick="startGuidedSyncProcess()">
+                <span>🔑</span>
+                <span>התחל עכשיו: התחבר וסנכרן את היומן שלי</span>
+            </button>
+        `;
+    } else if (type === 'tasks') {
+        titleEl.innerHTML = '<span>🚀</span> <span>יאללה בוא נלמד ונסמן!</span>';
+        bodyEl.innerHTML = `
+            <div class="welcome-zoom-step-box">
+                <strong>שבוע-אחרי-שבוע בלי לחץ:</strong><br>
+                בלוח הראשי לוחצים על <strong>"🚀 יאללה בוא נלמד"</strong> ונפתח צ'קליסט שבועי מסודר עם משימות 3 הקורסים בצבעים ברורים: 🟣 מור, 🔵 ואסל, 🟢 לוי-ורד.
+            </div>
+            <div class="welcome-zoom-step-box">
+                <strong>סימון מהיר ועדכון יומן:</strong><br>
+                לחיצה על ה-V מסמנת את המשימה כבוצעה ומעדכנת אוטומטית את יומן Google שלכם לירוק.
+            </div>
+            <div class="welcome-zoom-step-box">
+                <strong>כפתור "אוי, זה לעכשיו!":</strong><br>
+                לחיצה אחת מבודדת עבורכם אך ורק את המשימות של השבוע הנוכחי או מה שנשאר בפיגור.
+            </div>
+        `;
+        actionsEl.innerHTML = `
+            <button class="btn-zoom-action" onclick="goToTasksBoard()">
+                <span>🚀</span>
+                <span>כנס ללוח: יאללה בוא נלמד!</span>
+            </button>
+        `;
+    } else if (type === 'status') {
+        titleEl.innerHTML = '<span>🧘‍♂️</span> <span>מה המצב שלי כרגע?</span>';
+        bodyEl.innerHTML = `
+            <div class="welcome-zoom-step-box">
+                <strong>איפה אני עומד ביחס לסמסטר?</strong><br>
+                חישוב אוטומטי של השבוע האקדמי הנוכחי (כעת: <strong>שבוע 2</strong>), ובדיקה האם אתם <strong>✅ בקצב</strong>, <strong>⚠️ בפיגור</strong> או <strong>🚀 מקדימים</strong> בכל קורס.
+            </div>
+            <div class="welcome-zoom-step-box">
+                <strong>ספירה לאחור לתלקיט:</strong><br>
+                מעקב כמותי ברור אחרי משימות התלקיט של ואסל (27.01) ושלבי פרויקט ההערכה של מור.
+            </div>
+        `;
+        actionsEl.innerHTML = `
+            <button class="btn-zoom-action" onclick="closePillarZoom(); hideWelcomeScreen(); openQuickStatusModal();">
+                <span>🧘‍♂️</span>
+                <span>פתח את "מה המצב שלי כרגע?"</span>
+            </button>
+        `;
+    }
+
+    overlay.classList.add('open');
+}
+
+function closePillarZoom() {
+    const overlay = document.getElementById('pillarZoomOverlay');
+    if (overlay) overlay.classList.remove('open');
+}
+
+
+function goToTasksBoard() {
+    closePillarZoom();
+    hideWelcomeScreen();
+    toggleTasksAccordion(true);
+    setFilter('all', document.querySelector('.filter-btn-hero[data-filter="all"]'));
+    setTimeout(() => {
+        const el = document.getElementById('tasksAccordion');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 150);
+}
+
+function startGuidedSyncProcess() {
+    closePillarZoom();
+    hideWelcomeScreen();
+    if (googleAccessToken) {
+        // Already logged in -> open the guided onboarding sync modal right away!
+        openOnboardingSyncModal();
+    } else {
+        // Trigger Google login and force onboarding modal to open right after login
+        pendingGuidedSync = true;
+        handleAuthClick();
+    }
+}
+
 // Welcome Screen (Landing Gate) Router
 function showWelcomeScreen() {
     const ws = document.getElementById('welcomeScreen');
@@ -3202,38 +5313,395 @@ function showWelcomeScreen() {
 }
 
 function hideWelcomeScreen() {
+    closePillarZoom();
     const ws = document.getElementById('welcomeScreen');
     if (ws) ws.classList.add('hidden');
 }
 
 async function enterApp(mode) {
-    sessionStorage.setItem('roshaket_gate_passed', 'true');
-    hideWelcomeScreen();
+    if (mode === 'demo') {
+        sessionStorage.setItem('roshaket_gate_passed', 'true');
+        hideWelcomeScreen();
+        showToast('🎭 נכנסת למצב התנסות (דמו). תהנה!');
+        return;
+    }
 
     if (mode === 'google') {
         if (!googleAccessToken) {
+            // Keep welcome screen locked until Google verification succeeds!
             handleAuthClick();
         } else {
+            sessionStorage.setItem('roshaket_gate_passed', 'true');
+            hideWelcomeScreen();
             showToast('ברוך הבא! הנתונים האישיים שלך טעונים.');
         }
-    } else {
-        showToast('🎭 נכנסת למצב התנסות (דמו). תהנה!');
     }
 }
 
-// Auto-check on load whether to show welcome screen or directly open app
+// Always show welcome screen on app entry as requested
 window.addEventListener('DOMContentLoaded', () => {
-    const gatePassed = sessionStorage.getItem('roshaket_gate_passed');
-    // If user is already authenticated with Google, enter directly
-    if (googleAccessToken || gatePassed === 'true') {
+    showWelcomeScreen();
+});
+
+// Close modals on Escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        closeQuickStatusModal();
+        closeCourseSettingsModal();
+        closeConfigModal();
+        closeRegistrationModal();
+        closePendingApprovalModal();
         hideWelcomeScreen();
-    } else {
-        showWelcomeScreen();
     }
 });
 
+
+// --- Wassel Portfolio Tracking Logic ---
+const WASSEL_PORTFOLIO_TASKS = [
+    {
+        num: 1,
+        taskId: "w1_c2",
+        week: 1,
+        title: "ששת כובעי החשיבה (אדוארד דה-בונו)",
+        scope: "כרזה או מצגת קצרה (3–5 שקפים)",
+        desc: "הכנת כרזה או מצגת המיישמת את 6 כובעי החשיבה על המיזם החינוכי שלכם.",
+        details: [
+            "<strong>כובע לבן:</strong> עובדות ונתונים אובייקטיביים על בית הספר והמיזם.",
+            "<strong>כובע אדום:</strong> רגשות, אינטואיציה ותחושות בטן שלכם ושל הצוות.",
+            "<strong>כובע שחור:</strong> שיפוט ביקורתי, חסמים, סיכונים וקשיים ביישום.",
+            "<strong>כובע צהוב:</strong> יתרונות, הזדמנויות, אופטימיות וערך מוסף חינוכי.",
+            "<strong>כובע ירוק:</strong> חשיבה יצירתית, רעיונות חדשניים ופתרונות עוקפים.",
+            "<strong>כובע כחול:</strong> ראיית-על, ניהול תהליך החשיבה והצעדים הבאים."
+        ]
+    },
+    {
+        num: 2,
+        taskId: "w2_c2_portfolio",
+        week: 2,
+        title: "מעבר מתכנון המיזם ליישומו",
+        scope: "עד עמוד אחד",
+        desc: "תיאור המעבר משלב התכנון (שנה א') לשלב היישום בשטח במוסד החינוכי.",
+        details: [
+            "<strong>שינויים בתוכנית המקורית:</strong> האם נדרשו שינויים בתוכנית שכתבתם בקורס „תכנון חדשנות במערכת החינוך”? אם כן, תארו את השינויים שביצעתם (בנושא, במטרות, במקום היישום או ברכיבים אחרים), והסבירו מדוע נדרשו.",
+            "<strong>תרומת התוכנית לתהליך היישום:</strong> הסבירו כיצד התוכנית משנה א׳ סייעה לכם במעבר ליישום, גם אם אתם בתחילת הדרך, ואילו חלקים היו המשמעותיים ביותר.",
+            "<strong>התאמה ללא שינויים:</strong> אם לא נדרשו שינויים, הסבירו בקצרה מדוע התוכנית התאימה כפי שנכתבה.",
+            "<strong>עבודה בזוג או בקבוצה:</strong> אם אתם מיישמים את אותו מיזם באותו מוסד, הציגו גם את נקודת המבט האישית של כל אחד מחברי הקבוצה."
+        ]
+    },
+    {
+        num: 3,
+        taskId: "w5_c2",
+        week: 5,
+        title: "כלי מארגן להובלת שינוי",
+        scope: "דף עבודה / טבלה",
+        desc: "מילוי דף עבודה של כלי מארגן: ניתוח חלופות לפעולה, כוחות מניעים מול בולמים ובחירת אסטרטגיה.",
+        details: [
+            "<strong>העלאת חלופות לפעולה:</strong> פירוט מספר דרכים אפשריות להנעת השינוי במוסד.",
+            "<strong>ניתוח שדה כוחות (לוין):</strong> איתור כוחות דוחפים בעד המיזם מול כוחות בולמים (התנגדויות, חסמי זמן ומשאבים).",
+            "<strong>בחירת אסטרטגיה:</strong> נימוק הבחירה באסטרטגיה הנבחרת וגיבוש דרכי מענה להתנגדויות."
+        ]
+    },
+    {
+        num: 4,
+        taskId: "w7_c2",
+        week: 7,
+        title: "המפה המערכתית (פרופ' אינה פוקס 1995)",
+        scope: "עד 2 עמודים",
+        desc: "מיפוי מערכתי של בית הספר/המוסד החינוכי שבו מיושם המיזם.",
+        details: [
+            "<strong>מיפוי בעלי עניין:</strong> תלמידים, צוות מורים, הנהלה, הורים וקהילה/רשות.",
+            "<strong>ממשקים ויחסי גומלין:</strong> זיהוי קשרים, השפעות הדדיות ונקודות השקה בין הגורמים.",
+            "<strong>זיהוי נקודות תורפה והזדמנויות:</strong> מניעת כשלים מראש ויצירת קואליציות תומכות שינוי."
+        ]
+    },
+    {
+        num: 5,
+        taskId: "w11_c2",
+        week: 11,
+        title: "הטמעת מיומנויות SEL / מודל CASEL",
+        scope: "עד עמוד אחד",
+        desc: "שילוב היבטים רגשיים-חברתיים (SEL) במיזם על בסיס מודל CASEL (יסודי או על-יסודי).",
+        details: [
+            "<strong>5 מרכיבי CASEL:</strong> מודעות עצמית, ניהול עצמי, מודעות חברתית, מיומנויות קשר, וקבלת החלטות אחראית.",
+            "<strong>יישום במיזם:</strong> כיצד המיזם שלכם מקדם ומטמיע מיומנויות אלו בקרב התלמידים ו/או הצוות.",
+            "<strong>עוגן פדגוגי קונקרטי:</strong> תיאור פעילות/שיעור לדוגמה הממחיש את הלמידה הרגשית-חברתית במיזם."
+        ]
+    }
+];
+
+let portfolioStatuses = {};
+try {
+    const saved = localStorage.getItem('roshaket_portfolio_statuses');
+    if (saved) portfolioStatuses = JSON.parse(saved);
+} catch (e) {}
+
+function getPortfolioStatus(taskId) {
+    if (doneTasks.includes(taskId)) return 'completed';
+    return portfolioStatuses[taskId] || 'not_started';
+}
+
+function setPortfolioStatus(taskId, status) {
+    portfolioStatuses[taskId] = status;
+    try {
+        localStorage.setItem('roshaket_portfolio_statuses', JSON.stringify(portfolioStatuses));
+    } catch (e) {}
+
+    if (status === 'completed') {
+        if (!doneTasks.includes(taskId)) {
+            toggleTask(taskId, false);
+        }
+    } else {
+        if (doneTasks.includes(taskId)) {
+            toggleTask(taskId, false);
+        }
+    }
+    renderPortfolioModal();
+    render();
+}
+
+function openPortfolioModal() {
+    renderPortfolioModal();
+    const modal = document.getElementById('portfolioModal');
+    if (modal) modal.classList.add('open');
+}
+
+function closePortfolioModal() {
+    const modal = document.getElementById('portfolioModal');
+    if (modal) modal.classList.remove('open');
+}
+
+function openPortfolioModalToTask(taskId) {
+    openPortfolioModal();
+    setTimeout(() => {
+        const el = document.getElementById('portfolio_task_' + taskId);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 120);
+}
+
+function renderPortfolioModal() {
+    const container = document.getElementById('portfolioTasksContainer');
+    if (!container) return;
+
+    let completedCount = 0;
+    container.innerHTML = WASSEL_PORTFOLIO_TASKS.map(t => {
+        const status = getPortfolioStatus(t.taskId);
+        if (status === 'completed') completedCount++;
+
+        return `
+            <div class="portfolio-task-card status-${status.replace('_', '-')}" id="portfolio_task_${t.taskId}">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; flex-wrap: wrap;">
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="background: #0284c7; color: white; font-size: 11.5px; font-weight: 800; padding: 2px 8px; border-radius: 6px;">
+                                חלק ${t.num} מתוך 5
+                            </span>
+                            <span style="font-size: 12px; color: #64748b; font-weight: 700;">
+                                שבוע ${t.week} • היקף: ${t.scope}
+                            </span>
+                        </div>
+                        <h4 style="font-size: 16px; font-weight: 800; color: #0f172a; margin-top: 4px; margin-bottom: 3px;">
+                            ${t.title}
+                        </h4>
+                        <div style="font-size: 13px; color: #475569;">
+                            ${t.desc}
+                        </div>
+                    </div>
+                    <button class="btn" style="padding: 5px 10px; font-size: 11.5px; background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1;" onclick="closePortfolioModal(); scrollToWeekCard(${t.week})">
+                        קפוץ לשבוע ${t.week} ↗
+                    </button>
+                </div>
+
+                <!-- Status Selector -->
+                <div class="portfolio-status-selector">
+                    <span style="font-size: 12px; font-weight: 800; color: #64748b; margin-left: 6px;">סטטוס כתיבה:</span>
+                    <button class="portfolio-status-btn btn-not-started ${status === 'not_started' ? 'active' : ''}" onclick="setPortfolioStatus('${t.taskId}', 'not_started')">
+                        ⏳ טרם התחלתי
+                    </button>
+                    <button class="portfolio-status-btn btn-draft ${status === 'draft' ? 'active' : ''}" onclick="setPortfolioStatus('${t.taskId}', 'draft')">
+                        ✍️ בטיוטה
+                    </button>
+                    <button class="portfolio-status-btn btn-completed ${status === 'completed' ? 'active' : ''}" onclick="setPortfolioStatus('${t.taskId}', 'completed')">
+                        ✅ מוכן לתלקיט
+                    </button>
+                </div>
+
+                <!-- Full Instructions Accordion -->
+                <details style="margin-top: 10px; cursor: pointer;">
+                    <summary style="font-size: 13px; font-weight: 800; color: #0284c7; outline: none;">
+                        📋 צפה בהנחיות המלאות והדגשים של ואסל...
+                    </summary>
+                    <div class="portfolio-details-box">
+                        <ul style="margin: 0; padding-right: 18px; display: flex; flex-direction: column; gap: 6px;">
+                            ${t.details.map(d => `<li>${d}</li>`).join('')}
+                        </ul>
+                    </div>
+                </details>
+            </div>
+        `;
+    }).join('');
+
+    // Update Progress Bar
+    const progressLabel = document.getElementById('portfolioProgressLabel');
+    const progressBar = document.getElementById('portfolioProgressBar');
+    const pct = Math.round((completedCount / WASSEL_PORTFOLIO_TASKS.length) * 100);
+    if (progressLabel) progressLabel.innerText = `התקדמות תלקיט: ${completedCount} מתוך 5 משימות מוכנות (${pct}%)`;
+    if (progressBar) progressBar.style.width = pct + '%';
+}
+
+function scrollToWeekCard(weekNum) {
+    toggleTasksAccordion(true);
+    setTimeout(() => {
+        const el = document.getElementById('week_card_' + weekNum);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 150);
+}
+
 // Initial Render
 render();
+
+// ==========================================
+// ACCESS CONTROL & COURSE REGISTRATION (Google Sheets)
+// ==========================================
+const ACCESS_CONTROL_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyvK9BQDE3VYPkpq8NbkNxg_VKqMWKMluCFN1_NGrQ5-Di-WUWmZxa1v3E0A-VYCLtY/exec';
+
+const PRIMARY_ADMIN_EMAIL = 'saritofer.k@gmail.com';
+
+async function checkUserAccessApproval(email) {
+    if (!email) return { status: 'not_found' };
+    const em = email.toLowerCase().trim();
+
+    // Primary Admin (Ofer) is hardcoded as permanently approved
+    if (em === PRIMARY_ADMIN_EMAIL) {
+        return { status: 'found', approvalStatus: 'מאושר', name: 'עופר' };
+    }
+
+    try {
+        const res = await fetch(`${ACCESS_CONTROL_SCRIPT_URL}?action=check&email=${encodeURIComponent(em)}`);
+        if (res.ok) {
+            const data = await res.json();
+            return data;
+        }
+    } catch (e) {
+        console.error('Error checking user access approval:', e);
+    }
+    return { status: 'not_found' };
+}
+
+function openRegistrationModal() {
+    const modal = document.getElementById('registrationModal');
+    const nameInput = document.getElementById('regFullNameInput');
+    const emailInput = document.getElementById('regEmailInput');
+    const errorMsg = document.getElementById('regErrorMsg');
+    
+    // Always leave fields empty for manual input as requested by Ofer
+    if (nameInput) nameInput.value = '';
+    if (emailInput) emailInput.value = '';
+    if (errorMsg) errorMsg.style.display = 'none';
+
+    if (modal) modal.classList.add('open');
+}
+
+function closeRegistrationModal() {
+    const modal = document.getElementById('registrationModal');
+    if (modal) modal.classList.remove('open');
+}
+
+async function submitRegistrationRequest() {
+    const nameInput = document.getElementById('regFullNameInput');
+    const emailInput = document.getElementById('regEmailInput');
+    const errorMsg = document.getElementById('regErrorMsg');
+    const submitBtn = document.getElementById('regSubmitBtn');
+
+    const name = (nameInput ? nameInput.value : '').trim();
+    const email = (emailInput ? emailInput.value : '').trim().toLowerCase();
+
+    if (!name || !email) {
+        if (errorMsg) {
+            errorMsg.innerText = 'אנא מלא/י את שמך המלא וכתובת האימייל.';
+            errorMsg.style.display = 'block';
+        }
+        return;
+    }
+
+    if (!email.includes('@') || !email.includes('.')) {
+        if (errorMsg) {
+            errorMsg.innerText = 'כתובת האימייל אינה תקינה.';
+            errorMsg.style.display = 'block';
+        }
+        return;
+    }
+
+    if (errorMsg) errorMsg.style.display = 'none';
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>שולח בקשה...</span> <span>⏳</span>';
+    }
+
+    try {
+        const res = await fetch(`${ACCESS_CONTROL_SCRIPT_URL}?action=register&email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}`);
+        const data = await res.json();
+
+        closeRegistrationModal();
+        openPendingApprovalModal(name, email);
+        showToast('🎉 בקשתך נקלטה בהצלחה ונמצאת בבדיקה אצל עופר');
+    } catch (e) {
+        console.error('Registration error:', e);
+        if (errorMsg) {
+            errorMsg.innerText = 'חלה שגיאה בשליחת הבקשה. אנא נסה/י שוב.';
+            errorMsg.style.display = 'block';
+        }
+    } finally {
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<span>שלח בקשת הצטרפות</span> <span>🚀</span>';
+        }
+    }
+}
+
+function openPendingApprovalModal(name, email) {
+    const modal = document.getElementById('pendingApprovalModal');
+    const nameEl = document.getElementById('pendingUserName');
+    const emailEl = document.getElementById('pendingUserEmail');
+
+    if (nameEl) nameEl.textContent = name || 'סטודנט/ית';
+    if (emailEl) emailEl.textContent = email || '';
+
+    if (email) localStorage.setItem('roshaket_pending_email', email);
+    if (name) localStorage.setItem('roshaket_pending_name', name);
+
+    if (modal) modal.classList.add('open');
+}
+
+function closePendingApprovalModal() {
+    const modal = document.getElementById('pendingApprovalModal');
+    if (modal) modal.classList.remove('open');
+}
+
+function continueFromPendingToDemo() {
+    closePendingApprovalModal();
+    enterApp('demo');
+}
+
+async function checkPendingApprovalAgain() {
+    const email = document.getElementById('pendingUserEmail')?.textContent || localStorage.getItem('roshaket_pending_email');
+    if (!email) {
+        showToast('לא נמצאה כתובת מייל לבדיקה.');
+        return;
+    }
+    showToast('🔍 בודק סטטוס מול הגיליון...');
+    const approval = await checkUserAccessApproval(email);
+    if (approval.status === 'found' && approval.approvalStatus === 'מאושר') {
+        closePendingApprovalModal();
+        showToast('🎉 מזל טוב! בקשתך אושרה. מתחבר...');
+        handleAuthClick();
+    } else if (approval.status === 'found' && approval.approvalStatus === 'נדחה') {
+        closePendingApprovalModal();
+        alert('הבקשה נדחתה. לבירורים ניתן לפנות לעופר.');
+    } else {
+        showToast('⏳ עדיין ממתין לאישור של עופר בגיליון. תודה על הסבלנות!');
+    }
+}
+
 </script>
 
 </body>
