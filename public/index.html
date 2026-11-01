@@ -7697,47 +7697,42 @@ updateWhatsNewUI();
 </script>
 
 <!-- Email Consent & Privacy Modal (Roshaket Permanent Access) -->
-<div class="modal" id="emailConsentModal" role="dialog" aria-modal="true" aria-labelledby="consentModalTitle" style="z-index: 100000;">
-    <div class="modal-content" style="max-width: 520px; text-align: right; border-radius: 20px; border: 1.5px solid rgba(99, 102, 241, 0.2); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
-        <div class="modal-header" style="border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <span style="font-size: 26px;">🔒</span>
-                <div>
-                    <h3 id="consentModalTitle" style="margin: 0; font-size: 19px; font-weight: 800; color: #1e1b4b;">אישור הצטרפות ושמירת פרטים</h3>
-                    <p style="margin: 2px 0 0 0; font-size: 12.5px; color: #64748b;">Roshaket | תוכנית המהפכה (שנה ב')</p>
-                </div>
-            </div>
-            <button class="modal-close-x" onclick="closeConsentModal()" title="סגור">✕</button>
+<div class="modal-overlay" id="emailConsentModal" onclick="if(event.target === this) closeConsentModal()">
+    <div class="modal-card" style="max-width: 480px; text-align: right; padding: 24px; position: relative;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">
+            <h3 style="font-size: 18px; font-weight: 800; color: #1e1b4b; margin: 0; display: flex; align-items: center; gap: 8px;">
+                <span>🔒</span>
+                <span>אישור הצטרפות ושמירת פרטים</span>
+            </h3>
+            <button onclick="closeConsentModal()" style="background: none; border: none; font-size: 20px; color: #94a3b8; cursor: pointer; padding: 4px 8px; border-radius: 8px; line-height: 1;" title="סגור">✕</button>
         </div>
 
-        <div style="padding: 18px 0 10px 0;">
-            <div style="background: #f8fafc; border: 1.5px solid #e0e7ff; border-radius: 14px; padding: 18px 20px; margin-bottom: 18px; line-height: 1.65;">
-                <p style="font-size: 15px; color: #1e293b; margin: 0; font-weight: 600;">
-                    ברוך/ה הבא/ה לראשקט! כדי לחבר אותך לקורס ולאפשר סנכרון מטלות ליומן Google שלך, כתובת האימייל שלך תישמר במאגר המשתמשים המורשים של Roshket. אנא אשר/י בבקשה.
-                </p>
-            </div>
+        <div style="background: #f8fafc; border: 1.5px solid #e0e7ff; border-radius: 14px; padding: 16px 18px; margin-bottom: 18px; line-height: 1.65;">
+            <p style="font-size: 14.5px; color: #1e293b; margin: 0; font-weight: 600;">
+                ברוך/ה הבא/ה לראשקט! כדי לחבר אותך לקורס ולאפשר סנכרון מטלות ליומן Google שלך, כתובת האימייל שלך תישמר במאגר המשתמשים המורשים של Roshket. אנא אשר/י בבקשה.
+            </p>
+        </div>
 
-            <div style="background: #f1f5f9; border-radius: 12px; padding: 12px 16px; margin-bottom: 18px;">
-                <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; user-select: none;">
-                    <input type="checkbox" id="consentCheckbox" onchange="toggleConsentButton()" style="width: 22px; height: 22px; accent-color: #4338ca; cursor: pointer; margin-top: 2px; flex-shrink: 0;">
-                    <span style="font-size: 14px; font-weight: 700; color: #0f172a; line-height: 1.5;">
-                        אני מאשר/ת את שמירת כתובת המייל שלי במאגר המשתמשים המורשים של Roshaket.
-                    </span>
-                </label>
-            </div>
+        <div style="background: #f1f5f9; border-radius: 12px; padding: 12px 16px; margin-bottom: 18px;">
+            <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; user-select: none;">
+                <input type="checkbox" id="consentCheckbox" onchange="toggleConsentButton()" style="width: 22px; height: 22px; accent-color: #4338ca; cursor: pointer; margin-top: 2px; flex-shrink: 0;">
+                <span style="font-size: 14px; font-weight: 700; color: #0f172a; line-height: 1.5;">
+                    אני מאשר/ת את שמירת כתובת המייל שלי במאגר המשתמשים המורשים של Roshaket.
+                </span>
+            </label>
+        </div>
 
-            <div id="consentErrorMsg" style="display: none; background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; padding: 10px 14px; border-radius: 10px; font-size: 13px; font-weight: 700; margin-bottom: 15px;">
-            </div>
+        <div id="consentErrorMsg" style="display: none; background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; padding: 10px 14px; border-radius: 10px; font-size: 13px; font-weight: 700; margin-bottom: 15px;">
+        </div>
 
-            <div style="display: flex; gap: 10px; justify-content: flex-end; align-items: center;">
-                <button type="button" class="btn-welcome-secondary" onclick="closeConsentModal()" style="padding: 10px 18px; font-size: 14px;">
-                    ביטול
-                </button>
-                <button type="button" class="btn-welcome-primary" id="confirmConsentBtn" onclick="submitConsentAndEnroll()" disabled style="opacity: 0.5; cursor: not-allowed; padding: 10px 22px; font-size: 14.5px;">
-                    <span>✅</span>
-                    <span>אשר/י והיכנס/י למערכת</span>
-                </button>
-            </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end; align-items: center;">
+            <button type="button" class="btn-welcome-secondary" onclick="closeConsentModal()" style="padding: 9px 16px; font-size: 13.5px;">
+                ביטול
+            </button>
+            <button type="button" class="btn-welcome-primary" id="confirmConsentBtn" onclick="submitConsentAndEnroll()" disabled style="opacity: 0.5; cursor: not-allowed; padding: 9px 20px; font-size: 14px;">
+                <span>✅</span>
+                <span>אשר/י והיכנס/י למערכת</span>
+            </button>
         </div>
     </div>
 </div>
