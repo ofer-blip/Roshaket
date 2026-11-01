@@ -1803,6 +1803,52 @@
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
         }
 
+        .btn-welcome-register {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            color: #ffffff;
+            border: none;
+            padding: 12px 22px;
+            border-radius: 12px;
+            font-size: 14.5px;
+            font-weight: 800;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 8px 20px -5px rgba(16, 185, 129, 0.4);
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .btn-welcome-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px -5px rgba(16, 185, 129, 0.6);
+            background: linear-gradient(135deg, #047857 0%, #059669 100%);
+        }
+
+        .btn-compact-register {
+            background: #ecfdf5;
+            color: #047857;
+            border: 1.5px solid #a7f3d0;
+            padding: 6px 13px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-compact-register:hover {
+            background: #10b981;
+            color: #ffffff;
+            border-color: #059669;
+            transform: translateY(-1px);
+        }
+
         .btn-welcome-secondary:hover {
             background: #f8fafc;
             color: #1e1b4b;
@@ -2476,6 +2522,570 @@
             color: #ffffff;
         }
 
+        /* ==========================================
+           Lesson Summaries, Study Helper & What's New Bubble
+           (Spacious, Responsive Mobile + Desktop + Print)
+           ========================================== */
+        .btn-bell-wrap {
+            position: relative;
+            display: inline-flex;
+        }
+
+        .bell-unread-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: 800;
+            min-width: 19px;
+            height: 19px;
+            padding: 0 5px;
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #1e1b4b;
+            box-shadow: 0 2px 6px rgba(239, 68, 68, 0.45);
+            animation: pulseRedDot 2s infinite;
+            pointer-events: none;
+        }
+
+        /* Floating What's New Bubble Banner (Spacious & Airy) */
+        .whats-new-bubble {
+            background: linear-gradient(135deg, #ffffff 0%, #f5f3ff 100%);
+            border: 2px solid #c4b5fd;
+            border-radius: 18px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            box-shadow: 0 8px 22px -6px rgba(99, 102, 241, 0.16);
+            position: relative;
+            transition: all 0.25s ease;
+        }
+
+        .whats-new-bubble:hover {
+            border-color: #8b5cf6;
+            box-shadow: 0 10px 26px -5px rgba(99, 102, 241, 0.22);
+        }
+
+        .whats-new-bubble-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex: 1;
+            min-width: 240px;
+            cursor: pointer;
+        }
+
+        .whats-new-bubble-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
+            color: #ffffff;
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .whats-new-bubble-texts h4 {
+            font-size: 16px;
+            font-weight: 800;
+            color: #1e1b4b;
+            margin-bottom: 3px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .whats-new-tag-pill {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fde68a;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 999px;
+        }
+
+        .whats-new-bubble-texts p {
+            font-size: 13.5px;
+            color: #475569;
+            font-weight: 600;
+            line-height: 1.45;
+        }
+
+        .whats-new-bubble-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .btn-whats-new-open {
+            background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+            color: #ffffff;
+            border: none;
+            padding: 9px 16px;
+            border-radius: 12px;
+            font-size: 13.5px;
+            font-weight: 800;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+            transition: all 0.2s;
+        }
+
+        .btn-whats-new-open:hover {
+            transform: translateY(-1px);
+            background: linear-gradient(135deg, #4338ca 0%, #4f46e5 100%);
+        }
+
+        .btn-whats-new-dismiss {
+            background: #f1f5f9;
+            color: #64748b;
+            border: 1px solid #cbd5e1;
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .btn-whats-new-dismiss:hover {
+            background: #fee2e2;
+            color: #dc2626;
+            border-color: #fca5a5;
+        }
+
+        /* Spacious Lesson Summary Action Row inside Task Card */
+        .task-summary-action-row {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed rgba(99, 102, 241, 0.22);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .lesson-summary-btn {
+            background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 11px;
+            padding: 8px 14px;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+            transition: all 0.2s ease;
+            flex-grow: 1;
+            justify-content: center;
+            min-height: 40px;
+        }
+
+        .lesson-summary-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(99, 102, 241, 0.35);
+            background: linear-gradient(135deg, #4338ca 0%, #4f46e5 100%);
+        }
+
+        .lesson-summary-count-badge {
+            background: rgba(255, 255, 255, 0.22);
+            color: #ffffff;
+            padding: 1px 8px;
+            border-radius: 999px;
+            font-size: 11.5px;
+            font-weight: 800;
+        }
+
+        .btn-admin-add-summary-mini {
+            background: #ffffff;
+            color: #4338ca;
+            border: 1.5px dashed #a5b4fc;
+            border-radius: 10px;
+            padding: 6px 10px;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.18s;
+            min-height: 36px;
+        }
+
+        .btn-admin-add-summary-mini:hover {
+            background: #eef2ff;
+            border-color: #6366f1;
+        }
+
+        /* Study Helper Workspace Modal (Spacious & Airy) */
+        .study-workspace-card {
+            background: #f8fafc;
+            border-radius: 24px;
+            max-width: 880px;
+            width: 100%;
+            max-height: 92dvh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.45), 0 0 0 2px rgba(99, 102, 241, 0.25);
+            text-align: right;
+        }
+
+        .study-workspace-header {
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 65%, #4338ca 100%);
+            color: #ffffff;
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 14px;
+            flex-shrink: 0;
+        }
+
+        .study-workspace-title-wrap h3 {
+            font-size: 21px;
+            font-weight: 800;
+            color: #ffffff;
+            line-height: 1.3;
+            margin-top: 4px;
+        }
+
+        .study-workspace-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            font-size: 12.5px;
+            font-weight: 700;
+            color: #e0e7ff;
+        }
+
+        /* Multi-Summary Switcher Bar (when a lesson has 2+ summaries) */
+        .summary-switcher-bar {
+            background: #eef2ff;
+            border-bottom: 1.5px solid #c7d2fe;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            flex-shrink: 0;
+        }
+
+        .summary-switcher-tab {
+            background: #ffffff;
+            color: #312e81;
+            border: 1.5px solid #c7d2fe;
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-size: 13.5px;
+            font-weight: 800;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.18s;
+        }
+
+        .summary-switcher-tab:hover {
+            background: #f5f3ff;
+            border-color: #818cf8;
+        }
+
+        .summary-switcher-tab.active {
+            background: #4338ca;
+            color: #ffffff;
+            border-color: #4338ca;
+            box-shadow: 0 4px 10px rgba(67, 56, 202, 0.25);
+        }
+
+        /* Quick Section Filter Tabs inside Workspace */
+        .study-section-nav {
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+            flex-shrink: 0;
+        }
+
+        .study-section-pills {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .study-nav-pill {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1.5px solid #e2e8f0;
+            padding: 7px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.18s;
+        }
+
+        .study-nav-pill:hover {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+
+        .study-nav-pill.active {
+            background: #0f172a;
+            color: #ffffff;
+            border-color: #0f172a;
+        }
+
+        .study-workspace-body {
+            padding: 24px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+            flex-grow: 1;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Spacious Content Blocks inside Workspace */
+        .study-block-card {
+            background: #ffffff;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 18px;
+            padding: 22px 24px;
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.03);
+        }
+
+        .study-block-card.block-admin-rules {
+            border-right: 5px solid #f59e0b;
+            background: linear-gradient(to left, #fffbeb 0%, #ffffff 35%);
+        }
+
+        .study-block-card.block-concepts {
+            border-right: 5px solid #6366f1;
+        }
+
+        .study-block-card.block-exercise {
+            border-right: 5px solid #10b981;
+            background: linear-gradient(to left, #f0fdf4 0%, #ffffff 30%);
+        }
+
+        .study-block-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+
+        .study-block-header h4 {
+            font-size: 18px;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .study-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .study-list li {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 14px 16px;
+            font-size: 14.5px;
+            line-height: 1.65;
+            color: #1e293b;
+        }
+
+        .study-list li strong {
+            color: #1e1b4b;
+            font-weight: 800;
+        }
+
+        /* Responsive 5-Step Logic Model / Exercise Flow Grid */
+        .logic-model-flow-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 10px;
+        }
+
+        @media (min-width: 780px) {
+            .logic-model-flow-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 12px;
+                align-items: stretch;
+            }
+        }
+
+        .logic-step-card {
+            background: #ffffff;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            position: relative;
+            box-shadow: 0 3px 10px rgba(15, 23, 42, 0.04);
+            transition: transform 0.2s;
+        }
+
+        .logic-step-card:hover {
+            transform: translateY(-2px);
+            border-color: #6366f1;
+        }
+
+        .logic-step-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #1e1b4b;
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 999px;
+            align-self: flex-start;
+        }
+
+        .logic-step-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: #1e1b4b;
+            line-height: 1.3;
+        }
+
+        .logic-step-question {
+            font-size: 13px;
+            font-weight: 800;
+            color: #4338ca;
+            background: #eef2ff;
+            padding: 6px 10px;
+            border-radius: 8px;
+        }
+
+        .logic-step-desc {
+            font-size: 13.5px;
+            color: #334155;
+            line-height: 1.55;
+        }
+
+        .logic-step-example {
+            font-size: 12.5px;
+            color: #065f46;
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            padding: 8px 10px;
+            border-radius: 10px;
+            line-height: 1.45;
+            margin-top: auto;
+        }
+
+        .study-workspace-footer {
+            background: #ffffff;
+            border-top: 1.5px solid #e2e8f0;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            flex-shrink: 0;
+        }
+
+        /* Admin Alma Studio Modal Styles */
+        .alma-upload-dropzone {
+            border: 2px dashed #818cf8;
+            background: #f5f3ff;
+            border-radius: 16px;
+            padding: 22px 18px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 16px;
+        }
+
+        .alma-upload-dropzone:hover {
+            background: #ede9fe;
+            border-color: #4f46e5;
+        }
+
+        .alma-studio-field {
+            margin-bottom: 16px;
+        }
+
+        .alma-studio-field label {
+            display: block;
+            font-size: 13.5px;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 6px;
+        }
+
+        .alma-studio-input, .alma-studio-textarea, .alma-studio-select {
+            width: 100%;
+            padding: 11px 14px;
+            border-radius: 12px;
+            border: 1.5px solid #cbd5e1;
+            font-family: inherit;
+            font-size: 14px;
+            color: #0f172a;
+            background: #ffffff;
+            line-height: 1.55;
+            outline: none;
+        }
+
+        .alma-studio-input:focus, .alma-studio-textarea:focus, .alma-studio-select:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.14);
+        }
+
+        @media (max-width: 600px) {
+            .study-workspace-header { padding: 16px 18px; }
+            .study-workspace-body { padding: 16px; gap: 16px; }
+            .study-block-card { padding: 16px; }
+            .study-section-nav { padding: 10px 16px; }
+            .summary-switcher-bar { padding: 10px 16px; }
+            .study-workspace-footer { padding: 12px 16px; }
+        }
+
     </style>
 </head>
 <body>
@@ -2524,17 +3134,18 @@
                 <span>🔑</span>
                 <span>התחבר לחשבון שלי (Google)</span>
             </button>
+            <button class="btn-welcome-register" onclick="enterApp('google')" title="הרשמה והצטרפות לקורס עם חשבון Google">
+                <span>📝</span>
+                <span>הרשמה והצטרפות לקורס</span>
+            </button>
             <button class="btn-welcome-secondary" onclick="enterApp('demo')">
                 <span>🚀</span>
                 <span>כניסה להתנסות (מצב דמו)</span>
             </button>
         </div>
 
-        <div style="text-align: center; margin-top: 14px;">
-            <button type="button" onclick="openRegistrationModal()" style="background: none; border: none; color: #4338ca; font-weight: 700; font-size: 13.5px; text-decoration: underline; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-family: inherit;">
-                <span>📝</span>
-                <span>עדיין לא רשום/ה לקורס? הגישו בקשת הצטרפות</span>
-            </button>
+        <div style="text-align: center; margin-top: 12px; font-size: 13px; color: #475569; font-weight: 600;">
+            <span>💡 רישום או כניסה מתבצעים ישירות עם חשבון Google ומעניקים גישה קבועה</span>
         </div>
 
         <div class="welcome-footer-tag">
@@ -2600,6 +3211,11 @@
                             <div class="dropdown-divider"></div>
                             <!-- Admin-only vs Regular user items -->
                             <div id="adminMenuItems" style="display: none;">
+                                <button class="dropdown-item" onclick="openAlmaStudioModal(); closeOptionsMenu();" style="background: #f5f3ff; color: #4338ca; font-weight: 800;">
+                                    <span>🎙️</span>
+                                    <span>העלאת תמלול מאלמה (.txt) וסיכומים</span>
+                                </button>
+                                <div class="dropdown-divider"></div>
                                 <button class="dropdown-item" onclick="openCourseSettingsModal(); closeOptionsMenu();">
                                     <span>⚙️</span>
                                     <span>ניהול קורסים וסילבוס (מנהל)</span>
@@ -2621,16 +3237,29 @@
                         </div>
                     </div>
 
+                    <!-- What's New Bell Notification Button (🔔) -->
+                    <div class="btn-bell-wrap">
+                        <button class="btn-icon-round" onclick="openWhatsNewModal()" title="מה חדש בראשקט? עדכונים וסיכומי שיעור">
+                            🔔
+                        </button>
+                        <span class="bell-unread-badge" id="whatsNewBadgeCount" style="display: none;">1</span>
+                    </div>
+
                     <!-- Question Mark Icon Button (?) -->
                     <button class="btn-icon-round" onclick="showWelcomeScreen()" title="דף כניסה והסבר על ראשקט">
                         ?
                     </button>
                 </div>
 
-                <!-- Account Connect Button -->
-                <button class="btn btn-google btn-compact-auth" id="googleAuthBtn" onclick="handleAuthClick()">
-                    <span>🔑</span> <span>התחבר לחשבון Google</span>
-                </button>
+                <!-- Account Connect & Register Buttons (Shown when not connected) -->
+                <div id="unauthButtonsRow" style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: flex-end;">
+                    <button class="btn btn-google btn-compact-auth" id="googleAuthBtn" onclick="handleAuthClick()">
+                        <span>🔑</span> <span>התחבר לחשבון Google</span>
+                    </button>
+                    <button class="btn-compact-register" id="headerRegisterBtn" onclick="handleAuthClick()" title="הרשמה והצטרפות לקורס">
+                        <span>📝</span> <span>הצטרפות לקורס</span>
+                    </button>
+                </div>
 
                 <!-- Connected Action Sub-row: Sync to Calendar + Logout (Shown only when connected) -->
                 <div id="connectedActionsRow" style="display: none; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: flex-end;">
@@ -2644,6 +3273,27 @@
             </div>
         </div>
     </header>
+
+    <!-- 0. Spacious What's New Bubble Banner (Dismissible, shows latest lesson summary) -->
+    <div class="whats-new-bubble" id="whatsNewBubbleBanner" style="display: none;">
+        <div class="whats-new-bubble-left" id="whatsNewBubbleClickArea">
+            <div class="whats-new-bubble-icon">✨</div>
+            <div class="whats-new-bubble-texts">
+                <h4>
+                    <span id="whatsNewBubbleTitle">חדש בראשקט: סיכום שיעור ועזר לתרגיל!</span>
+                    <span class="whats-new-tag-pill" id="whatsNewBubbleTag">שבוע 3 • חדש</span>
+                </h4>
+                <p id="whatsNewBubbleDesc">עלה סיכום המפגש של ד"ר ישי מור: נהלי הגשה, תיאוריית השינוי ושליף מלא למילוי תרגיל "המודל הלוגי" (נייד/שולחני + הורדת PDF).</p>
+            </div>
+        </div>
+        <div class="whats-new-bubble-actions">
+            <button class="btn-whats-new-open" id="whatsNewBubbleOpenBtn">
+                <span>📖</span>
+                <span>פתח סיכום ↗</span>
+            </button>
+            <button class="btn-whats-new-dismiss" onclick="dismissWhatsNewBubble(event)" title="סגור הודעה (תמיד זמין בפעמון 🔔 למעלה)">✕</button>
+        </div>
+    </div>
 
     <!-- 1. Full-Width Clean Quick Status Bar -->
     <div class="quick-status-bar" id="quickStatusBar" style="padding: 15px 20px; margin-bottom: 20px;" onclick="openQuickStatusModal()" title="מה המצב שלי כרגע?">
@@ -3322,6 +3972,227 @@
     </div>
 </div>
 
+<!-- Spacious Study Helper & Lesson Summary Workspace Modal -->
+<div class="modal-overlay" id="lessonSummaryModal" onclick="if(event.target === this) closeLessonSummaryModal()">
+    <div class="study-workspace-card">
+        <div class="study-workspace-header">
+            <div class="study-workspace-title-wrap">
+                <div class="study-workspace-meta" id="summaryModalMeta">
+                    <span>🟣 הערכת תוכניות – מור</span>
+                    <span>•</span>
+                    <span>שבוע 3 (01.11.2026)</span>
+                </div>
+                <h3 id="summaryModalTitle">סיכום מפגש + שליף לתרגיל: תיאוריית השינוי והמודל הלוגי</h3>
+            </div>
+            <button class="modal-close-x" onclick="closeLessonSummaryModal()" title="סגור חלונית עבודה">✕</button>
+        </div>
+
+        <!-- Multi-summary switcher (shown when a lesson/day has 2+ summaries or for Admin to add a 2nd summary) -->
+        <div class="summary-switcher-bar" id="summarySwitcherBar" style="display: none;">
+            <!-- Populated dynamically via JS -->
+        </div>
+
+        <!-- Quick Section Filter & Action Bar -->
+        <div class="study-section-nav">
+            <div class="study-section-pills">
+                <button class="study-nav-pill active" data-sec="all" onclick="setSummarySectionFilter('all', this)">🌟 הכל במבט אחד</button>
+                <button class="study-nav-pill" data-sec="rules" onclick="setSummarySectionFilter('rules', this)">🛠️ נהלים והגשה</button>
+                <button class="study-nav-pill" data-sec="concepts" onclick="setSummarySectionFilter('concepts', this)">🧠 מושגי השיעור</button>
+                <button class="study-nav-pill" data-sec="exercise" onclick="setSummarySectionFilter('exercise', this)">📊 שליף לתרגיל</button>
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button class="btn" style="padding: 6px 12px; min-height: 36px; font-size: 12.5px; background: #ecfdf5; color: #047857; border-color: #a7f3d0;" onclick="copySummaryTemplateToClipboard()">
+                    <span>📋</span>
+                    <span>העתק תבנית לתרגיל</span>
+                </button>
+                <button class="btn btn-primary" style="padding: 6px 14px; min-height: 36px; font-size: 12.5px;" onclick="downloadCurrentSummaryPdf()">
+                    <span>📥</span>
+                    <span>הורד דף עזר (PDF)</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Spacious Scrollable Body -->
+        <div class="study-workspace-body" id="summaryModalBody">
+            <!-- Populated dynamically via JS -->
+        </div>
+
+        <!-- Workspace Footer -->
+        <div class="study-workspace-footer">
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;" id="summaryAdminFooterActions">
+                <!-- Admin edit / add second summary buttons injected here -->
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-right: auto;">
+                <button class="btn" style="padding: 8px 14px; min-height: 38px; font-size: 13px;" onclick="downloadCurrentSummaryDoc()">
+                    📄 הורד כקובץ Word/טקסט
+                </button>
+                <button class="btn btn-primary" style="padding: 8px 18px; min-height: 38px; font-size: 13.5px; background: #0f172a;" onclick="closeLessonSummaryModal()">
+                    סגור חלונית
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- What's New & Updates Feed Modal ("מה חדש בראשקט?") -->
+<div class="modal-overlay" id="whatsNewModal" onclick="if(event.target === this) closeWhatsNewModal()">
+    <div class="modal-card" style="max-width: 620px; width: 100%; max-height: 88dvh; display: flex; flex-direction: column; padding: 0; overflow: hidden; text-align: right;">
+        <div style="background: linear-gradient(135deg, #1e1b4b 0%, #4338ca 100%); color: white; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 28px;">🔔</span>
+                <div>
+                    <h3 style="font-size: 20px; font-weight: 800; color: white; margin: 0;">מה חדש בראשקט?</h3>
+                    <p style="font-size: 13px; color: #e0e7ff; margin: 2px 0 0 0;">עדכונים שוטפים, סיכומי שיעור ודפי עזר לתרגילים</p>
+                </div>
+            </div>
+            <button class="modal-close-x" onclick="closeWhatsNewModal()" title="סגור">✕</button>
+        </div>
+
+        <div id="whatsNewFeedContainer" style="padding: 20px 22px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; background: #f8fafc; flex-grow: 1;">
+            <!-- Populated dynamically via JS -->
+        </div>
+
+        <div style="padding: 14px 22px; background: #ffffff; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <button class="btn" id="whatsNewAdminUploadBtn" style="display: none; background: #f5f3ff; color: #4338ca; border-color: #c4b5fd; font-size: 13px; padding: 8px 14px; min-height: 38px;" onclick="closeWhatsNewModal(); openAlmaStudioModal();">
+                🎙️ העלה תמלול חדש מאלמה (.txt)
+            </button>
+            <button class="btn btn-primary" style="background: #0f172a; color: white; margin-right: auto; padding: 8px 20px; min-height: 38px;" onclick="closeWhatsNewModal()">
+                הבנתי, תודה!
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Admin Alma (.txt) Upload & Summary Studio Modal -->
+<div class="modal-overlay" id="almaStudioModal" onclick="if(event.target === this) closeAlmaStudioModal()">
+    <div class="study-workspace-card" style="max-width: 780px;">
+        <div class="study-workspace-header" style="background: linear-gradient(135deg, #312e81 0%, #4f46e5 100%);">
+            <div class="study-workspace-title-wrap">
+                <div class="study-workspace-meta">
+                    <span>🎙️ צינור שיגור אוטומטי: Alma ➔ Roshaket</span>
+                </div>
+                <h3>סטודיו עריכת ושיגור סיכומי שיעור (מנהל)</h3>
+            </div>
+            <button class="modal-close-x" onclick="closeAlmaStudioModal()" title="סגור">✕</button>
+        </div>
+
+        <div class="study-workspace-body" style="padding: 22px 24px; gap: 18px;">
+            <!-- Step 1: Target Week & Course Selection -->
+            <div class="study-block-card" style="padding: 18px 20px;">
+                <div style="font-weight: 800; font-size: 16px; color: #1e1b4b; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                    <span>1️⃣</span>
+                    <span>שיוך הסיכום לשבוע ולקורס (תומך במספר סיכומים לאותו יום/שיעור):</span>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                    <div class="alma-studio-field" style="margin-bottom: 0;">
+                        <label>בחר שבוע בסמסטר:</label>
+                        <select id="almaWeekSelect" class="alma-studio-select" onchange="onAlmaTargetChange()"></select>
+                    </div>
+                    <div class="alma-studio-field" style="margin-bottom: 0;">
+                        <label>בחר קורס:</label>
+                        <select id="almaCourseSelect" class="alma-studio-select" onchange="onAlmaTargetChange()">
+                            <option value="mor">🟣 הערכת תוכניות – ד"ר ישי מור</option>
+                            <option value="wassel">🔵 פיתוח חדשנות – ד"ר ואסל</option>
+                            <option value="levy">🟢 סוגיות בהערכה – ד"ר עדי לוי-ורד</option>
+                        </select>
+                    </div>
+                    <div class="alma-studio-field" style="margin-bottom: 0;">
+                        <label>פעולה (סיכום חדש או עריכת קיים):</label>
+                        <select id="almaExistingSelect" class="alma-studio-select" onchange="onAlmaExistingSelectChange()"></select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Upload .txt from Alma (Mobile/Desktop) -->
+            <div class="study-block-card" style="padding: 18px 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
+                    <div style="font-weight: 800; font-size: 16px; color: #1e1b4b; display: flex; align-items: center; gap: 8px;">
+                        <span>2️⃣</span>
+                        <span>טעינת קובץ תמלול מאלמה (<code>.txt</code>) מהנייד או הדבקת טקסט:</span>
+                    </div>
+                    <button type="button" class="btn" style="padding: 5px 10px; min-height: 32px; font-size: 12px;" onclick="promptAdminGeminiKey()">
+                        🔑 הגדר מפתח Gemini AI (אופציונלי)
+                    </button>
+                </div>
+
+                <div class="alma-upload-dropzone" onclick="document.getElementById('almaTxtFileInput').click()">
+                    <div style="font-size: 32px; margin-bottom: 6px;">📲</div>
+                    <div style="font-weight: 800; font-size: 15px; color: #312e81;">לחץ לבחירת קובץ <code>.txt</code> מאלמה (מהנייד או מהמחשב)</div>
+                    <div style="font-size: 12.5px; color: #64748b; margin-top: 4px;" id="almaFileStatusText">מנקה אוטומטית שיבושי תמלול ומזקק נהלים, מושגי ליבה ושליף לתרגיל</div>
+                    <input type="file" id="almaTxtFileInput" accept=".txt,.md,text/plain" style="display: none;" onchange="handleAlmaTxtFilePicked(this)">
+                </div>
+
+                <details style="margin-bottom: 12px;">
+                    <summary style="font-size: 13px; font-weight: 800; color: #4f46e5; cursor: pointer;">או הדבק כאן ישירות את הטקסט הגולמי מאלמה...</summary>
+                    <textarea id="almaRawTranscriptInput" class="alma-studio-textarea" rows="4" style="margin-top: 8px;" placeholder="הדבק כאן את התמלול הגולמי (למשל: דובר 1: ...) ולחץ על כפתור הזיקוק האוטומטי למטה"></textarea>
+                </details>
+
+                <button type="button" class="btn btn-primary" id="almaDistillBtn" style="width: 100%; justify-content: center; padding: 12px; font-size: 15px;" onclick="processRawAlmaTranscript()">
+                    <span>✨</span>
+                    <span>זקק תמלול אוטומטית לבלוקים מרווחים (ניקוי שגיאות + שליף לתרגיל)</span>
+                </button>
+            </div>
+
+            <!-- Step 3: Spacious Block Editor before publishing -->
+            <div class="study-block-card" style="padding: 18px 20px;">
+                <div style="font-weight: 800; font-size: 16px; color: #1e1b4b; margin-bottom: 14px; display: flex; align-items: center; gap: 8px;">
+                    <span>3️⃣</span>
+                    <span>עריכה ודיוק לפני פרסום לסטודנטים:</span>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px;">
+                    <div class="alma-studio-field">
+                        <label>כותרת הסיכום / השיעור:</label>
+                        <input type="text" id="almaEditTitle" class="alma-studio-input" placeholder="למשל: מחזון ותיאוריית שינוי למודל לוגי">
+                    </div>
+                    <div class="alma-studio-field">
+                        <label>תווית לשונית (כשיש 2 סיכומים באותו שיעור):</label>
+                        <input type="text" id="almaEditTabLabel" class="alma-studio-input" placeholder="למשל: חלק א' – הרצאה ומודל לוגי">
+                    </div>
+                </div>
+
+                <div class="alma-studio-field">
+                    <label>תקציר קצר לבועית "🔔 מה חדש?" (משפט אחד או שניים):</label>
+                    <input type="text" id="almaEditTeaser" class="alma-studio-input" placeholder="למשל: עלה סיכום השיעור של ישי + שליף 5 השלבים למילוי שקף המודל הלוגי!">
+                </div>
+
+                <div class="alma-studio-field">
+                    <label>🛠️ בלוק 1: נהלי עבודה, הגשות ודגשים מעשיים (כל שורה = סעיף מרווח):</label>
+                    <textarea id="almaEditRules" class="alma-studio-textarea" rows="4" placeholder="כל שורה תהפוך לכרטיסיית נוהל ברורה..."></textarea>
+                </div>
+
+                <div class="alma-studio-field">
+                    <label>🧠 בלוק 2: מושגי יסוד ודוגמאות מהכיתה (כל שורה = מושג מרווח):</label>
+                    <textarea id="almaEditConcepts" class="alma-studio-textarea" rows="5" placeholder="כל שורה תהפוך לכרטיסיית מושג ברורה..."></textarea>
+                </div>
+
+                <div class="alma-studio-field">
+                    <label>📊 בלוק 3: שלבי השליף לתרגיל (פורמט לכל שורה: <code>שם השלב | שאלה מנחה | הסבר | דוגמה</code>):</label>
+                    <textarea id="almaEditSteps" class="alma-studio-textarea" rows="5" placeholder="1. משאבים (Inputs) | עם מה אני עובד/ת? | מה שיש לי ביד כדי להתחיל | שעתיים שבועיות, חדר קיים, מתנדבים"></textarea>
+                </div>
+
+                <div class="alma-studio-field" style="margin-bottom: 0;">
+                    <label>📋 בלוק 4: תבנית מוכנה להעתקה עבור הסטודנטים (להדבקה במצגת / Docs):</label>
+                    <textarea id="almaEditTemplate" class="alma-studio-textarea" rows="4" placeholder="טקסט מוכן שיועתק ללוח של הסטודנט בלחיצה על כפתור 'העתק תבנית'..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="study-workspace-footer">
+            <button type="button" class="btn" id="almaDeleteBtn" style="display: none; background: #fef2f2; color: #dc2626; border-color: #fecaca;" onclick="deleteCurrentAlmaSummary()">
+                🗑️ מחק סיכום זה
+            </button>
+            <div style="display: flex; gap: 10px; margin-right: auto; flex-wrap: wrap;">
+                <button type="button" class="btn" onclick="closeAlmaStudioModal()">ביטול</button>
+                <button type="button" class="btn btn-primary" style="padding: 10px 22px; font-size: 15px;" onclick="saveAndPublishAlmaSummary()">
+                    <span>🚀</span>
+                    <span>פרסם לסטודנטים בראשקט!</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 // Google OAuth & Calendar API Configuration
 const DEFAULT_CLIENT_ID = '889823725975-l5p1o8nnnsffqpc9lb9dr5vfdq15vsrn.apps.googleusercontent.com';
@@ -3590,6 +4461,46 @@ function toggleSinglePastWeek(weekNum, event) {
 
 function renderTaskCardHtml(t) {
     const isDone = doneTasks.includes(t.id);
+    const taskWeekNum = parseInt((t.id.match(/^w(\d+)_/) || [0, 0])[1], 10);
+    const isMainCourseCard = !t.id.endsWith('_portfolio');
+    const summariesForTask = (isMainCourseCard && typeof getSummariesForCourseWeek === 'function')
+        ? getSummariesForCourseWeek(taskWeekNum, t.courseKey)
+        : [];
+    const adminMode = (typeof isOferAdmin === 'function') && isOferAdmin();
+
+    let summaryActionRowHtml = '';
+    if (isMainCourseCard && (summariesForTask.length > 0 || adminMode)) {
+        if (summariesForTask.length > 0) {
+            const btnLabel = summariesForTask.length > 1
+                ? `סיכומי שיעור ועזרים (${summariesForTask.length})`
+                : `סיכום שיעור + שליף לתרגיל`;
+            summaryActionRowHtml = `
+                <div class="task-summary-action-row">
+                    <button type="button" class="lesson-summary-btn" onclick="event.stopPropagation(); openLessonSummaryModal(${taskWeekNum}, '${t.courseKey}')">
+                        <span>✨</span>
+                        <span>${btnLabel}</span>
+                        <span class="lesson-summary-count-badge">${summariesForTask.length > 1 ? summariesForTask.length + ' סיכומים' : 'פתח חלונית עבודה'} ↗</span>
+                    </button>
+                    ${adminMode ? `
+                        <button type="button" class="btn-admin-add-summary-mini" onclick="event.stopPropagation(); openAlmaStudioModal(${taskWeekNum}, '${t.courseKey}', 'new')" title="הוסף סיכום נוסף לשיעור זה (מאלמה .txt)">
+                            <span>🎙️</span>
+                            <span>+ סיכום</span>
+                        </button>
+                    ` : ''}
+                </div>
+            `;
+        } else if (adminMode) {
+            summaryActionRowHtml = `
+                <div class="task-summary-action-row">
+                    <button type="button" class="btn-admin-add-summary-mini" style="width: 100%; justify-content: center;" onclick="event.stopPropagation(); openAlmaStudioModal(${taskWeekNum}, '${t.courseKey}', 'new')">
+                        <span>🎙️</span>
+                        <span>העלה תמלול אלמה (.txt) / סיכום לשיעור זה</span>
+                    </button>
+                </div>
+            `;
+        }
+    }
+
     return `
         <div class="task-item ${t.courseClass} ${isDone ? 'done' : ''}" id="card_${t.id}">
             <div class="task-top">
@@ -3614,6 +4525,7 @@ function renderTaskCardHtml(t) {
                     <div class="task-desc">${t.desc}</div>
                 </div>
             </div>
+            ${summaryActionRowHtml}
             <div class="task-user-note-wrap">
                 ${userTaskNotes[t.id] ? `
                     <div class="task-user-note-display task-user-note-badge" onclick="editTaskNote('${t.id}')" title="לחץ לעריכת ההערה">
@@ -3690,6 +4602,7 @@ function render() {
 
             const pastCard = document.createElement('div');
             pastCard.className = `past-week-compact-card ${isExpanded ? 'open' : ''}`;
+            pastCard.id = 'week_card_' + w.weekNum;
             pastCard.innerHTML = `
                 <div class="past-week-compact-header" onclick="toggleSinglePastWeek(${w.weekNum}, event)">
                     <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
@@ -3729,6 +4642,7 @@ function render() {
 
         const card = document.createElement('div');
         card.className = `week-card ${isCurrentWeek ? 'current-week' : ''}`;
+        card.id = 'week_card_' + w.weekNum;
         
         const missingInPastUrgent = isPastWeek ? visibleWeekTasks.filter(t => !doneTasks.includes(t.id)).length : 0;
 
@@ -4092,6 +5006,9 @@ function updateSyncUI() {
         btn.classList.add('connected');
         btn.title = googleUserEmail ? `מחובר לחשבון: ${googleUserEmail}` : 'מחובר ל-Google Calendar';
         if (connectedRow) connectedRow.style.display = 'flex';
+        const unauthRow = document.getElementById('unauthButtonsRow');
+        const headerRegBtn = document.getElementById('headerRegisterBtn');
+        if (headerRegBtn) headerRegBtn.style.display = 'none';
         if (adminMenuWrap) {
             adminMenuWrap.style.display = 'inline-block';
             const nameEl = document.getElementById('menuUserDisplayName');
@@ -4113,6 +5030,8 @@ function updateSyncUI() {
         btn.classList.remove('connected');
         btn.title = 'התחבר לחשבון Google לסנכרון אוטומטי עם היומן';
         if (connectedRow) connectedRow.style.display = 'none';
+        const headerRegBtn = document.getElementById('headerRegisterBtn');
+        if (headerRegBtn) headerRegBtn.style.display = 'inline-flex';
         if (adminMenuWrap) {
             adminMenuWrap.style.display = 'none';
         }
@@ -4177,26 +5096,9 @@ function handleAuthClick() {
 
                 // Check access authorization in Google Sheet
                 const approval = await checkUserAccessApproval(googleUserEmail);
-                if (approval.status === 'not_found') {
-                    googleAccessToken = null;
-                    isUserLoggedIn = false;
-                    localStorage.removeItem('roshaket_g_token');
-                    localStorage.removeItem('roshaket_user_email');
-                    updateSyncUI();
-                    // Keep welcome screen visible underneath, pop up registration modal
-                    openRegistrationModal();
-                    showToast('כתובת המייל אינה רשומה עדיין. אנא שלח/י בקשת הצטרפות לקורס.');
-                    return;
-                } else if (approval.approvalStatus === 'ממתין לאישור') {
-                    googleAccessToken = null;
-                    isUserLoggedIn = false;
-                    localStorage.removeItem('roshaket_g_token');
-                    localStorage.removeItem('roshaket_user_email');
-                    updateSyncUI();
-                    // Keep welcome screen visible underneath, pop up pending approval modal
-                    openPendingApprovalModal(approval.name || googleUserName || '', googleUserEmail);
-                    return;
-                } else if (approval.approvalStatus === 'נדחה') {
+
+                // Case 1: Rejected
+                if (approval.status === 'found' && approval.approvalStatus === 'נדחה') {
                     googleAccessToken = null;
                     isUserLoggedIn = false;
                     localStorage.removeItem('roshaket_g_token');
@@ -4206,32 +5108,14 @@ function handleAuthClick() {
                     return;
                 }
 
-                // ONLY IF APPROVED: unlock the gate and enter the app!
-                sessionStorage.setItem('roshaket_gate_passed', 'true');
-                hideWelcomeScreen();
-
-                localStorage.setItem('roshaket_g_token', googleAccessToken);
-                isUserLoggedIn = true;
-                doneTasks = JSON.parse(localStorage.getItem('roshaket_done_tasks') || '[]');
-                userTaskNotes = JSON.parse(localStorage.getItem('roshaket_user_notes') || '{}');
-                showToast('🔑 התחברת בהצלחה! ברוך הבא לראשקט.');
-                updateSyncUI();
-
-                // Update strip badge visibility
-                ['mor', 'wassel', 'levy'].forEach(cKey => {
-                    const badge = document.querySelector(`.badge-${cKey}`);
-                    if (badge) {
-                        badge.style.display = hiddenCourses.includes(cKey) ? 'none' : 'flex';
-                    }
-                });
-
-                render();
-                if (pendingGuidedSync || !localStorage.getItem('roshaket_initial_sync_done')) {
-                    pendingGuidedSync = false;
-                    openOnboardingSyncModal();
-                } else {
-                    ensureRoshaketCalendarExists();
+                // Case 2: Already approved (e.g. Yifat or previously registered student)
+                if (approval.status === 'found' && approval.approvalStatus === 'מאושר') {
+                    proceedSuccessfulLogin(approval.name || googleUserName || '');
+                    return;
                 }
+
+                // Case 3: First-time entry or awaiting consent -> Show Consent Modal!
+                openConsentModal(googleUserEmail, approval.name || googleUserName || '');
             },
         });
         tokenClient.requestAccessToken({ prompt: 'consent' });
@@ -5351,6 +6235,9 @@ document.addEventListener('keydown', (e) => {
         closeConfigModal();
         closeRegistrationModal();
         closePendingApprovalModal();
+        if (typeof closeLessonSummaryModal === 'function') closeLessonSummaryModal();
+        if (typeof closeWhatsNewModal === 'function') closeWhatsNewModal();
+        if (typeof closeAlmaStudioModal === 'function') closeAlmaStudioModal();
         hideWelcomeScreen();
     }
 });
@@ -5566,6 +6453,114 @@ const ACCESS_CONTROL_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyvK9
 
 const PRIMARY_ADMIN_EMAIL = 'saritofer.k@gmail.com';
 
+async function proceedSuccessfulLogin(userName) {
+    if (userName && !localStorage.getItem('roshaket_user_name')) {
+        localStorage.setItem('roshaket_user_name', userName);
+    }
+    sessionStorage.setItem('roshaket_gate_passed', 'true');
+    hideWelcomeScreen();
+
+    localStorage.setItem('roshaket_g_token', googleAccessToken);
+    isUserLoggedIn = true;
+    doneTasks = JSON.parse(localStorage.getItem('roshaket_done_tasks') || '[]');
+    userTaskNotes = JSON.parse(localStorage.getItem('roshaket_user_notes') || '{}');
+    showToast('🔑 התחברת בהצלחה! ברוך/ה הבא/ה לראשקט.');
+    updateSyncUI();
+
+    // Update strip badge visibility
+    ['mor', 'wassel', 'levy'].forEach(cKey => {
+        const badge = document.querySelector(`.badge-${cKey}`);
+        if (badge) {
+            badge.style.display = hiddenCourses.includes(cKey) ? 'none' : 'flex';
+        }
+    });
+
+    render();
+    if (pendingGuidedSync || !localStorage.getItem('roshaket_initial_sync_done')) {
+        pendingGuidedSync = false;
+        openOnboardingSyncModal();
+    } else {
+        ensureRoshaketCalendarExists();
+    }
+}
+
+function openConsentModal(email, name) {
+    const modal = document.getElementById('emailConsentModal');
+    const emailDisplay = document.getElementById('consentUserEmailDisplay');
+    const chk = document.getElementById('consentCheckbox');
+    const btn = document.getElementById('confirmConsentBtn');
+    const err = document.getElementById('consentErrorMsg');
+
+    if (emailDisplay) emailDisplay.textContent = email || googleUserEmail || '';
+    if (chk) chk.checked = false;
+    if (btn) {
+        btn.disabled = true;
+        btn.style.opacity = '0.5';
+        btn.style.cursor = 'not-allowed';
+        btn.innerHTML = '<span>✅</span> <span>אשר/י והיכנס/י למערכת</span>';
+    }
+    if (err) err.style.display = 'none';
+
+    if (modal) modal.classList.add('open');
+}
+
+function closeConsentModal() {
+    const modal = document.getElementById('emailConsentModal');
+    if (modal) modal.classList.remove('open');
+}
+
+function toggleConsentButton() {
+    const chk = document.getElementById('consentCheckbox');
+    const btn = document.getElementById('confirmConsentBtn');
+    if (!btn || !chk) return;
+
+    if (chk.checked) {
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        btn.style.cursor = 'pointer';
+    } else {
+        btn.disabled = true;
+        btn.style.opacity = '0.5';
+        btn.style.cursor = 'not-allowed';
+    }
+}
+
+async function submitConsentAndEnroll() {
+    const chk = document.getElementById('consentCheckbox');
+    const btn = document.getElementById('confirmConsentBtn');
+    const err = document.getElementById('consentErrorMsg');
+    const email = googleUserEmail;
+    const name = googleUserName || (email ? email.split('@')[0] : 'סטודנט/ית');
+
+    if (!chk || !chk.checked) {
+        if (err) {
+            err.innerText = 'אנא סמן/י את תיבת האישור כדי להמשיך.';
+            err.style.display = 'block';
+        }
+        return;
+    }
+
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span>רושם אישור ומחבר...</span> <span>⏳</span>';
+    }
+    if (err) err.style.display = 'none';
+
+    try {
+        const res = await fetch(`${ACCESS_CONTROL_SCRIPT_URL}?action=register&email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}&consent=approved`);
+        const data = await res.json();
+        console.log('Consent & registration response:', data);
+    } catch (e) {
+        console.warn('Network notice during consent registration:', e);
+    }
+
+    localStorage.setItem('roshaket_user_consent', 'approved');
+    localStorage.setItem('roshaket_consent_timestamp', new Date().toISOString());
+    closeConsentModal();
+    showToast('🎉 ברוך/ה הבא/ה לראשקט! ההרשמה הושלמה בהצלחה.');
+    proceedSuccessfulLogin(name);
+}
+
 async function checkUserAccessApproval(email) {
     if (!email) return { status: 'not_found' };
     const em = email.toLowerCase().trim();
@@ -5638,8 +6633,15 @@ async function submitRegistrationRequest() {
     }
 
     try {
-        const res = await fetch(`${ACCESS_CONTROL_SCRIPT_URL}?action=register&email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}`);
+        const res = await fetch(`${ACCESS_CONTROL_SCRIPT_URL}?action=register&email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}&consent=approved`);
         const data = await res.json();
+
+        if (data && (data.approvalStatus === 'מאושר' || data.status === 'exists')) {
+            closeRegistrationModal();
+            showToast('🎉 החשבון מאושר! מתחבר ישירות עם Google...');
+            enterApp('google');
+            return;
+        }
 
         closeRegistrationModal();
         openPendingApprovalModal(name, email);
@@ -5702,7 +6704,1084 @@ async function checkPendingApprovalAgain() {
     }
 }
 
+// ==========================================
+// LESSON SUMMARIES, STUDY HELPER WORKSPACE, WHAT'S NEW & ALMA (.TXT) STUDIO
+// ==========================================
+
+const COURSE_META_MAP = {
+    mor: { name: 'הערכת תוכניות – ד"ר ישי מור', shortName: 'הערכת תוכניות – מור', emoji: '🟣', color: '#4338ca', bg: '#f5f3ff', border: '#c4b5fd' },
+    wassel: { name: 'פיתוח חדשנות – ד"ר ואסל', shortName: 'פיתוח חדשנות – ואסל', emoji: '🔵', color: '#0369a1', bg: '#f0f9ff', border: '#7dd3fc' },
+    levy: { name: 'סוגיות בהערכה – ד"ר עדי לוי-ורד', shortName: 'סוגיות בהערכה – לוי-ורד', emoji: '🟢', color: '#047857', bg: '#f0fdf4', border: '#86efac' }
+};
+
+const DEFAULT_LESSON_SUMMARIES = [
+    {
+        id: 'sum_w3_mor_1',
+        weekNum: 3,
+        courseKey: 'mor',
+        dateStr: '01.11.2026',
+        createdAt: '2026-11-01T21:00:00+02:00',
+        tabLabel: 'סיכום מפגש + שליף למודל לוגי',
+        title: 'מחזון ותיאוריית שינוי למודל לוגי (Logic Model)',
+        teaser: 'עלה סיכום המפגש של ד"ר ישי מור (שבוע 3): נהלי ההגשה הכפולה במודל, תיאוריית השינוי, ושליף 5 השלבים למילוי שקף המודל הלוגי!',
+        rules: [
+            '<strong>הגשה כפולה במודל (Moodle):</strong> בכל מטלה בקורס יש להגיש <strong>פעמיים</strong> – (1) <strong>בפורום הקורס</strong> כדי לשתף עם החברים, לקבל השראה ולראות דוגמאות של עמיתים (ישי אינו מגיב בפורום), ו-(2) <strong>בתוך המטלה עצמה</strong> כדי שיישמר תיעוד הגשה וישי יוכל לתת לכם משוב אישי ופרטי.',
+            '<strong>איך הכי נוח להעלות תוצר לפורום?</strong> מומלץ להדביק טקסט קצר ישירות בהודעת הפורום או לצרף קישור פתוח ל-<code>Google Docs</code> (במקום קובץ <code>PDF</code> שמאלץ את החברים להוריד למחשב כדי לקרוא). אם הגשתם באיחור – שלחו הודעה קצרה לישי כדי שיידע להיכנס לבדוק.',
+            '<strong>משוב עמיתים בונה וביקורתי:</strong> כשאתם מגיבים לחברים בפורום, אל תסתפקו רק בפרגון כללי ("איזה יופי!"). העזרה הכי גדולה לחבר היא להצביע בעדינות על <strong>לקונות (פערים לוגיים)</strong> בתיאוריית השינוי שלו – למשל: <em>"לא ברור לי למה שילד יירגע דווקא במרחב עמוס גירויים, או איך פעולה א\' מובילה לתוצאה ב\'"</em>.',
+            '<strong>שמירת סילבוסים וחומרי קריאה:</strong> מומלץ להוריד ולשמור לעצמכם את קובצי הסילבוס של הקורסים כבר עכשיו, לפני שהגישה לאתר הקורס תינעל בסוף הסמסטר.'
+        ],
+        concepts: [
+            '<strong>החזון החינוכי (Vision / Impact) מול מחוון הערכה בשטח:</strong> החזון הוא המהות החינוכית והערכית של המיזם שלנו (למשל: אמפתיה, אחריות, הכוונה עצמית ללמידה <code>Self-Regulated Learning</code> ומסוגלות עצמית). כדי להעריך אם המיזם עובד (כמו בדוגמת <strong>פינת החי</strong> בכיתה), אנחנו מתרגמים את תמונת החזון ל<strong>מחוון הערכה מוחשי</strong> עם תבחינים ברורים מ-1 עד 5 (האם יש מתקני העשרה? האם החיות משתמשות בהם? מה המורה והילדים עושים בפועל?).',
+            '<strong>תיאוריית השינוי (Theory of Change) כ"תוכנית אדריכלית":</strong> תיאוריית שינוי היא סיפור בעל מבנה לוגי של סיבה ותוצאה (<em>"אם נעשה א\' ⬅ יקרה ב\' ⬅ וזה יוביל לתוצאה ג\'"</em>). כל עוד הרעיון נמצא רק בראש שלנו הוא פלואידי ומשתנה; כתיבה מפורשת שלו מאפשרת לגייס שותפים, לזהות פערים בזמן אמת מול התוכנית, ולהוכיח שהשינוי קרה בזכות הפעולות שלנו ולא במקרה.',
+            '<strong>סכנת "פולחן המטען" (Cargo Cult):</strong> במלחמת העולם השנייה תושבי איים באוקיינוס השקט ראו חיילים אמריקאים בונים מגדל פיקוח ומסלול נחיתה ומקבלים מטוסי אספקה. כשהאמריקאים עזבו, התושבים בנו מגדלים ומסלולים מעץ וחיכו למטוסים – שלא הגיעו, כי הם העתיקו רק את התפאורה החיצונית בלי להבין את המנגנון. <strong>הלקח למיזמים שלנו (כמו "מערת הקסמים"):</strong> אם לא ננסח מה באמת מחולל את השינוי בתוך המיזם, לא נוכל להסביר או לשכפל את ההצלחה.',
+            '<strong>מלכודת ה-PBL – ההבחנה הקריטית בין תפוקות (Outputs) לתוצאות (Outcomes):</strong> בפרויקטים חינוכיים (כמו <strong>פתרון קונפליקטים בגן בשיטת STEM</strong>) קל להתלהב מ<strong>תפוקות</strong> מרשימות ומוחשיות (הילדים בנו 8 דגמים פיזיים או ישבו 30 שעות בסדנה), אך תפוקה היא רק מה שעשינו/ייצרנו. <strong>תוצאה</strong> היא השינוי שהתרחש בילדים או בצוות (למשל: היכולת שלהם לנהל חקר או לפתור קונפליקט בעצמם).'
+        ],
+        steps: [
+            {
+                num: 'שלב 1',
+                title: 'משאבים (Inputs)',
+                question: 'עם מה אני עובד/ת?',
+                desc: 'כל מה שקיים או נדרש כדי להפעיל את המיזם: זמן במערכת, כוח אדם, חלל פיזי, תקציב, ציוד וחומרי הדרכה והסברה.',
+                example: 'דוגמאות מהכיתה: שעתיים שבועיות במערכת, חדר קיים בגן/ביה"ס, מתנדבים והורים, מכתבי הסברה לצוות ולהורים.'
+            },
+            {
+                num: 'שלב 2',
+                title: 'פעילויות (Activities)',
+                question: 'מה עושים בפועל?',
+                desc: 'הפעולות, הסדנאות והתהליכים שאנחנו מפעילים בפועל עם המשאבים שלנו לאורך תקופת המיזם.',
+                example: 'דוגמאות מהכיתה: העברת 8 סדנאות של 40 דק׳ בגן; מפגשי חברותות במערת הקסמים; בניית פתרון פיזי לקונפליקט חברתי.'
+            },
+            {
+                num: 'שלב 3',
+                title: 'תפוקות (Outputs)',
+                question: 'מה אפשר לספור או לצלם?',
+                desc: 'התוצרים המיידיים, הכמותיים והמוחשיים של הפעילות. שימו לב: תפוקה מראה שהפעילות קרתה, אך היא עדיין לא השינוי הפדגוגי!',
+                example: 'דוגמאות מהכיתה: 20 מורים השתתפו ב-30 שעות סדנה ופותחו 5 אפליקציות; 6 תלמידות השתתפו ב-20 מפגשים; נבנו 8 דגמים פיזיים.'
+            },
+            {
+                num: 'שלב 4',
+                title: 'תוצאות (Outcomes)',
+                question: 'מה השתנה בילדים/בצוות?',
+                desc: 'השינוי המציאותי ביכולות, בעמדות או בהתנהגות בטווח הקצר-בינוני (למשל 3 חודשים), בהתאם למשאבים שלנו.',
+                example: 'דוגמאות מהכיתה: הילדים מסוגלים לקחת בעיית חקר ולבנות תוכנית עבודה בעזרת מנחה; שינוי לטובה בשיח הכיתתי.'
+            },
+            {
+                num: 'שלב 5',
+                title: 'השפעה / חזון (Impact)',
+                question: 'לאן שואפים בטווח הארוך?',
+                desc: 'השינוי העמוק וארוך הטווח (לרוב תהליך רב-שנתי של 3–5 שנים) שמגשים את החזון החינוכי הרחב שלנו.',
+                example: 'דוגמאות מהכיתה: בוגרים שמחים, סקרנים, בעלי הכוונה עצמית ללמידה (SRL), מסוגלות עצמית ואמפתיה.'
+            }
+        ],
+        template: `תבנית למילוי שקף "מודל לוגי ראשוני" – שם המיזם: [הזן שם מיזם] | מגיש/ה: [שם מלא]
+
+🎯 החזון החינוכי (Impact ארוך טווח):
+• מה השינוי העמוק שאנחנו רוצים לראות בבית הספר / בבוגרים שלנו?
+[השלם כאן]
+
+🔗 תיאוריית השינוי שלנו (סיפור הסיבה והתוצאה):
+• אם נעשה [פעולה מרכזית]... אז יקרה [תהליך/מנגנון]... וזה יוביל לכך ש-[התוצאה המצופה].
+
+📊 חמשת שלבי המודל הלוגי:
+1. משאבים (Inputs – עם מה אנחנו עובדים? זמן, מקום, צוות, חומרי הדרכה):
+• 
+
+2. פעילויות (Activities – מה אנחנו עושים בפועל עם המשאבים?):
+• 
+
+3. תפוקות (Outputs – תוצרים מדידים/מוחשיים: כמה מפגשים, כמה משתתפים, אילו תוצרים פיזיים נוצרו?):
+• 
+
+4. תוצאות (Outcomes – איזה שינוי ריאלי נראה בילדים/בצוות בסיום תקופת הפרויקט השנה?):
+• `
+    }
+];
+
+function loadAllLessonSummaries() {
+    let customList = [];
+    try {
+        const saved = localStorage.getItem('roshaket_lesson_summaries_v1');
+        if (saved) customList = JSON.parse(saved);
+    } catch (e) {
+        console.warn('Error loading custom summaries:', e);
+    }
+
+    const deletedIds = JSON.parse(localStorage.getItem('roshaket_deleted_summary_ids') || '[]');
+    const mergedMap = new Map();
+
+    DEFAULT_LESSON_SUMMARIES.forEach(item => {
+        if (!deletedIds.includes(item.id)) {
+            mergedMap.set(item.id, item);
+        }
+    });
+
+    if (Array.isArray(customList)) {
+        customList.forEach(item => {
+            if (item && item.id && !deletedIds.includes(item.id)) {
+                mergedMap.set(item.id, item);
+            }
+        });
+    }
+
+    return Array.from(mergedMap.values()).sort((a, b) => {
+        if (b.weekNum !== a.weekNum) return b.weekNum - a.weekNum;
+        return String(b.createdAt || '').localeCompare(String(a.createdAt || ''));
+    });
+}
+
+function saveCustomLessonSummaries(summariesArray) {
+    try {
+        localStorage.setItem('roshaket_lesson_summaries_v1', JSON.stringify(summariesArray));
+    } catch (e) {
+        console.error('Error saving lesson summaries:', e);
+    }
+}
+
+function getSummariesForCourseWeek(weekNum, courseKey) {
+    const all = loadAllLessonSummaries();
+    return all.filter(s => Number(s.weekNum) === Number(weekNum) && s.courseKey === courseKey)
+              .sort((a, b) => String(a.createdAt || '').localeCompare(String(b.createdAt || '')));
+}
+
+// State for currently open Study Helper Workspace Modal
+let activeWorkspaceWeek = 3;
+let activeWorkspaceCourse = 'mor';
+let activeWorkspaceSummaryId = null;
+let activeSummarySectionFilter = 'all';
+
+function openLessonSummaryModal(weekNum, courseKey, specificSummaryId) {
+    activeWorkspaceWeek = Number(weekNum);
+    activeWorkspaceCourse = courseKey;
+    activeSummarySectionFilter = 'all';
+
+    const summaries = getSummariesForCourseWeek(activeWorkspaceWeek, activeWorkspaceCourse);
+    if (summaries.length === 0) {
+        if (isOferAdmin()) {
+            openAlmaStudioModal(activeWorkspaceWeek, activeWorkspaceCourse, 'new');
+        } else {
+            showToast('טרם הועלה סיכום למפגש זה');
+        }
+        return;
+    }
+
+    if (specificSummaryId && summaries.some(s => s.id === specificSummaryId)) {
+        activeWorkspaceSummaryId = specificSummaryId;
+    } else {
+        activeWorkspaceSummaryId = summaries[0].id;
+    }
+
+    // Mark all summaries in this course/week as read for the notification badge
+    summaries.forEach(s => markSummaryAsRead(s.id));
+    updateWhatsNewUI();
+
+    renderLessonSummaryWorkspace();
+    const modal = document.getElementById('lessonSummaryModal');
+    if (modal) modal.classList.add('open');
+}
+
+function closeLessonSummaryModal() {
+    const modal = document.getElementById('lessonSummaryModal');
+    if (modal) modal.classList.remove('open');
+}
+
+function switchActiveSummaryInModal(summaryId) {
+    activeWorkspaceSummaryId = summaryId;
+    markSummaryAsRead(summaryId);
+    updateWhatsNewUI();
+    renderLessonSummaryWorkspace();
+}
+
+function setSummarySectionFilter(secType, btnEl) {
+    activeSummarySectionFilter = secType;
+    document.querySelectorAll('#lessonSummaryModal .study-nav-pill').forEach(b => b.classList.remove('active'));
+    if (btnEl) btnEl.classList.add('active');
+    renderLessonSummaryWorkspaceBody();
+}
+
+function getActiveSummaryObject() {
+    const summaries = getSummariesForCourseWeek(activeWorkspaceWeek, activeWorkspaceCourse);
+    return summaries.find(s => s.id === activeWorkspaceSummaryId) || summaries[0] || null;
+}
+
+function renderLessonSummaryWorkspace() {
+    const summaries = getSummariesForCourseWeek(activeWorkspaceWeek, activeWorkspaceCourse);
+    const current = getActiveSummaryObject();
+    if (!current) return;
+
+    const cMeta = COURSE_META_MAP[current.courseKey] || COURSE_META_MAP.mor;
+    const weekObj = semesterSchedule.find(w => w.weekNum === Number(current.weekNum));
+    const dateDisplay = current.dateStr || (weekObj ? weekObj.dateStr : '');
+
+    const metaEl = document.getElementById('summaryModalMeta');
+    if (metaEl) {
+        metaEl.innerHTML = `
+            <span>${cMeta.emoji} ${cMeta.name}</span>
+            <span>•</span>
+            <span>שבוע ${current.weekNum}${dateDisplay ? ` (${dateDisplay})` : ''}</span>
+            ${summaries.length > 1 ? `<span>•</span><span style="background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 999px;">${summaries.length} סיכומים במפגש זה</span>` : ''}
+        `;
+    }
+
+    const titleEl = document.getElementById('summaryModalTitle');
+    if (titleEl) {
+        titleEl.innerText = current.title;
+    }
+
+    // Render Multi-Summary Switcher Bar (shown when there are 2+ summaries OR when Ofer is Admin so he can easily see tabs / add 2nd summary)
+    const switcherBar = document.getElementById('summarySwitcherBar');
+    if (switcherBar) {
+        if (summaries.length > 1 || isOferAdmin()) {
+            switcherBar.style.display = 'flex';
+            const tabsHtml = summaries.map((s, idx) => {
+                const isAct = s.id === current.id;
+                const label = s.tabLabel || `סיכום ${idx + 1}: ${s.title.slice(0, 28)}`;
+                return `
+                    <button type="button" class="summary-switcher-tab ${isAct ? 'active' : ''}" onclick="switchActiveSummaryInModal('${s.id}')">
+                        <span>📄</span>
+                        <span>${escapeHtml(label)}</span>
+                    </button>
+                `;
+            }).join('');
+
+            const addSecondBtnHtml = isOferAdmin() ? `
+                <button type="button" class="btn-admin-add-summary-mini" style="margin-right: auto;" onclick="closeLessonSummaryModal(); openAlmaStudioModal(${current.weekNum}, '${current.courseKey}', 'new')">
+                    <span>🎙️</span>
+                    <span>+ הוסף סיכום נוסף לשיעור זה</span>
+                </button>
+            ` : '';
+
+            switcherBar.innerHTML = tabsHtml + addSecondBtnHtml;
+        } else {
+            switcherBar.style.display = 'none';
+        }
+    }
+
+    // Reset nav pill active visual
+    document.querySelectorAll('#lessonSummaryModal .study-nav-pill').forEach(b => {
+        b.classList.toggle('active', b.getAttribute('data-sec') === activeSummarySectionFilter);
+    });
+
+    // Admin Footer Actions
+    const adminFooter = document.getElementById('summaryAdminFooterActions');
+    if (adminFooter) {
+        if (isOferAdmin()) {
+            adminFooter.innerHTML = `
+                <button type="button" class="btn" style="padding: 7px 12px; min-height: 36px; font-size: 12.5px; background: #f5f3ff; color: #4338ca; border-color: #c4b5fd;" onclick="closeLessonSummaryModal(); openAlmaStudioModal(${current.weekNum}, '${current.courseKey}', '${current.id}')">
+                    ✏️ ערוך סיכום זה
+                </button>
+                <button type="button" class="btn" style="padding: 7px 12px; min-height: 36px; font-size: 12.5px; background: #ffffff; color: #4338ca; border-color: #cbd5e1;" onclick="closeLessonSummaryModal(); openAlmaStudioModal(${current.weekNum}, '${current.courseKey}', 'new')">
+                    🎙️ + סיכום שני לשיעור
+                </button>
+            `;
+        } else {
+            adminFooter.innerHTML = `
+                <span style="font-size: 12px; color: #64748b; font-weight: 700;">💡 מותאם לעבודה בנייד ובמחשב שולחני</span>
+            `;
+        }
+    }
+
+    renderLessonSummaryWorkspaceBody();
+}
+
+function renderLessonSummaryWorkspaceBody() {
+    const bodyEl = document.getElementById('summaryModalBody');
+    const current = getActiveSummaryObject();
+    if (!bodyEl || !current) return;
+
+    const showRules = (activeSummarySectionFilter === 'all' || activeSummarySectionFilter === 'rules') && current.rules && current.rules.length > 0;
+    const showConcepts = (activeSummarySectionFilter === 'all' || activeSummarySectionFilter === 'concepts') && current.concepts && current.concepts.length > 0;
+    const showExercise = (activeSummarySectionFilter === 'all' || activeSummarySectionFilter === 'exercise') && ((current.steps && current.steps.length > 0) || current.template);
+
+    let html = '';
+
+    if (showRules) {
+        html += `
+            <div class="study-block-card block-admin-rules">
+                <div class="study-block-header">
+                    <span style="font-size: 24px;">🛠️</span>
+                    <div>
+                        <h4>חלק א': נהלי עבודה, הגשות ודגשים מעשיים מהשיעור</h4>
+                        <div style="font-size: 12.5px; color: #64748b; font-weight: 600;">כל מה שחשוב לדעת כדי להגיש נכון ולעבוד בראש שקט</div>
+                    </div>
+                </div>
+                <ul class="study-list">
+                    ${current.rules.map(r => `<li>${r}</li>`).join('')}
+                </ul>
+            </div>
+        `;
+    }
+
+    if (showConcepts) {
+        html += `
+            <div class="study-block-card block-concepts">
+                <div class="study-block-header">
+                    <span style="font-size: 24px;">🧠</span>
+                    <div>
+                        <h4>חלק ב': מושגי ליבה ודוגמאות מהכיתה</h4>
+                        <div style="font-size: 12.5px; color: #64748b; font-weight: 600;">זיקוק הרעיונות הפדגוגיים והאנליטיים שעלו בדיון הכיתתי</div>
+                    </div>
+                </div>
+                <ul class="study-list">
+                    ${current.concepts.map(c => `<li>${c}</li>`).join('')}
+                </ul>
+            </div>
+        `;
+    }
+
+    if (showExercise) {
+        const stepsHtml = (current.steps && current.steps.length > 0) ? `
+            <div class="logic-model-flow-grid">
+                ${current.steps.map((st, idx) => `
+                    <div class="logic-step-card">
+                        <span class="logic-step-num">${escapeHtml(st.num || ('שלב ' + (idx + 1)))}</span>
+                        <div class="logic-step-title">${escapeHtml(st.title || '')}</div>
+                        ${st.question ? `<div class="logic-step-question">❓ ${escapeHtml(st.question)}</div>` : ''}
+                        <div class="logic-step-desc">${escapeHtml(st.desc || '')}</div>
+                        ${st.example ? `<div class="logic-step-example"><strong>💡 מהכיתה:</strong> ${escapeHtml(st.example)}</div>` : ''}
+                    </div>
+                `).join('')}
+            </div>
+        ` : '';
+
+        const templateHtml = current.template ? `
+            <div style="margin-top: 20px; background: #f8fafc; border: 1.5px dashed #94a3b8; border-radius: 16px; padding: 16px 18px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
+                    <div style="font-weight: 800; font-size: 14.5px; color: #0f172a; display: flex; align-items: center; gap: 6px;">
+                        <span>📋</span>
+                        <span>תבנית מוכנה להעתקה (למצגת השיתופית או ל-Google Docs):</span>
+                    </div>
+                    <button type="button" class="btn" style="padding: 6px 12px; min-height: 34px; font-size: 12.5px; background: #0f172a; color: #ffffff;" onclick="copySummaryTemplateToClipboard()">
+                        📋 העתק תבנית ללוח
+                    </button>
+                </div>
+                <pre style="white-space: pre-wrap; font-family: inherit; font-size: 13px; color: #334155; line-height: 1.6; background: #ffffff; padding: 12px 14px; border-radius: 10px; border: 1px solid #e2e8f0; margin: 0;">${escapeHtml(current.template)}</pre>
+            </div>
+        ` : '';
+
+        html += `
+            <div class="study-block-card block-exercise">
+                <div class="study-block-header">
+                    <span style="font-size: 24px;">📊</span>
+                    <div>
+                        <h4>חלק ג': שליף מובנה לתרגיל הכיתה / הבית</h4>
+                        <div style="font-size: 12.5px; color: #047857; font-weight: 700;">במחשב: תרשים זרימה אופקי של כל השלבים • בנייד: כרטיסיות אנכיות נוחות לגלילה</div>
+                    </div>
+                </div>
+                ${stepsHtml}
+                ${templateHtml}
+            </div>
+        `;
+    }
+
+    bodyEl.innerHTML = html || `<div style="text-align: center; padding: 30px; color: #64748b; font-weight: 700;">אין תוכן בחלק זה.</div>`;
+}
+
+function copySummaryTemplateToClipboard() {
+    const current = getActiveSummaryObject();
+    if (!current) return;
+    const textToCopy = current.template || current.title;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            showToast('📋 התבנית הועתקה ללוח! אפשר להדביק במצגת או ב-Docs');
+        }).catch(() => fallbackCopyText(textToCopy));
+    } else {
+        fallbackCopyText(textToCopy);
+    }
+}
+
+function fallbackCopyText(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+        document.execCommand('copy');
+        showToast('📋 התבנית הועתקה ללוח!');
+    } catch (e) {
+        showToast('לא ניתן להעתיק אוטומטית');
+    }
+    document.body.removeChild(ta);
+}
+
+// Printable A4 PDF / Handout Generator (Works cleanly on Desktop & Mobile)
+function buildPrintableSummaryHtml(summaryObj, autoPrint) {
+    const cMeta = COURSE_META_MAP[summaryObj.courseKey] || COURSE_META_MAP.mor;
+    const rulesHtml = (summaryObj.rules || []).map(r => `<li style="margin-bottom: 10px; line-height: 1.6;">${r}</li>`).join('');
+    const conceptsHtml = (summaryObj.concepts || []).map(c => `<li style="margin-bottom: 12px; line-height: 1.6;">${c}</li>`).join('');
+    const stepsHtml = (summaryObj.steps || []).map((st, idx) => `
+        <div style="border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; background: #ffffff; page-break-inside: avoid;">
+            <div style="font-weight: 800; color: #1e1b4b; font-size: 15px; margin-bottom: 4px;">
+                <span style="background: #1e1b4b; color: white; padding: 2px 8px; border-radius: 999px; font-size: 11.5px; margin-left: 6px;">${escapeHtml(st.num || ('שלב ' + (idx + 1)))}</span>
+                ${escapeHtml(st.title || '')}
+                ${st.question ? `<span style="color: #4338ca; font-size: 13px; margin-right: 8px;">(${escapeHtml(st.question)})</span>` : ''}
+            </div>
+            <div style="font-size: 13.5px; color: #334155; line-height: 1.5; margin-bottom: 4px;">${escapeHtml(st.desc || '')}</div>
+            ${st.example ? `<div style="font-size: 12.5px; color: #065f46; background: #ecfdf5; padding: 6px 10px; border-radius: 8px;"><strong>💡 דוגמה מהכיתה:</strong> ${escapeHtml(st.example)}</div>` : ''}
+        </div>
+    `).join('');
+
+    return `<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>דף עזר וסיכום שיעור - ${escapeHtml(summaryObj.title)} | Roshaket</title>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; font-family: 'Assistant', Arial, sans-serif; }
+        body { max-width: 820px; margin: 0 auto; padding: 28px; color: #0f172a; background: #ffffff; line-height: 1.6; }
+        .top-print-bar { display: flex; justify-content: space-between; align-items: center; background: #eef2ff; border: 1.5px solid #c7d2fe; padding: 12px 18px; border-radius: 12px; margin-bottom: 20px; }
+        .btn-print { background: #4338ca; color: white; border: none; padding: 8px 18px; border-radius: 8px; font-weight: 800; font-size: 14px; cursor: pointer; }
+        h1 { font-size: 24px; color: #1e1b4b; margin: 6px 0 4px 0; }
+        h2 { font-size: 18px; color: #1e1b4b; border-bottom: 2px solid #e2e8f0; padding-bottom: 6px; margin-top: 22px; margin-bottom: 12px; }
+        ul { padding-right: 20px; margin: 0; }
+        @media print {
+            .top-print-bar { display: none !important; }
+            body { padding: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-print-bar">
+        <div style="font-weight: 700; color: #1e1b4b; font-size: 14px;">🎓 דף עזר מבית <strong>Roshaket</strong> (מותאם להדפסה או שמירה כ-PDF)</div>
+        <button class="btn-print" onclick="window.print()">🖨️ הדפס / שמור כ-PDF</button>
+    </div>
+    <div style="border-bottom: 3px solid #4338ca; padding-bottom: 14px; margin-bottom: 18px;">
+        <div style="font-size: 13.5px; font-weight: 800; color: #4338ca;">${cMeta.emoji} ${escapeHtml(cMeta.name)} • שבוע ${summaryObj.weekNum} (${escapeHtml(summaryObj.dateStr || '')})</div>
+        <h1>${escapeHtml(summaryObj.title)}</h1>
+        <div style="font-size: 12.5px; color: #64748b;">חומר עזר לסטודנטים • תוכנית המהפכה (שנה ב' תשפ"ז) • מכללת בית ברל</div>
+    </div>
+    ${rulesHtml ? `<h2>🛠️ חלק א': נהלי עבודה, הגשות ודגשים מעשיים</h2><ul>${rulesHtml}</ul>` : ''}
+    ${conceptsHtml ? `<h2>🧠 חלק ב': מושגי ליבה ודוגמאות מהכיתה</h2><ul>${conceptsHtml}</ul>` : ''}
+    ${stepsHtml ? `<h2>📊 חלק ג': שליף מובנה לתרגיל הכיתה / הבית</h2>${stepsHtml}` : ''}
+    ${summaryObj.template ? `<h2>📋 תבנית מוכנה לעבודה</h2><pre style="white-space: pre-wrap; background: #f8fafc; border: 1px solid #cbd5e1; padding: 14px; border-radius: 10px; font-size: 13px; line-height: 1.6;">${escapeHtml(summaryObj.template)}</pre>` : ''}
+    ${autoPrint ? `<script>window.onload = function() { setTimeout(function() { window.print(); }, 350); };<\/script>` : ''}
+<!-- Email Consent & Privacy Modal (Roshaket Permanent Access) -->
+<div class="modal" id="emailConsentModal" role="dialog" aria-modal="true" aria-labelledby="consentModalTitle" style="z-index: 100000;">
+    <div class="modal-content" style="max-width: 520px; text-align: right; border-radius: 20px; border: 1.5px solid rgba(99, 102, 241, 0.2); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
+        <div class="modal-header" style="border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 26px;">🔒</span>
+                <div>
+                    <h3 id="consentModalTitle" style="margin: 0; font-size: 19px; font-weight: 800; color: #1e1b4b;">אישור הצטרפות ושמירת פרטים</h3>
+                    <p style="margin: 2px 0 0 0; font-size: 12.5px; color: #64748b;">Roshaket | תוכנית המהפכה (שנה ב')</p>
+                </div>
+            </div>
+            <button class="modal-close-x" onclick="closeConsentModal()" title="סגור">✕</button>
+        </div>
+
+        <div style="padding: 18px 0 10px 0;">
+            <div style="background: #f8fafc; border: 1.5px solid #e0e7ff; border-radius: 14px; padding: 18px 20px; margin-bottom: 18px; line-height: 1.65;">
+                <p style="font-size: 15px; color: #1e293b; margin: 0 0 12px 0; font-weight: 600;">
+                    ברוך/ה הבא/ה לראשקט! כדי לחבר אותך לקורס ולאפשר סנכרון מטלות ליומן Google שלך, כתובת האימייל שלך תישמר במאגר המשתמשים המורשים של Roshket. אנא אשר/י בבקשה.
+                </p>
+                <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 12px; font-weight: 700; color: #4338ca; direction: ltr; text-align: left; font-size: 14px; display: flex; align-items: center; justify-content: space-between;">
+                    <span id="consentUserEmailDisplay">user@gmail.com</span>
+                    <span style="font-size: 11px; background: #e0e7ff; color: #4338ca; padding: 2px 7px; border-radius: 4px; font-weight: 700;">חשבון Google</span>
+                </div>
+            </div>
+
+            <div style="background: #f1f5f9; border-radius: 12px; padding: 12px 16px; margin-bottom: 18px;">
+                <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; user-select: none;">
+                    <input type="checkbox" id="consentCheckbox" onchange="toggleConsentButton()" style="width: 22px; height: 22px; accent-color: #4338ca; cursor: pointer; margin-top: 2px; flex-shrink: 0;">
+                    <span style="font-size: 14px; font-weight: 700; color: #0f172a; line-height: 1.5;">
+                        אני מאשר/ת את שמירת כתובת המייל שלי במאגר המשתמשים המורשים של Roshaket.
+                    </span>
+                </label>
+            </div>
+
+            <div id="consentErrorMsg" style="display: none; background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; padding: 10px 14px; border-radius: 10px; font-size: 13px; font-weight: 700; margin-bottom: 15px;">
+            </div>
+
+            <div style="display: flex; gap: 10px; justify-content: flex-end; align-items: center;">
+                <button type="button" class="btn-welcome-secondary" onclick="closeConsentModal()" style="padding: 10px 18px; font-size: 14px;">
+                    ביטול
+                </button>
+                <button type="button" class="btn-welcome-primary" id="confirmConsentBtn" onclick="submitConsentAndEnroll()" disabled style="opacity: 0.5; cursor: not-allowed; padding: 10px 22px; font-size: 14.5px;">
+                    <span>✅</span>
+                    <span>אשר/י והיכנס/י למערכת</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>`;
+}
+
+function downloadCurrentSummaryPdf() {
+    const current = getActiveSummaryObject();
+    if (!current) return;
+    const htmlContent = buildPrintableSummaryHtml(current, true);
+    const printWin = window.open('', '_blank');
+    if (printWin) {
+        printWin.document.open();
+        printWin.document.write(htmlContent);
+        printWin.document.close();
+        showToast('📥 נפתח דף עזר מעוצב לשמירה כ-PDF / הדפסה!');
+    } else {
+        // Fallback if popup blocked on mobile: download standalone HTML handout
+        downloadCurrentSummaryDoc();
+    }
+}
+
+function downloadCurrentSummaryDoc() {
+    const current = getActiveSummaryObject();
+    if (!current) return;
+    const htmlContent = buildPrintableSummaryHtml(current, false);
+    const blob = new Blob(['\ufeff', htmlContent], { type: 'application/msword;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Roshaket_Week${current.weekNum}_${current.courseKey}_Summary.doc`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+    showToast('📄 קובץ הסיכום ירד למכשיר שלך בהצלחה!');
+}
+
+// ==========================================
+// WHAT'S NEW BUBBLE & NOTIFICATION BELL ENGINE ("מה חדש בראשקט?")
+// ==========================================
+
+function getReadSummaryIds() {
+    try {
+        return JSON.parse(localStorage.getItem('roshaket_read_summaries') || '[]');
+    } catch (e) {
+        return [];
+    }
+}
+
+function markSummaryAsRead(summaryId) {
+    if (!summaryId) return;
+    const readIds = getReadSummaryIds();
+    if (!readIds.includes(summaryId)) {
+        readIds.push(summaryId);
+        localStorage.setItem('roshaket_read_summaries', JSON.stringify(readIds));
+    }
+}
+
+function dismissWhatsNewBubble(event) {
+    if (event) event.stopPropagation();
+    const all = loadAllLessonSummaries();
+    if (all.length > 0) {
+        sessionStorage.setItem('roshaket_dismissed_bubble_id', all[0].id);
+    }
+    const banner = document.getElementById('whatsNewBubbleBanner');
+    if (banner) banner.style.display = 'none';
+}
+
+function updateWhatsNewUI() {
+    const allSummaries = loadAllLessonSummaries();
+    const readIds = getReadSummaryIds();
+    const unreadSummaries = allSummaries.filter(s => !readIds.includes(s.id));
+
+    // 1. Update Header Bell Badge
+    const badge = document.getElementById('whatsNewBadgeCount');
+    if (badge) {
+        if (unreadSummaries.length > 0) {
+            badge.style.display = 'flex';
+            badge.innerText = unreadSummaries.length;
+        } else {
+            badge.style.display = 'none';
+        }
+    }
+
+    // 2. Update Floating Bubble Banner on Main Board
+    const banner = document.getElementById('whatsNewBubbleBanner');
+    if (!banner) return;
+
+    if (allSummaries.length === 0) {
+        banner.style.display = 'none';
+        return;
+    }
+
+    const latest = unreadSummaries.length > 0 ? unreadSummaries[0] : allSummaries[0];
+    const dismissedId = sessionStorage.getItem('roshaket_dismissed_bubble_id');
+    if (dismissedId === latest.id && unreadSummaries.length === 0) {
+        banner.style.display = 'none';
+        return;
+    }
+
+    const cMeta = COURSE_META_MAP[latest.courseKey] || COURSE_META_MAP.mor;
+    const sameWeekCourseCount = getSummariesForCourseWeek(latest.weekNum, latest.courseKey).length;
+
+    const titleEl = document.getElementById('whatsNewBubbleTitle');
+    const tagEl = document.getElementById('whatsNewBubbleTag');
+    const descEl = document.getElementById('whatsNewBubbleDesc');
+    const clickArea = document.getElementById('whatsNewBubbleClickArea');
+    const openBtn = document.getElementById('whatsNewBubbleOpenBtn');
+
+    if (titleEl) titleEl.innerText = `${cMeta.emoji} סיכום שיעור ועזר לתרגיל: ${latest.title}`;
+    if (tagEl) tagEl.innerText = `שבוע ${latest.weekNum} • ${unreadSummaries.length > 0 ? 'חדש!' : 'זמין'}`;
+    if (descEl) descEl.innerText = latest.teaser || `לחץ לצפייה בסיכום השיעור, מושגי הליבה והשליף המובנה לתרגיל (${sameWeekCourseCount > 1 ? sameWeekCourseCount + ' סיכומים זמינים' : 'נייד + שולחני + PDF'}).`;
+
+    const openHandler = () => {
+        openLessonSummaryModal(latest.weekNum, latest.courseKey, latest.id);
+    };
+    if (clickArea) clickArea.onclick = openHandler;
+    if (openBtn) openBtn.onclick = openHandler;
+
+    banner.style.display = 'flex';
+}
+
+function openWhatsNewModal() {
+    const modal = document.getElementById('whatsNewModal');
+    const container = document.getElementById('whatsNewFeedContainer');
+    const adminBtn = document.getElementById('whatsNewAdminUploadBtn');
+    if (!modal || !container) return;
+
+    if (adminBtn) {
+        adminBtn.style.display = isOferAdmin() ? 'inline-flex' : 'none';
+    }
+
+    const allSummaries = loadAllLessonSummaries();
+    const readIds = getReadSummaryIds();
+
+    if (allSummaries.length === 0) {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 30px; color: #64748b; font-weight: 700;">
+                אין עדכונים חדשים כרגע.
+            </div>
+        `;
+    } else {
+        container.innerHTML = allSummaries.map(s => {
+            const cMeta = COURSE_META_MAP[s.courseKey] || COURSE_META_MAP.mor;
+            const isUnread = !readIds.includes(s.id);
+            return `
+                <div style="background: #ffffff; border: 1.5px solid ${isUnread ? '#818cf8' : '#e2e8f0'}; border-radius: 16px; padding: 16px 18px; box-shadow: 0 3px 10px rgba(15, 23, 42, 0.04); display: flex; flex-direction: column; gap: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;">
+                        <span style="font-size: 12px; font-weight: 800; padding: 3px 10px; border-radius: 8px; background: ${cMeta.bg}; color: ${cMeta.color}; border: 1px solid ${cMeta.border};">
+                            ${cMeta.emoji} ${escapeHtml(cMeta.shortName)} • שבוע ${s.weekNum} (${escapeHtml(s.dateStr || '')})
+                        </span>
+                        ${isUnread ? `<span style="background: #fef3c7; color: #92400e; border: 1px solid #fde68a; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 999px;">✨ חדש!</span>` : `<span style="font-size: 11.5px; color: #94a3b8; font-weight: 700;">✓ נקרא</span>`}
+                    </div>
+                    <div style="font-size: 16.5px; font-weight: 800; color: #0f172a; line-height: 1.35;">
+                        ${escapeHtml(s.title)}
+                    </div>
+                    <div style="font-size: 13.5px; color: #475569; line-height: 1.5;">
+                        ${escapeHtml(s.teaser || '')}
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; flex-wrap: wrap;">
+                        <button type="button" class="btn" style="padding: 6px 12px; min-height: 34px; font-size: 12.5px;" onclick="closeWhatsNewModal(); scrollToWeekCard(${s.weekNum});">
+                            📅 קפוץ לשבוע ${s.weekNum}
+                        </button>
+                        <button type="button" class="btn btn-primary" style="padding: 6px 14px; min-height: 34px; font-size: 12.5px;" onclick="closeWhatsNewModal(); openLessonSummaryModal(${s.weekNum}, '${s.courseKey}', '${s.id}');">
+                            📖 פתח סיכום ושליף ↗
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    modal.classList.add('open');
+}
+
+function closeWhatsNewModal() {
+    const modal = document.getElementById('whatsNewModal');
+    if (modal) modal.classList.remove('open');
+}
+
+// ==========================================
+// ADMIN ALMA (.TXT) UPLOAD & SUMMARY STUDIO ENGINE
+// ==========================================
+
+function openAlmaStudioModal(targetWeek, targetCourse, targetSummaryId) {
+    const modal = document.getElementById('almaStudioModal');
+    if (!modal) return;
+
+    const weekSelect = document.getElementById('almaWeekSelect');
+    const courseSelect = document.getElementById('almaCourseSelect');
+
+    if (weekSelect) {
+        const currentW = getCurrentAcademicWeek();
+        weekSelect.innerHTML = semesterSchedule.map(w => `
+            <option value="${w.weekNum}">שבוע ${w.weekNum} (${w.dateStr})${w.weekNum === currentW ? ' – השבוע הנוכחי' : ''}</option>
+        `).join('');
+        weekSelect.value = String(targetWeek || currentW || 3);
+    }
+
+    if (courseSelect && targetCourse) {
+        courseSelect.value = targetCourse;
+    }
+
+    onAlmaTargetChange(targetSummaryId);
+    modal.classList.add('open');
+}
+
+function closeAlmaStudioModal() {
+    const modal = document.getElementById('almaStudioModal');
+    if (modal) modal.classList.remove('open');
+}
+
+function onAlmaTargetChange(preferredSummaryId) {
+    const weekNum = Number(document.getElementById('almaWeekSelect')?.value || 3);
+    const courseKey = document.getElementById('almaCourseSelect')?.value || 'mor';
+    const existingSelect = document.getElementById('almaExistingSelect');
+    if (!existingSelect) return;
+
+    const existingList = getSummariesForCourseWeek(weekNum, courseKey);
+    let optionsHtml = `<option value="new">➕ יצירת סיכום חדש לשיעור זה (סיכום #${existingList.length + 1})</option>`;
+    existingList.forEach((s, idx) => {
+        optionsHtml += `<option value="${s.id}">✏️ עריכת סיכום ${idx + 1}: ${escapeHtml(s.title)}</option>`;
+    });
+    existingSelect.innerHTML = optionsHtml;
+
+    if (preferredSummaryId && preferredSummaryId !== 'new' && existingList.some(s => s.id === preferredSummaryId)) {
+        existingSelect.value = preferredSummaryId;
+    } else {
+        existingSelect.value = 'new';
+    }
+
+    onAlmaExistingSelectChange();
+}
+
+function onAlmaExistingSelectChange() {
+    const weekNum = Number(document.getElementById('almaWeekSelect')?.value || 3);
+    const courseKey = document.getElementById('almaCourseSelect')?.value || 'mor';
+    const selectedId = document.getElementById('almaExistingSelect')?.value || 'new';
+    const deleteBtn = document.getElementById('almaDeleteBtn');
+
+    if (selectedId === 'new') {
+        if (deleteBtn) deleteBtn.style.display = 'none';
+        const existingCount = getSummariesForCourseWeek(weekNum, courseKey).length;
+        document.getElementById('almaEditTitle').value = '';
+        document.getElementById('almaEditTabLabel').value = existingCount > 0 ? `סיכום ${existingCount + 1}` : 'סיכום מפגש ושליף לתרגיל';
+        document.getElementById('almaEditTeaser').value = '';
+        document.getElementById('almaEditRules').value = '';
+        document.getElementById('almaEditConcepts').value = '';
+        document.getElementById('almaEditSteps').value = '';
+        document.getElementById('almaEditTemplate').value = '';
+        document.getElementById('almaRawTranscriptInput').value = '';
+        return;
+    }
+
+    const existingList = getSummariesForCourseWeek(weekNum, courseKey);
+    const found = existingList.find(s => s.id === selectedId);
+    if (!found) return;
+
+    if (deleteBtn) deleteBtn.style.display = 'inline-flex';
+    document.getElementById('almaEditTitle').value = found.title || '';
+    document.getElementById('almaEditTabLabel').value = found.tabLabel || '';
+    document.getElementById('almaEditTeaser').value = found.teaser || '';
+    document.getElementById('almaEditRules').value = (found.rules || []).map(stripHtmlTags).join('\n');
+    document.getElementById('almaEditConcepts').value = (found.concepts || []).map(stripHtmlTags).join('\n');
+    document.getElementById('almaEditSteps').value = (found.steps || []).map(st => `${st.title || ''} | ${st.question || ''} | ${st.desc || ''} | ${st.example || ''}`).join('\n');
+    document.getElementById('almaEditTemplate').value = found.template || '';
+}
+
+function stripHtmlTags(htmlStr) {
+    if (!htmlStr) return '';
+    const tmp = document.createElement('div');
+    tmp.innerHTML = htmlStr;
+    return (tmp.textContent || tmp.innerText || '').trim();
+}
+
+function handleAlmaTxtFilePicked(inputEl) {
+    const file = inputEl.files && inputEl.files[0];
+    if (!file) return;
+
+    const statusText = document.getElementById('almaFileStatusText');
+    if (statusText) {
+        statusText.style.color = '#4338ca';
+        statusText.style.fontWeight = '800';
+        statusText.innerText = `⏳ קורא את הקובץ "${file.name}" מאלמה...`;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const content = String(e.target.result || '');
+        const rawBox = document.getElementById('almaRawTranscriptInput');
+        if (rawBox) rawBox.value = content;
+        if (statusText) {
+            statusText.style.color = '#059669';
+            statusText.innerText = `✅ הקובץ "${file.name}" (${Math.round(content.length / 1024) || 1}KB) נטען! מעבד ומזקק לבלוקים...`;
+        }
+        processRawAlmaTranscript(file.name);
+    };
+    reader.readAsText(file, 'UTF-8');
+}
+
+function promptAdminGeminiKey() {
+    const current = localStorage.getItem('roshaket_gemini_key') || '';
+    const key = prompt('הזן מפתח Gemini API לזיקוק AI אוטומטי של תמלולי אלמה (נשמר מקומית במכשירך בלבד):', current);
+    if (key !== null) {
+        localStorage.setItem('roshaket_gemini_key', key.trim());
+        showToast(key.trim() ? '🔑 מפתח Gemini נשמר בהצלחה!' : 'מפתח הוסר (ישתמש במזקק המובנה)');
+    }
+}
+
+// Cleans common Alma Speech-to-Text Hebrew phonetic errors
+function cleanAlmaSpeechErrors(rawText) {
+    if (!rawText) return '';
+    return rawText
+        .replace(/קרבולכאלט|קרדו קאדו/g, 'Cargo Cult (פולחן המטען)')
+        .replace(/design to pinking/gi, 'Design Thinking')
+        .replace(/\bStemp\b/gi, 'STEM')
+        .replace(/\bPDL\b/g, 'PBL')
+        .replace(/גוגל טורקס/g, 'Google Docs')
+        .replace(/נורטבוק|נורדפרוק|לנופו/g, 'NotebookLM')
+        .replace(/\*\*דובר \d+:\*\*/g, '\n');
+}
+
+async function processRawAlmaTranscript(fileNameHint) {
+    const rawInput = document.getElementById('almaRawTranscriptInput');
+    const rawText = (rawInput ? rawInput.value : '').trim();
+    if (!rawText) {
+        showToast('אנא בחר קובץ .txt מאלמה או הדבק את טקסט התמלול תחילה');
+        return;
+    }
+
+    const btn = document.getElementById('almaDistillBtn');
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span>⏳</span> <span>מנקה שיבושי תמלול ומזקק לבלוקים פדגוגיים...</span>';
+    }
+
+    const weekNum = Number(document.getElementById('almaWeekSelect')?.value || 3);
+    const courseKey = document.getElementById('almaCourseSelect')?.value || 'mor';
+    const cMeta = COURSE_META_MAP[courseKey] || COURSE_META_MAP.mor;
+    const weekObj = semesterSchedule.find(w => w.weekNum === weekNum);
+    const taskObj = weekObj ? weekObj.tasks.find(t => t.courseKey === courseKey) : null;
+
+    const geminiKey = localStorage.getItem('roshaket_gemini_key');
+    let distilled = null;
+
+    if (geminiKey) {
+        try {
+            const promptText = `אתה עוזר הוראה אקדמי בתוכנית התואר השני בחינוך (מכללת בית ברל).
+לפניך תמלול גולמי של שיעור מאפליקציית התמלול "אלמה" בקורס "${cMeta.name}" (שבוע ${weekNum}).
+תקן שגיאות שמיעה פונטיות, סנן דיבורי סרק, והחזר אך ורק אובייקט JSON תקני במבנה הבא:
+{
+  "title": "כותרת אקדמית ברורה לשיעור",
+  "teaser": "משפט קצר ומזמין לבועית מה חדש",
+  "rules": ["סעיף נוהל/הגשה 1", "סעיף 2"],
+  "concepts": ["שם מושג: הסבר בהיר ודוגמה מהכיתה", "מושג 2: הסבר"],
+  "steps": [
+    {"title": "שלב 1: ...", "question": "שאלה מנחה?", "desc": "הסבר קצר", "example": "דוגמה מהכיתה"}
+  ],
+  "template": "תבנית טקסט מוכנה לסטודנטים להעתקה לתרגיל"
+}
+התמלול:
+${rawText.slice(0, 28000)}`;
+
+            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(geminiKey)}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: promptText }] }],
+                    generationConfig: { responseMimeType: 'application/json' }
+                })
+            });
+            if (res.ok) {
+                const data = await res.json();
+                const txt = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (txt) distilled = JSON.parse(txt);
+            }
+        } catch (e) {
+            console.warn('Gemini distillation fallback to smart local parser:', e);
+        }
+    }
+
+    if (!distilled) {
+        // Smart Local Pedagogical Distiller
+        const cleaned = cleanAlmaSpeechErrors(rawText);
+        const sentences = cleaned.split(/[\n.?!]+/).map(s => s.trim()).filter(s => s.length > 28);
+
+        const ruleKeywords = ['מטלה', 'פורום', 'להגיש', 'הגשה', 'מודל', 'סילבוס', 'קישור', 'ציון', 'דוקס', 'PDF'];
+        const conceptKeywords = ['חזון', 'תיאור', 'שינוי', 'מודל', 'לוגי', 'הערכה', 'מחוון', 'מדד', 'תוצאה', 'תפוקה', 'משאב', 'מחקר'];
+
+        const extractedRules = sentences.filter(s => ruleKeywords.some(k => s.includes(k))).slice(0, 5);
+        const extractedConcepts = sentences.filter(s => conceptKeywords.some(k => s.includes(k)) && !extractedRules.includes(s)).slice(0, 6);
+
+        const defaultTitle = taskObj ? taskObj.title.replace(/^🎯\s*/, '') : (fileNameHint ? fileNameHint.replace(/\.txt$/i, '') : `סיכום שיעור שבוע ${weekNum}`);
+
+        distilled = {
+            title: `סיכום מפגש ועזר לתרגיל: ${defaultTitle}`,
+            teaser: `עלה סיכום חדש ב${cMeta.shortName} (שבוע ${weekNum}): עיקרי המפגש, דגשים להגשה ושליף עבודה לתרגיל.`,
+            rules: extractedRules.length > 0 ? extractedRules : [
+                'הקפידו לעבור על הנחיות המטלה השבועית במודל ולהגיש בזמן.',
+                'מומלץ לשתף טיוטה או קישור בפורום הקורס לקבלת משוב עמיתים בונה.'
+            ],
+            concepts: extractedConcepts.length > 0 ? extractedConcepts : sentences.slice(0, 5),
+            steps: [
+                { title: 'שלב 1: הגדרת המטרה / החזון', question: 'מה אנחנו רוצים להשיג?', desc: 'ניסוח תמונת העתיד והערך הפדגוגי של המיזם.', example: 'חיבור המיזם לצורך אמיתי בשטח' },
+                { title: 'שלב 2: משאבים ופעילויות', question: 'עם מה עובדים ומה עושים?', desc: 'מיפוי המשאבים הקיימים והפעולות שיתבצעו.', example: 'סדנאות, מפגשים, חומרי למידה' },
+                { title: 'שלב 3: תפוקות מול תוצאות', question: 'איך נדע שהצלחנו?', desc: 'הבחנה בין תוצרים כמותיים לבין שינוי פדגוגי.', example: 'מדדי הצלחה כמותיים ואיכותניים' }
+            ],
+            template: `תבנית עבודה לתרגיל – ${cMeta.shortName} (שבוע ${weekNum})\nשם המיזם: [הזן כאן]\n\n1. מטרת המיזם / החזון:\n• \n\n2. עיקרי התהליך והפעילויות:\n• \n\n3. מדדי הערכה ותוצאות מצופות:\n• `
+        };
+    }
+
+    document.getElementById('almaEditTitle').value = distilled.title || '';
+    document.getElementById('almaEditTeaser').value = distilled.teaser || '';
+    document.getElementById('almaEditRules').value = (distilled.rules || []).join('\n');
+    document.getElementById('almaEditConcepts').value = (distilled.concepts || []).join('\n');
+    document.getElementById('almaEditSteps').value = (distilled.steps || []).map((st, idx) => `${st.title || ('שלב ' + (idx + 1))} | ${st.question || ''} | ${st.desc || ''} | ${st.example || ''}`).join('\n');
+    document.getElementById('almaEditTemplate').value = distilled.template || '';
+
+    if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '<span>✨</span> <span>זקק תמלול אוטומטית לבלוקים מרווחים (ניקוי שגיאות + שליף לתרגיל)</span>';
+    }
+    showToast('✨ התמלול זוקק לבלוקים! בדוק/ערוך למטה ולחץ על "פרסם לסטודנטים"');
+}
+
+function formatLineWithBoldPrefix(line) {
+    const clean = escapeHtml(line.trim());
+    const colonIdx = clean.indexOf(':');
+    if (colonIdx > 0 && colonIdx < 48) {
+        return `<strong>${clean.slice(0, colonIdx + 1)}</strong>${clean.slice(colonIdx + 1)}`;
+    }
+    return clean;
+}
+
+function saveAndPublishAlmaSummary() {
+    const weekNum = Number(document.getElementById('almaWeekSelect')?.value || 3);
+    const courseKey = document.getElementById('almaCourseSelect')?.value || 'mor';
+    const selectedId = document.getElementById('almaExistingSelect')?.value || 'new';
+
+    const title = (document.getElementById('almaEditTitle')?.value || '').trim();
+    const tabLabel = (document.getElementById('almaEditTabLabel')?.value || '').trim();
+    const teaser = (document.getElementById('almaEditTeaser')?.value || '').trim();
+    const rulesRaw = (document.getElementById('almaEditRules')?.value || '').trim();
+    const conceptsRaw = (document.getElementById('almaEditConcepts')?.value || '').trim();
+    const stepsRaw = (document.getElementById('almaEditSteps')?.value || '').trim();
+    const template = (document.getElementById('almaEditTemplate')?.value || '').trim();
+
+    if (!title) {
+        showToast('אנא הזן כותרת לסיכום השיעור');
+        return;
+    }
+
+    const weekObj = semesterSchedule.find(w => w.weekNum === weekNum);
+    const dateStr = weekObj ? weekObj.dateStr : '';
+
+    const rules = rulesRaw ? rulesRaw.split('\n').map(l => l.trim()).filter(Boolean).map(formatLineWithBoldPrefix) : [];
+    const concepts = conceptsRaw ? conceptsRaw.split('\n').map(l => l.trim()).filter(Boolean).map(formatLineWithBoldPrefix) : [];
+    const steps = stepsRaw ? stepsRaw.split('\n').map(l => l.trim()).filter(Boolean).map((line, idx) => {
+        const parts = line.split('|').map(p => p.trim());
+        return {
+            num: `שלב ${idx + 1}`,
+            title: parts[0] || `שלב ${idx + 1}`,
+            question: parts[1] || '',
+            desc: parts[2] || '',
+            example: parts[3] || ''
+        };
+    }) : [];
+
+    const summaryId = selectedId === 'new' ? `sum_w${weekNum}_${courseKey}_${Date.now()}` : selectedId;
+
+    const newSummaryObj = {
+        id: summaryId,
+        weekNum: weekNum,
+        courseKey: courseKey,
+        dateStr: dateStr,
+        createdAt: new Date().toISOString(),
+        tabLabel: tabLabel || title.slice(0, 26),
+        title: title,
+        teaser: teaser || `סיכום שיעור ועזר לתרגיל – שבוע ${weekNum}`,
+        rules: rules,
+        concepts: concepts,
+        steps: steps,
+        template: template
+    };
+
+    const all = loadAllLessonSummaries();
+    const filtered = all.filter(s => s.id !== summaryId);
+    filtered.push(newSummaryObj);
+    saveCustomLessonSummaries(filtered);
+
+    // Remove from read list so notification bubble shows it fresh
+    const readIds = getReadSummaryIds().filter(id => id !== summaryId);
+    localStorage.setItem('roshaket_read_summaries', JSON.stringify(readIds));
+    sessionStorage.removeItem('roshaket_dismissed_bubble_id');
+
+    closeAlmaStudioModal();
+    render();
+    updateWhatsNewUI();
+    openLessonSummaryModal(weekNum, courseKey, summaryId);
+    showToast('🚀 הסיכום פורסם בהצלחה בראשקט וזמין לסטודנטים!');
+}
+
+function deleteCurrentAlmaSummary() {
+    const selectedId = document.getElementById('almaExistingSelect')?.value;
+    if (!selectedId || selectedId === 'new') return;
+    if (!confirm('האם למחוק סיכום זה מראשקט?')) return;
+
+    const deletedIds = JSON.parse(localStorage.getItem('roshaket_deleted_summary_ids') || '[]');
+    if (!deletedIds.includes(selectedId)) {
+        deletedIds.push(selectedId);
+        localStorage.setItem('roshaket_deleted_summary_ids', JSON.stringify(deletedIds));
+    }
+
+    const custom = loadAllLessonSummaries().filter(s => s.id !== selectedId);
+    saveCustomLessonSummaries(custom);
+
+    closeAlmaStudioModal();
+    render();
+    updateWhatsNewUI();
+    showToast('🗑️ הסיכום נמחק');
+}
+
+// Re-render and initialize What's New UI once Lesson Summary Engine is loaded
+render();
+updateWhatsNewUI();
+
 </script>
+
+<!-- Email Consent & Privacy Modal (Roshaket Permanent Access) -->
+<div class="modal" id="emailConsentModal" role="dialog" aria-modal="true" aria-labelledby="consentModalTitle" style="z-index: 100000;">
+    <div class="modal-content" style="max-width: 520px; text-align: right; border-radius: 20px; border: 1.5px solid rgba(99, 102, 241, 0.2); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
+        <div class="modal-header" style="border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 26px;">🔒</span>
+                <div>
+                    <h3 id="consentModalTitle" style="margin: 0; font-size: 19px; font-weight: 800; color: #1e1b4b;">אישור הצטרפות ושמירת פרטים</h3>
+                    <p style="margin: 2px 0 0 0; font-size: 12.5px; color: #64748b;">Roshaket | תוכנית המהפכה (שנה ב')</p>
+                </div>
+            </div>
+            <button class="modal-close-x" onclick="closeConsentModal()" title="סגור">✕</button>
+        </div>
+
+        <div style="padding: 18px 0 10px 0;">
+            <div style="background: #f8fafc; border: 1.5px solid #e0e7ff; border-radius: 14px; padding: 18px 20px; margin-bottom: 18px; line-height: 1.65;">
+                <p style="font-size: 15px; color: #1e293b; margin: 0 0 12px 0; font-weight: 600;">
+                    ברוך/ה הבא/ה לראשקט! כדי לחבר אותך לקורס ולאפשר סנכרון מטלות ליומן Google שלך, כתובת האימייל שלך תישמר במאגר המשתמשים המורשים של Roshket. אנא אשר/י בבקשה.
+                </p>
+                <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 12px; font-weight: 700; color: #4338ca; direction: ltr; text-align: left; font-size: 14px; display: flex; align-items: center; justify-content: space-between;">
+                    <span id="consentUserEmailDisplay">user@gmail.com</span>
+                    <span style="font-size: 11px; background: #e0e7ff; color: #4338ca; padding: 2px 7px; border-radius: 4px; font-weight: 700;">חשבון Google</span>
+                </div>
+            </div>
+
+            <div style="background: #f1f5f9; border-radius: 12px; padding: 12px 16px; margin-bottom: 18px;">
+                <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; user-select: none;">
+                    <input type="checkbox" id="consentCheckbox" onchange="toggleConsentButton()" style="width: 22px; height: 22px; accent-color: #4338ca; cursor: pointer; margin-top: 2px; flex-shrink: 0;">
+                    <span style="font-size: 14px; font-weight: 700; color: #0f172a; line-height: 1.5;">
+                        אני מאשר/ת את שמירת כתובת המייל שלי במאגר המשתמשים המורשים של Roshaket.
+                    </span>
+                </label>
+            </div>
+
+            <div id="consentErrorMsg" style="display: none; background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; padding: 10px 14px; border-radius: 10px; font-size: 13px; font-weight: 700; margin-bottom: 15px;">
+            </div>
+
+            <div style="display: flex; gap: 10px; justify-content: flex-end; align-items: center;">
+                <button type="button" class="btn-welcome-secondary" onclick="closeConsentModal()" style="padding: 10px 18px; font-size: 14px;">
+                    ביטול
+                </button>
+                <button type="button" class="btn-welcome-primary" id="confirmConsentBtn" onclick="submitConsentAndEnroll()" disabled style="opacity: 0.5; cursor: not-allowed; padding: 10px 22px; font-size: 14.5px;">
+                    <span>✅</span>
+                    <span>אשר/י והיכנס/י למערכת</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>
