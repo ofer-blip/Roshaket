@@ -6201,292 +6201,11 @@ function scrollToWeekCard(weekNum) {
     }, 150);
 }
 
-// Initial Render
-render();
-
-// ==========================================
-// ACCESS CONTROL & COURSE REGISTRATION (Google Sheets)
-// ==========================================
-const ACCESS_CONTROL_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyvK9BQDE3VYPkpq8NbkNxg_VKqMWKMluCFN1_NGrQ5-Di-WUWmZxa1v3E0A-VYCLtY/exec';
-
-const PRIMARY_ADMIN_EMAIL = 'saritofer.k@gmail.com';
-
-async function proceedSuccessfulLogin(userName) {
-    if (typeof trackEvent === 'function') trackEvent('login_google_success', { user: userName, email: googleUserEmail });
-    if (userName && !localStorage.getItem('roshaket_user_name')) {
-        localStorage.setItem('roshaket_user_name', userName);
-    }
-    sessionStorage.setItem('roshaket_gate_passed', 'true');
-    hideWelcomeScreen();
-
-    localStorage.setItem('roshaket_g_token', googleAccessToken);
-    isUserLoggedIn = true;
-    doneTasks = JSON.parse(localStorage.getItem('roshaket_done_tasks') || '[]');
-    userTaskNotes = JSON.parse(localStorage.getItem('roshaket_user_notes') || '{}');
-    showToast('🔑 התחברת בהצלחה! ברוך/ה הבא/ה לראשקט.');
-    updateSyncUI();
-
-    // Update strip badge visibility
-    ['mor', 'wassel', 'levy'].forEach(cKey => {
-        const badge = document.querySelector(`.badge-${cKey}`);
-        if (badge) {
-            badge.style.display = hiddenCourses.includes(cKey) ? 'none' : 'flex';
-        }
-    });
-
-    render();
-    if (pendingGuidedSync || !localStorage.getItem('roshaket_initial_sync_done')) {
-        pendingGuidedSync = false;
-        openOnboardingSyncModal();
-    } else {
-        ensureRoshaketCalendarExists();
-    }
-}
-
-function openConsentModal(email, name) {
-    const modal = document.getElementById('emailConsentModal');
-    const chk = document.getElementById('consentCheckbox');
-    const btn = document.getElementById('confirmConsentBtn');
-    const err = document.getElementById('consentErrorMsg');
-
-    if (chk) chk.checked = false;
-    if (btn) {
-        btn.disabled = true;
-        btn.style.opacity = '0.5';
-        btn.style.cursor = 'not-allowed';
-        btn.innerHTML = '<span>✅</span> <span>אשר/י והיכנס/י למערכת</span>';
-    }
-    if (err) err.style.display = 'none';
-
-    if (modal) modal.classList.add('open');
-}
-
-function closeConsentModal() {
-    const modal = document.getElementById('emailConsentModal');
-    if (modal) modal.classList.remove('open');
-}
-
-function toggleConsentButton() {
-    const chk = document.getElementById('consentCheckbox');
-    const btn = document.getElementById('confirmConsentBtn');
-    if (!btn || !chk) return;
-
-    if (chk.checked) {
-        btn.disabled = false;
-        btn.style.opacity = '1';
-        btn.style.cursor = 'pointer';
-    } else {
-        btn.disabled = true;
-        btn.style.opacity = '0.5';
-        btn.style.cursor = 'not-allowed';
-    }
-}
-
-function submitConsentAndEnroll() {
-    const chk = document.getElementById('consentCheckbox');
-    const err = document.getElementById('consentErrorMsg');
-    const email = googleUserEmail || localStorage.getItem('roshaket_user_email') || '';
-    const name = googleUserName || localStorage.getItem('roshaket_user_name') || (email && email.includes('@') ? email.split('@')[0] : 'סטודנט/ית');
-
-    if (chk && !chk.checked) {
-        if (err) {
-            err.innerText = 'אנא סמן/י את תיבת האישור כדי להמשיך.';
-            err.style.display = 'block';
-        }
-        return;
-    }
-
-    // 1. Save consent locally immediately
-    localStorage.setItem('roshaket_user_consent', 'approved');
-    localStorage.setItem('roshaket_consent_timestamp', new Date().toISOString());
-
-    // 2. Close modal immediately - ZERO FREEZE!
-    closeConsentModal();
-
-    // 3. Enter app immediately and show feedback
-    showToast('🎉 ברוך/ה הבא/ה לראשקט! החשבון אושר בהצלחה.');
-    proceedSuccessfulLogin(name);
-
-    // 4. Send registration to Google Sheet asynchronously in background
-    if (email && email.includes('@')) {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 6000);
-        fetch(`${ACCESS_CONTROL_SCRIPT_URL}?action=register&email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}&consent=approved`, {
-            signal: controller.signal
-        })
-        .then(res => res.json())
-        .then(data => {
-            clearTimeout(timeoutId);
-            console.log('Background consent registered successfully:', data);
-        })
-        .catch(err => {
-            clearTimeout(timeoutId);
-            console.warn('Background consent notification notice:', err);
-        });
-    }
-}
-
-async function checkUserAccessApproval(email) {
-    if (!email) return { status: 'not_found' };
-    const em = email.toLowerCase().trim();
-
-    // Primary Admin (Ofer) is hardcoded as permanently approved
-    if (em === PRIMARY_ADMIN_EMAIL) {
-        return { status: 'found', approvalStatus: 'מאושר', name: 'עופר' };
-    }
-
-    try {
-        const res = await fetch(`${ACCESS_CONTROL_SCRIPT_URL}?action=check&email=${encodeURIComponent(em)}`);
-        if (res.ok) {
-            const data = await res.json();
-            return data;
-        }
-    } catch (e) {
-        console.error('Error checking user access approval:', e);
-    }
-    return { status: 'not_found' };
-}
-
-function openRegistrationModal() {
-    const modal = document.getElementById('registrationModal');
-    const nameInput = document.getElementById('regFullNameInput');
-    const emailInput = document.getElementById('regEmailInput');
-    const errorMsg = document.getElementById('regErrorMsg');
-    
-    // Always leave fields empty for manual input as requested by Ofer
-    if (nameInput) nameInput.value = '';
-    if (emailInput) emailInput.value = '';
-    if (errorMsg) errorMsg.style.display = 'none';
-
-    if (modal) modal.classList.add('open');
-}
-
-function closeRegistrationModal() {
-    const modal = document.getElementById('registrationModal');
-    if (modal) modal.classList.remove('open');
-}
-
-async function submitRegistrationRequest() {
-    const nameInput = document.getElementById('regFullNameInput');
-    const emailInput = document.getElementById('regEmailInput');
-    const errorMsg = document.getElementById('regErrorMsg');
-    const submitBtn = document.getElementById('regSubmitBtn');
-
-    const name = (nameInput ? nameInput.value : '').trim();
-    const email = (emailInput ? emailInput.value : '').trim().toLowerCase();
-
-    if (!name || !email) {
-        if (errorMsg) {
-            errorMsg.innerText = 'אנא מלא/י את שמך המלא וכתובת האימייל.';
-            errorMsg.style.display = 'block';
-        }
-        return;
-    }
-
-    if (!email.includes('@') || !email.includes('.')) {
-        if (errorMsg) {
-            errorMsg.innerText = 'כתובת האימייל אינה תקינה.';
-            errorMsg.style.display = 'block';
-        }
-        return;
-    }
-
-    if (errorMsg) errorMsg.style.display = 'none';
-    if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<span>שולח בקשה...</span> <span>⏳</span>';
-    }
-
-    try {
-        const res = await fetch(`${ACCESS_CONTROL_SCRIPT_URL}?action=register&email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}&consent=approved`);
-        const data = await res.json();
-
-        if (data && (data.approvalStatus === 'מאושר' || data.status === 'exists')) {
-            closeRegistrationModal();
-            showToast('🎉 החשבון מאושר! מתחבר ישירות עם Google...');
-            enterApp('google');
-            return;
-        }
-
-        closeRegistrationModal();
-        openPendingApprovalModal(name, email);
-        showToast('🎉 בקשתך נקלטה בהצלחה ונמצאת בבדיקה אצל עופר');
-    } catch (e) {
-        console.error('Registration error:', e);
-        if (errorMsg) {
-            errorMsg.innerText = 'חלה שגיאה בשליחת הבקשה. אנא נסה/י שוב.';
-            errorMsg.style.display = 'block';
-        }
-    } finally {
-        if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = '<span>שלח בקשת הצטרפות</span> <span>🚀</span>';
-        }
-    }
-}
-
-function openPendingApprovalModal(name, email) {
-    const modal = document.getElementById('pendingApprovalModal');
-    const nameEl = document.getElementById('pendingUserName');
-    const emailEl = document.getElementById('pendingUserEmail');
-
-    if (nameEl) nameEl.textContent = name || 'סטודנט/ית';
-    if (emailEl) emailEl.textContent = email || '';
-
-    if (email) localStorage.setItem('roshaket_pending_email', email);
-    if (name) localStorage.setItem('roshaket_pending_name', name);
-
-    if (modal) modal.classList.add('open');
-}
-
-function closePendingApprovalModal() {
-    const modal = document.getElementById('pendingApprovalModal');
-    if (modal) modal.classList.remove('open');
-}
-
-function continueFromPendingToDemo() {
-    closePendingApprovalModal();
-    enterApp('demo');
-}
-
-async function checkPendingApprovalAgain() {
-    const email = document.getElementById('pendingUserEmail')?.textContent || localStorage.getItem('roshaket_pending_email');
-    if (!email) {
-        showToast('לא נמצאה כתובת מייל לבדיקה.');
-        return;
-    }
-    showToast('🔍 בודק סטטוס מול הגיליון...');
-    const approval = await checkUserAccessApproval(email);
-    if (approval.status === 'found' && approval.approvalStatus === 'מאושר') {
-        closePendingApprovalModal();
-        showToast('🎉 מזל טוב! בקשתך אושרה. מתחבר...');
-        handleAuthClick();
-    } else if (approval.status === 'found' && approval.approvalStatus === 'נדחה') {
-        closePendingApprovalModal();
-        alert('הבקשה נדחתה. לבירורים ניתן לפנות לעופר.');
-    } else {
-        showToast('⏳ עדיין ממתין לאישור של עופר בגיליון. תודה על הסבלנות!');
-    }
-}
-
-
-
-// ==========================================
-// ROSHAKET LIGHTWEIGHT ANALYTICS & EVENT TRACKING
-// ==========================================
-window.ROSHAKET_GA_ID = window.ROSHAKET_GA_ID || '';
-window.trackEvent = function(eventName, params = {}) {
-    try {
-        if (typeof window.gtag === 'function') {
-            window.gtag('event', eventName, params);
-        }
-        if (typeof window.clarity === 'function') {
-            window.clarity('event', eventName);
-        }
-        console.log('📊 [Analytics]', eventName, params);
-    } catch (e) {
-        console.warn('Analytics tracking error:', e);
-    }
+// Course visual metadata map
+const COURSE_META_MAP = {
+    mor: { name: 'הערכת תוכניות – ד"ר ישי מור', shortName: 'הערכת תוכניות – מור', emoji: '🟣', color: '#4338ca', bg: '#f5f3ff', border: '#c4b5fd' },
+    wassel: { name: 'פיתוח חדשנות – ד"ר ואסל', shortName: 'פיתוח חדשנות – ואסל', emoji: '🔵', color: '#0369a1', bg: '#f0f9ff', border: '#7dd3fc' },
+    levy: { name: 'סוגיות בהערכה – ד"ר עדי לוי-ורד', shortName: 'סוגיות בהערכה – לוי-ורד', emoji: '🟢', color: '#047857', bg: '#f0fdf4', border: '#86efac' }
 };
 
 const DEFAULT_LESSON_SUMMARIES = [
@@ -7455,6 +7174,296 @@ function deleteCurrentAlmaSummary() {
 // Re-render and initialize What's New UI once Lesson Summary Engine is loaded
 render();
 updateWhatsNewUI();
+
+// Initial Render
+render();
+
+// ==========================================
+// ACCESS CONTROL & COURSE REGISTRATION (Google Sheets)
+// ==========================================
+const ACCESS_CONTROL_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyvK9BQDE3VYPkpq8NbkNxg_VKqMWKMluCFN1_NGrQ5-Di-WUWmZxa1v3E0A-VYCLtY/exec';
+
+const PRIMARY_ADMIN_EMAIL = 'saritofer.k@gmail.com';
+
+async function proceedSuccessfulLogin(userName) {
+    if (typeof trackEvent === 'function') trackEvent('login_google_success', { user: userName, email: googleUserEmail });
+    if (userName && !localStorage.getItem('roshaket_user_name')) {
+        localStorage.setItem('roshaket_user_name', userName);
+    }
+    sessionStorage.setItem('roshaket_gate_passed', 'true');
+    hideWelcomeScreen();
+
+    localStorage.setItem('roshaket_g_token', googleAccessToken);
+    isUserLoggedIn = true;
+    doneTasks = JSON.parse(localStorage.getItem('roshaket_done_tasks') || '[]');
+    userTaskNotes = JSON.parse(localStorage.getItem('roshaket_user_notes') || '{}');
+    showToast('🔑 התחברת בהצלחה! ברוך/ה הבא/ה לראשקט.');
+    updateSyncUI();
+
+    // Update strip badge visibility
+    ['mor', 'wassel', 'levy'].forEach(cKey => {
+        const badge = document.querySelector(`.badge-${cKey}`);
+        if (badge) {
+            badge.style.display = hiddenCourses.includes(cKey) ? 'none' : 'flex';
+        }
+    });
+
+    render();
+    if (pendingGuidedSync || !localStorage.getItem('roshaket_initial_sync_done')) {
+        pendingGuidedSync = false;
+        openOnboardingSyncModal();
+    } else {
+        ensureRoshaketCalendarExists();
+    }
+}
+
+function openConsentModal(email, name) {
+    const modal = document.getElementById('emailConsentModal');
+    const chk = document.getElementById('consentCheckbox');
+    const btn = document.getElementById('confirmConsentBtn');
+    const err = document.getElementById('consentErrorMsg');
+
+    if (chk) chk.checked = false;
+    if (btn) {
+        btn.disabled = true;
+        btn.style.opacity = '0.5';
+        btn.style.cursor = 'not-allowed';
+        btn.innerHTML = '<span>✅</span> <span>אשר/י והיכנס/י למערכת</span>';
+    }
+    if (err) err.style.display = 'none';
+
+    if (modal) modal.classList.add('open');
+}
+
+function closeConsentModal() {
+    const modal = document.getElementById('emailConsentModal');
+    if (modal) modal.classList.remove('open');
+}
+
+function toggleConsentButton() {
+    const chk = document.getElementById('consentCheckbox');
+    const btn = document.getElementById('confirmConsentBtn');
+    if (!btn || !chk) return;
+
+    if (chk.checked) {
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        btn.style.cursor = 'pointer';
+    } else {
+        btn.disabled = true;
+        btn.style.opacity = '0.5';
+        btn.style.cursor = 'not-allowed';
+    }
+}
+
+function submitConsentAndEnroll() {
+    const chk = document.getElementById('consentCheckbox');
+    const err = document.getElementById('consentErrorMsg');
+    const email = googleUserEmail || localStorage.getItem('roshaket_user_email') || '';
+    const name = googleUserName || localStorage.getItem('roshaket_user_name') || (email && email.includes('@') ? email.split('@')[0] : 'סטודנט/ית');
+
+    if (chk && !chk.checked) {
+        if (err) {
+            err.innerText = 'אנא סמן/י את תיבת האישור כדי להמשיך.';
+            err.style.display = 'block';
+        }
+        return;
+    }
+
+    // 1. Save consent locally immediately
+    localStorage.setItem('roshaket_user_consent', 'approved');
+    localStorage.setItem('roshaket_consent_timestamp', new Date().toISOString());
+
+    // 2. Close modal immediately - ZERO FREEZE!
+    closeConsentModal();
+
+    // 3. Enter app immediately and show feedback
+    showToast('🎉 ברוך/ה הבא/ה לראשקט! החשבון אושר בהצלחה.');
+    proceedSuccessfulLogin(name);
+
+    // 4. Send registration to Google Sheet asynchronously in background
+    if (email && email.includes('@')) {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 6000);
+        fetch(`${ACCESS_CONTROL_SCRIPT_URL}?action=register&email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}&consent=approved`, {
+            signal: controller.signal
+        })
+        .then(res => res.json())
+        .then(data => {
+            clearTimeout(timeoutId);
+            console.log('Background consent registered successfully:', data);
+        })
+        .catch(err => {
+            clearTimeout(timeoutId);
+            console.warn('Background consent notification notice:', err);
+        });
+    }
+}
+
+async function checkUserAccessApproval(email) {
+    if (!email) return { status: 'not_found' };
+    const em = email.toLowerCase().trim();
+
+    // Primary Admin (Ofer) is hardcoded as permanently approved
+    if (em === PRIMARY_ADMIN_EMAIL) {
+        return { status: 'found', approvalStatus: 'מאושר', name: 'עופר' };
+    }
+
+    try {
+        const res = await fetch(`${ACCESS_CONTROL_SCRIPT_URL}?action=check&email=${encodeURIComponent(em)}`);
+        if (res.ok) {
+            const data = await res.json();
+            return data;
+        }
+    } catch (e) {
+        console.error('Error checking user access approval:', e);
+    }
+    return { status: 'not_found' };
+}
+
+function openRegistrationModal() {
+    const modal = document.getElementById('registrationModal');
+    const nameInput = document.getElementById('regFullNameInput');
+    const emailInput = document.getElementById('regEmailInput');
+    const errorMsg = document.getElementById('regErrorMsg');
+    
+    // Always leave fields empty for manual input as requested by Ofer
+    if (nameInput) nameInput.value = '';
+    if (emailInput) emailInput.value = '';
+    if (errorMsg) errorMsg.style.display = 'none';
+
+    if (modal) modal.classList.add('open');
+}
+
+function closeRegistrationModal() {
+    const modal = document.getElementById('registrationModal');
+    if (modal) modal.classList.remove('open');
+}
+
+async function submitRegistrationRequest() {
+    const nameInput = document.getElementById('regFullNameInput');
+    const emailInput = document.getElementById('regEmailInput');
+    const errorMsg = document.getElementById('regErrorMsg');
+    const submitBtn = document.getElementById('regSubmitBtn');
+
+    const name = (nameInput ? nameInput.value : '').trim();
+    const email = (emailInput ? emailInput.value : '').trim().toLowerCase();
+
+    if (!name || !email) {
+        if (errorMsg) {
+            errorMsg.innerText = 'אנא מלא/י את שמך המלא וכתובת האימייל.';
+            errorMsg.style.display = 'block';
+        }
+        return;
+    }
+
+    if (!email.includes('@') || !email.includes('.')) {
+        if (errorMsg) {
+            errorMsg.innerText = 'כתובת האימייל אינה תקינה.';
+            errorMsg.style.display = 'block';
+        }
+        return;
+    }
+
+    if (errorMsg) errorMsg.style.display = 'none';
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>שולח בקשה...</span> <span>⏳</span>';
+    }
+
+    try {
+        const res = await fetch(`${ACCESS_CONTROL_SCRIPT_URL}?action=register&email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}&consent=approved`);
+        const data = await res.json();
+
+        if (data && (data.approvalStatus === 'מאושר' || data.status === 'exists')) {
+            closeRegistrationModal();
+            showToast('🎉 החשבון מאושר! מתחבר ישירות עם Google...');
+            enterApp('google');
+            return;
+        }
+
+        closeRegistrationModal();
+        openPendingApprovalModal(name, email);
+        showToast('🎉 בקשתך נקלטה בהצלחה ונמצאת בבדיקה אצל עופר');
+    } catch (e) {
+        console.error('Registration error:', e);
+        if (errorMsg) {
+            errorMsg.innerText = 'חלה שגיאה בשליחת הבקשה. אנא נסה/י שוב.';
+            errorMsg.style.display = 'block';
+        }
+    } finally {
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<span>שלח בקשת הצטרפות</span> <span>🚀</span>';
+        }
+    }
+}
+
+function openPendingApprovalModal(name, email) {
+    const modal = document.getElementById('pendingApprovalModal');
+    const nameEl = document.getElementById('pendingUserName');
+    const emailEl = document.getElementById('pendingUserEmail');
+
+    if (nameEl) nameEl.textContent = name || 'סטודנט/ית';
+    if (emailEl) emailEl.textContent = email || '';
+
+    if (email) localStorage.setItem('roshaket_pending_email', email);
+    if (name) localStorage.setItem('roshaket_pending_name', name);
+
+    if (modal) modal.classList.add('open');
+}
+
+function closePendingApprovalModal() {
+    const modal = document.getElementById('pendingApprovalModal');
+    if (modal) modal.classList.remove('open');
+}
+
+function continueFromPendingToDemo() {
+    closePendingApprovalModal();
+    enterApp('demo');
+}
+
+async function checkPendingApprovalAgain() {
+    const email = document.getElementById('pendingUserEmail')?.textContent || localStorage.getItem('roshaket_pending_email');
+    if (!email) {
+        showToast('לא נמצאה כתובת מייל לבדיקה.');
+        return;
+    }
+    showToast('🔍 בודק סטטוס מול הגיליון...');
+    const approval = await checkUserAccessApproval(email);
+    if (approval.status === 'found' && approval.approvalStatus === 'מאושר') {
+        closePendingApprovalModal();
+        showToast('🎉 מזל טוב! בקשתך אושרה. מתחבר...');
+        handleAuthClick();
+    } else if (approval.status === 'found' && approval.approvalStatus === 'נדחה') {
+        closePendingApprovalModal();
+        alert('הבקשה נדחתה. לבירורים ניתן לפנות לעופר.');
+    } else {
+        showToast('⏳ עדיין ממתין לאישור של עופר בגיליון. תודה על הסבלנות!');
+    }
+}
+
+
+
+// ==========================================
+// ROSHAKET LIGHTWEIGHT ANALYTICS & EVENT TRACKING
+// ==========================================
+window.ROSHAKET_GA_ID = window.ROSHAKET_GA_ID || '';
+window.trackEvent = function(eventName, params = {}) {
+    try {
+        if (typeof window.gtag === 'function') {
+            window.gtag('event', eventName, params);
+        }
+        if (typeof window.clarity === 'function') {
+            window.clarity('event', eventName);
+        }
+        console.log('📊 [Analytics]', eventName, params);
+    } catch (e) {
+        console.warn('Analytics tracking error:', e);
+    }
+};
+
+
 
 </script>
 
