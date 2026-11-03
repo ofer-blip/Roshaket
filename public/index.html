@@ -868,9 +868,9 @@
         }
 
         @media (max-width: 768px) {
-            body { padding: 12px; padding-bottom: 28px; }
-            header { padding: 18px 20px; }
-            .header-title h1 { font-size: 22px; }
+            body { padding: 10px; padding-bottom: 28px; }
+            header { padding: 10px 14px; border-radius: 14px; margin-bottom: 12px; }
+            .header-title h1 { font-size: 16px; }
             .tasks-container { grid-template-columns: 1fr; }
             .course-strip { grid-template-columns: 1fr; }
             .sync-status-banner { flex-direction: column; align-items: stretch; text-align: center; }
@@ -2332,15 +2332,33 @@
                 font-size: 10.5px;
             }
             .header-content {
-                flex-direction: column;
-                align-items: stretch;
+                flex-direction: row !important;
+                align-items: center !important;
+                justify-content: space-between !important;
+                flex-wrap: nowrap !important;
+                gap: 8px !important;
+            }
+            .header-title h1 {
+                font-size: 16px !important;
+                line-height: 1.2 !important;
+                margin: 0 !important;
+            }
+            .header-title p {
+                display: none !important;
+            }
+            .brand-logo {
+                width: 32px !important;
+                height: 32px !important;
             }
             .header-actions-col {
-                align-items: flex-end;
-                width: 100%;
-                border-top: 1px solid rgba(255, 255, 255, 0.14);
-                padding-top: 12px;
-                margin-top: 4px;
+                width: auto !important;
+                border-top: none !important;
+                padding-top: 0 !important;
+                margin-top: 0 !important;
+                flex-shrink: 0 !important;
+                flex-direction: row !important;
+                align-items: center !important;
+                gap: 6px !important;
             }
             .btn-compact-auth {
                 max-width: 100%;
@@ -2552,83 +2570,77 @@
             pointer-events: none;
         }
 
-        /* Floating What's New Bubble Banner (Spacious & Airy) */
+        /* Slim Compact What's New Banner (Single Line, Zero Clutter) */
         .whats-new-bubble {
-            background: linear-gradient(135deg, #ffffff 0%, #f5f3ff 100%);
-            border: 2px solid #c4b5fd;
-            border-radius: 18px;
-            padding: 16px 20px;
-            margin-bottom: 20px;
+            background: #ffffff;
+            border: 1.5px solid #c7d2fe;
+            border-radius: 14px;
+            padding: 8px 14px;
+            margin-bottom: 14px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 14px;
-            flex-wrap: wrap;
-            box-shadow: 0 8px 22px -6px rgba(99, 102, 241, 0.16);
+            gap: 10px;
+            box-shadow: 0 3px 12px -3px rgba(99, 102, 241, 0.1);
             position: relative;
-            transition: all 0.25s ease;
+            transition: all 0.2s ease;
         }
 
         .whats-new-bubble:hover {
-            border-color: #8b5cf6;
-            box-shadow: 0 10px 26px -5px rgba(99, 102, 241, 0.22);
+            border-color: #818cf8;
+            box-shadow: 0 4px 16px -2px rgba(99, 102, 241, 0.16);
         }
 
         .whats-new-bubble-left {
             display: flex;
             align-items: center;
-            gap: 14px;
-            flex: 1;
-            min-width: 240px;
+            gap: 10px;
+            flex: 1 1 auto;
+            min-width: 0;
             cursor: pointer;
         }
 
         .whats-new-bubble-icon {
-            width: 46px;
-            height: 46px;
-            border-radius: 14px;
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
             background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
             color: #ffffff;
-            font-size: 22px;
+            font-size: 17px;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
         }
 
-        .whats-new-bubble-texts h4 {
-            font-size: 16px;
-            font-weight: 800;
-            color: #1e1b4b;
-            margin-bottom: 3px;
+        .whats-new-bubble-text {
             display: flex;
             align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
+            min-width: 0;
         }
 
-        .whats-new-tag-pill {
-            background: #fef3c7;
-            color: #92400e;
-            border: 1px solid #fde68a;
-            font-size: 11px;
-            font-weight: 800;
-            padding: 2px 8px;
-            border-radius: 999px;
+        .whats-new-bubble-pill {
+            display: none !important;
         }
 
-        .whats-new-bubble-texts p {
+        .whats-new-bubble-desc {
+            display: none !important;
+        }
+
+        .whats-new-bubble-title {
             font-size: 13.5px;
-            color: #475569;
-            font-weight: 600;
-            line-height: 1.45;
+            font-weight: 800;
+            color: #1e1b4b;
+            line-height: 1.3;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .whats-new-bubble-actions {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             flex-shrink: 0;
         }
 
@@ -2636,16 +2648,15 @@
             background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
             color: #ffffff;
             border: none;
-            padding: 9px 16px;
-            border-radius: 12px;
-            font-size: 13.5px;
+            padding: 6px 13px;
+            border-radius: 9px;
+            font-size: 12px;
             font-weight: 800;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
-            transition: all 0.2s;
+            gap: 4px;
+            white-space: nowrap;
         }
 
         .btn-whats-new-open:hover, .btn-bubble-open:hover {
@@ -3364,23 +3375,18 @@
         </div>
     </header>
 
-    <!-- 0. Spacious What's New Bubble Banner (Direct Click to Summary) -->
+    <!-- 0. Slim Compact What's New Bubble Banner (Single Line) -->
     <div class="whats-new-bubble" id="whatsNewBubbleBanner" onclick="openLessonSummaryModal(3, 'mor')" style="display: none; cursor: pointer;">
         <div class="whats-new-bubble-left" id="whatsNewBubbleClickArea">
             <div class="whats-new-bubble-icon">✨</div>
             <div class="whats-new-bubble-text">
-                <div class="whats-new-bubble-pill" id="whatsNewBubblePill">חדש בראשקט! שיעור 3</div>
-                <div class="whats-new-bubble-title" id="whatsNewBubbleTitle">🟣 סיכום שיעור ועזר לתרגיל: המודל הלוגי (ישי מור)</div>
-                <div class="whats-new-bubble-desc" id="whatsNewBubbleDesc">סיכום שיעור מעמיק, תרשים 5 שלבים של המודל, שליף מהיר ותרגול מעשי!</div>
+                <div class="whats-new-bubble-title" id="whatsNewBubbleTitle">סיכום שיעור 3 • המודל הלוגי (ד"ר ישי מור)</div>
             </div>
         </div>
         <div class="whats-new-bubble-actions">
-            <button type="button" class="btn" id="whatsNewBubbleJumpBtn" style="padding: 7px 13px; min-height: 38px; font-size: 12.5px; font-weight: 700; background: #f8fafc; border: 1.5px solid #cbd5e1; color: #1e293b; border-radius: 10px; cursor: pointer; transition: all 0.2s ease;" onclick="event.stopPropagation(); scrollToWeekCard(3);">
-                <span>🗓️ קפוץ לשבוע 3</span>
-            </button>
             <button type="button" class="btn-whats-new-open" id="whatsNewBubbleOpenBtn" onclick="event.stopPropagation(); openLessonSummaryModal(3, 'mor')">
-                <span>פתח סיכום ושליף</span>
-                <span style="font-size: 14px; font-weight: 800; line-height: 1;">↗</span>
+                <span>פתח סיכום</span>
+                <span style="font-size: 13px; font-weight: 800; line-height: 1;">↗</span>
             </button>
         </div>
     </div>
@@ -6981,7 +6987,7 @@ function updateWhatsNewUI() {
     const clickArea = document.getElementById('whatsNewBubbleClickArea');
     const openBtn = document.getElementById('whatsNewBubbleOpenBtn');
 
-    if (titleEl) titleEl.innerText = `${cMeta.emoji} סיכום שיעור ועזר לתרגיל: ${latest.title}`;
+    if (titleEl) titleEl.innerText = `${cMeta.emoji} סיכום שיעור ${latest.weekNum}: ${latest.title}`;
     if (tagEl) tagEl.innerText = `שבוע ${latest.weekNum} • ${unreadSummaries.length > 0 ? 'חדש!' : 'זמין'}`;
     if (descEl) descEl.innerText = latest.teaser || `לחץ לצפייה בסיכום השיעור, מושגי הליבה והשליף המובנה לתרגיל (${sameWeekCourseCount > 1 ? sameWeekCourseCount + ' סיכומים זמינים' : 'נייד + שולחני + PDF'}).`;
 
