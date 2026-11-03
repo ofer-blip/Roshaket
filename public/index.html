@@ -2632,7 +2632,7 @@
             flex-shrink: 0;
         }
 
-        .btn-whats-new-open {
+        .btn-whats-new-open, .btn-bubble-open {
             background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
             color: #ffffff;
             border: none;
@@ -2648,12 +2648,12 @@
             transition: all 0.2s;
         }
 
-        .btn-whats-new-open:hover {
+        .btn-whats-new-open:hover, .btn-bubble-open:hover {
             transform: translateY(-1px);
             background: linear-gradient(135deg, #4338ca 0%, #4f46e5 100%);
         }
 
-        .btn-whats-new-dismiss {
+        .btn-whats-new-dismiss, .btn-bubble-dismiss {
             background: #f1f5f9;
             color: #64748b;
             border: 1px solid #cbd5e1;
@@ -2669,7 +2669,7 @@
             transition: all 0.2s;
         }
 
-        .btn-whats-new-dismiss:hover {
+        .btn-whats-new-dismiss:hover, .btn-bubble-dismiss:hover {
             background: #fee2e2;
             color: #dc2626;
             border-color: #fca5a5;
@@ -3285,11 +3285,11 @@
             </div>
         </div>
         <div class="whats-new-bubble-actions">
-            <button type="button" class="btn-bubble-open" id="whatsNewBubbleOpenBtn">
+            <button type="button" class="btn-whats-new-open" id="whatsNewBubbleOpenBtn">
                 <span>פתח סיכום שיעור</span>
-                <span>↗</span>
+                <span style="font-size: 14px; font-weight: 800; line-height: 1;">↗</span>
             </button>
-            <button type="button" class="btn-bubble-dismiss" onclick="dismissWhatsNewBubble(true)" title="הסתר עדכון זה">✕</button>
+            <button type="button" class="btn-whats-new-dismiss" onclick="dismissWhatsNewBubble(true)" title="הסתר עדכון זה">✕</button>
         </div>
     </div>
 
