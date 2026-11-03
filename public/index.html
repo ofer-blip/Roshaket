@@ -3972,6 +3972,8 @@
 </div>
 
 <script>
+const PRIMARY_ADMIN_EMAIL = 'saritofer.k@gmail.com';
+
 // Google OAuth & Calendar API Configuration
 const DEFAULT_CLIENT_ID = '889823725975-l5p1o8nnnsffqpc9lb9dr5vfdq15vsrn.apps.googleusercontent.com';
 localStorage.setItem('roshaket_client_id', DEFAULT_CLIENT_ID);
@@ -7221,7 +7223,7 @@ render();
 // ==========================================
 const ACCESS_CONTROL_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyvK9BQDE3VYPkpq8NbkNxg_VKqMWKMluCFN1_NGrQ5-Di-WUWmZxa1v3E0A-VYCLtY/exec';
 
-const PRIMARY_ADMIN_EMAIL = 'saritofer.k@gmail.com';
+// PRIMARY_ADMIN_EMAIL declared at top
 
 async function proceedSuccessfulLogin(userName) {
     if (typeof trackEvent === 'function') trackEvent('login_google_success', { user: userName, email: googleUserEmail });
