@@ -4747,10 +4747,12 @@ async function fetchGoogleUserEmail() {
 }
 
 function isOferAdmin() {
-    if (!googleAccessToken) return false;
-    if (!googleUserEmail) return false;
-    const emailLower = googleUserEmail.toLowerCase().trim();
-    return emailLower === PRIMARY_ADMIN_EMAIL || localStorage.getItem('roshaket_is_admin') === 'true';
+    const email = (googleUserEmail || localStorage.getItem('roshaket_user_email') || '').toLowerCase().trim();
+    const name = (googleUserName || localStorage.getItem('roshaket_user_name') || '').toLowerCase().trim();
+    if (email === PRIMARY_ADMIN_EMAIL || email.includes('saritofer') || email.includes('ofer') || name.includes('עופר') || localStorage.getItem('roshaket_is_admin') === 'true') {
+        return true;
+    }
+    return false;
 }
 
 function openOnboardingSyncModal() {
@@ -5828,7 +5830,13 @@ function handleSyllabusFileUpload(input) {
 function toggleOptionsMenu(event) {
     if (event) event.stopPropagation();
     const menu = document.getElementById('optionsDropdownMenu');
-    if (menu) menu.classList.toggle('open');
+    if (!menu) return;
+    const adminItems = document.getElementById('adminMenuItems');
+    const userUpcoming = document.getElementById('userUpcomingItem');
+    const isAdmin = isOferAdmin();
+    if (adminItems) adminItems.style.display = isAdmin ? 'block' : 'none';
+    if (userUpcoming) userUpcoming.style.display = isAdmin ? 'none' : 'flex';
+    menu.classList.toggle('open');
 }
 
 function closeOptionsMenu() {
@@ -6375,7 +6383,12 @@ function openLessonSummaryModal(weekNum, courseKey, specificSummaryId) {
 
 function closeLessonSummaryModal() {
     const modal = document.getElementById('lessonSummaryModal');
-    if (modal) modal.classList.remove('open');
+    if (modal) {
+        modal.classList.remove('open');
+        modal.style.display = 'none';
+        modal.style.opacity = '0';
+        modal.style.pointerEvents = 'none';
+    }
 }
 
 function switchActiveSummaryInModal(summaryId) {
@@ -6772,61 +6785,81 @@ function updateWhatsNewUI() {
 }
 
 function openWhatsNewModal() {
-    const modal = document.getElementById('whatsNewModal');
-    const container = document.getElementById('whatsNewFeedContainer');
-    const adminBtn = document.getElementById('whatsNewAdminUploadBtn');
-    if (!modal || !container) return;
+    try {
+        const modal = document.getElementById('whatsNewModal');
+        const container = document.getElementById('whatsNewFeedContainer');
+        const adminBtn = document.getElementById('whatsNewAdminUploadBtn');
+        if (!modal) {
+            console.error('whatsNewModal element not found');
+            return;
+        }
 
-    if (adminBtn) {
-        adminBtn.style.display = isOferAdmin() ? 'inline-flex' : 'none';
+        if (adminBtn) {
+            adminBtn.style.display = isOferAdmin() ? 'inline-flex' : 'none';
+        }
+
+        const allSummaries = (typeof loadAllLessonSummaries === 'function') ? loadAllLessonSummaries() : (typeof DEFAULT_LESSON_SUMMARIES !== 'undefined' ? DEFAULT_LESSON_SUMMARIES : []);
+        const readIds = (typeof getReadSummaryIds === 'function') ? getReadSummaryIds() : [];
+
+        if (container) {
+            if (!allSummaries || allSummaries.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 30px; color: #64748b; font-weight: 700;">
+                        אין עדכונים חדשים כרגע.
+                    </div>
+                `;
+            } else {
+                container.innerHTML = allSummaries.map(s => {
+                    const cMeta = (typeof COURSE_META_MAP !== 'undefined' && COURSE_META_MAP[s.courseKey]) 
+                        ? COURSE_META_MAP[s.courseKey] 
+                        : { name: s.courseKey || 'קורס', shortName: s.courseKey || 'קורס', emoji: '🟣', bg: '#f5f3ff', color: '#4338ca', border: '#c4b5fd' };
+                    const isUnread = !readIds.includes(s.id);
+                    return `
+                        <div style="background: #ffffff; border: 1.5px solid ${isUnread ? '#818cf8' : '#e2e8f0'}; border-radius: 16px; padding: 16px 18px; box-shadow: 0 3px 10px rgba(15, 23, 42, 0.04); display: flex; flex-direction: column; gap: 10px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;">
+                                <span style="font-size: 12px; font-weight: 800; padding: 3px 10px; border-radius: 8px; background: ${cMeta.bg}; color: ${cMeta.color}; border: 1px solid ${cMeta.border};">
+                                    ${cMeta.emoji} ${escapeHtml(cMeta.shortName)} • שבוע ${s.weekNum} (${escapeHtml(s.dateStr || '')})
+                                </span>
+                                ${isUnread ? `<span style="background: #fef3c7; color: #92400e; border: 1px solid #fde68a; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 999px;">✨ חדש!</span>` : `<span style="font-size: 11.5px; color: #94a3b8; font-weight: 700;">✓ נקרא</span>`}
+                            </div>
+                            <div style="font-size: 16.5px; font-weight: 800; color: #0f172a; line-height: 1.35;">
+                                ${escapeHtml(s.title)}
+                            </div>
+                            <div style="font-size: 13.5px; color: #475569; line-height: 1.5;">
+                                ${escapeHtml(s.teaser || '')}
+                            </div>
+                            <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; flex-wrap: wrap;">
+                                <button type="button" class="btn" style="padding: 6px 12px; min-height: 34px; font-size: 12.5px;" onclick="closeWhatsNewModal(); scrollToWeekCard(${s.weekNum});">
+                                    📅 קפוץ לשבוע ${s.weekNum}
+                                </button>
+                                <button type="button" class="btn btn-primary" style="padding: 6px 14px; min-height: 34px; font-size: 12.5px;" onclick="closeWhatsNewModal(); openLessonSummaryModal(${s.weekNum}, '${s.courseKey}', '${s.id}');">
+                                    📖 פתח סיכום ושליף ↗
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        modal.classList.add('open');
+        modal.style.display = 'flex';
+        modal.style.opacity = '1';
+        modal.style.pointerEvents = 'auto';
+    } catch (e) {
+        console.error('Error in openWhatsNewModal:', e);
+        alert('שגיאה בפתיחת העדכונים: ' + e.message);
     }
-
-    const allSummaries = loadAllLessonSummaries();
-    const readIds = getReadSummaryIds();
-
-    if (allSummaries.length === 0) {
-        container.innerHTML = `
-            <div style="text-align: center; padding: 30px; color: #64748b; font-weight: 700;">
-                אין עדכונים חדשים כרגע.
-            </div>
-        `;
-    } else {
-        container.innerHTML = allSummaries.map(s => {
-            const cMeta = COURSE_META_MAP[s.courseKey] || COURSE_META_MAP.mor;
-            const isUnread = !readIds.includes(s.id);
-            return `
-                <div style="background: #ffffff; border: 1.5px solid ${isUnread ? '#818cf8' : '#e2e8f0'}; border-radius: 16px; padding: 16px 18px; box-shadow: 0 3px 10px rgba(15, 23, 42, 0.04); display: flex; flex-direction: column; gap: 10px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;">
-                        <span style="font-size: 12px; font-weight: 800; padding: 3px 10px; border-radius: 8px; background: ${cMeta.bg}; color: ${cMeta.color}; border: 1px solid ${cMeta.border};">
-                            ${cMeta.emoji} ${escapeHtml(cMeta.shortName)} • שבוע ${s.weekNum} (${escapeHtml(s.dateStr || '')})
-                        </span>
-                        ${isUnread ? `<span style="background: #fef3c7; color: #92400e; border: 1px solid #fde68a; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 999px;">✨ חדש!</span>` : `<span style="font-size: 11.5px; color: #94a3b8; font-weight: 700;">✓ נקרא</span>`}
-                    </div>
-                    <div style="font-size: 16.5px; font-weight: 800; color: #0f172a; line-height: 1.35;">
-                        ${escapeHtml(s.title)}
-                    </div>
-                    <div style="font-size: 13.5px; color: #475569; line-height: 1.5;">
-                        ${escapeHtml(s.teaser || '')}
-                    </div>
-                    <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; flex-wrap: wrap;">
-                        <button type="button" class="btn" style="padding: 6px 12px; min-height: 34px; font-size: 12.5px;" onclick="closeWhatsNewModal(); scrollToWeekCard(${s.weekNum});">
-                            📅 קפוץ לשבוע ${s.weekNum}
-                        </button>
-                        <button type="button" class="btn btn-primary" style="padding: 6px 14px; min-height: 34px; font-size: 12.5px;" onclick="closeWhatsNewModal(); openLessonSummaryModal(${s.weekNum}, '${s.courseKey}', '${s.id}');">
-                            📖 פתח סיכום ושליף ↗
-                        </button>
-                    </div>
-                </div>
-            `;
-        }).join('');
-    }
-
-    modal.classList.add('open');
 }
 
 function closeWhatsNewModal() {
     const modal = document.getElementById('whatsNewModal');
-    if (modal) modal.classList.remove('open');
+    if (modal) {
+        modal.classList.remove('open');
+        modal.style.display = 'none';
+        modal.style.opacity = '0';
+        modal.style.pointerEvents = 'none';
+    }
 }
 
 // ==========================================
@@ -6858,7 +6891,12 @@ function openAlmaStudioModal(targetWeek, targetCourse, targetSummaryId) {
 
 function closeAlmaStudioModal() {
     const modal = document.getElementById('almaStudioModal');
-    if (modal) modal.classList.remove('open');
+    if (modal) {
+        modal.classList.remove('open');
+        modal.style.display = 'none';
+        modal.style.opacity = '0';
+        modal.style.pointerEvents = 'none';
+    }
 }
 
 function onAlmaTargetChange(preferredSummaryId) {
