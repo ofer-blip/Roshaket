@@ -3368,8 +3368,11 @@
             </div>
         </div>
         <div class="whats-new-bubble-actions">
+            <button type="button" class="btn" id="whatsNewBubbleJumpBtn" style="padding: 7px 13px; min-height: 38px; font-size: 12.5px; font-weight: 700; background: #f8fafc; border: 1.5px solid #cbd5e1; color: #1e293b; border-radius: 10px; cursor: pointer; transition: all 0.2s ease;" onclick="event.stopPropagation(); scrollToWeekCard(3);">
+                <span>🗓️ קפוץ לשבוע 3</span>
+            </button>
             <button type="button" class="btn-whats-new-open" id="whatsNewBubbleOpenBtn" onclick="event.stopPropagation(); openLessonSummaryModal(3, 'mor')">
-                <span>פתח סיכום שיעור</span>
+                <span>פתח סיכום ושליף</span>
                 <span style="font-size: 14px; font-weight: 800; line-height: 1;">↗</span>
             </button>
         </div>
@@ -6955,6 +6958,15 @@ function updateWhatsNewUI() {
     if (clickArea) clickArea.onclick = openHandler;
     if (openBtn) openBtn.onclick = openHandler;
 
+    const jumpBtn = document.getElementById('whatsNewBubbleJumpBtn');
+    if (jumpBtn) {
+        jumpBtn.innerHTML = `<span>🗓️ קפוץ לשבוע ${latest.weekNum}</span>`;
+        jumpBtn.onclick = (e) => {
+            e.stopPropagation();
+            scrollToWeekCard(latest.weekNum);
+        };
+    }
+
     banner.style.display = 'flex';
 }
 
@@ -7690,7 +7702,12 @@ window.trackEvent = function(eventName, params = {}) {
                 </div>
                 <h3 id="summaryModalTitle">סיכום מפגש + שליף לתרגיל: תיאוריית השינוי והמודל הלוגי</h3>
             </div>
-            <button class="modal-close-x" onclick="closeLessonSummaryModal()" title="סגור חלונית עבודה">✕</button>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <button type="button" class="btn" id="summaryJumpToWeekBtn" style="background: rgba(255,255,255,0.18); color: white; border: 1px solid rgba(255,255,255,0.3); font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 8px; backdrop-filter: blur(4px); cursor: pointer;" onclick="closeLessonSummaryModal(); scrollToWeekCard(activeWorkspaceWeek);">
+                    🗓️ קפוץ לשבוע בלוח
+                </button>
+                <button class="modal-close-x" onclick="closeLessonSummaryModal()" title="סגור חלונית עבודה">✕</button>
+            </div>
         </div>
 
         <!-- Multi-summary switcher (shown when a lesson/day has 2+ summaries or for Admin to add a 2nd summary) -->
