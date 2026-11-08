@@ -4847,9 +4847,12 @@ async function fetchGoogleUserEmail() {
 }
 
 function isOferAdmin() {
-    const email = (googleUserEmail || localStorage.getItem('roshaket_user_email') || '').toLowerCase().trim();
-    const name = (googleUserName || localStorage.getItem('roshaket_user_name') || '').toLowerCase().trim();
-    if (email === PRIMARY_ADMIN_EMAIL || email.includes('saritofer') || email.includes('ofer') || name.includes('עופר') || localStorage.getItem('roshaket_is_admin') === 'true') {
+    // Strict isolation: Admin tools are visible ONLY when actively logged in with Google as Ofer!
+    if (!isUserLoggedIn || !googleAccessToken) {
+        return false;
+    }
+    const email = (googleUserEmail || '').toLowerCase().trim();
+    if (email === PRIMARY_ADMIN_EMAIL || email.includes('saritofer') || email.includes('ofer')) {
         return true;
     }
     return false;
@@ -4929,7 +4932,9 @@ function handleLogoutClick() {
     localStorage.removeItem('roshaket_g_token');
     localStorage.removeItem('roshaket_cal_id');
     localStorage.removeItem('roshaket_user_email');
-// Keep user name persistent across sessions
+    localStorage.removeItem('roshaket_user_name');
+    localStorage.removeItem('roshaket_is_admin');
+    sessionStorage.removeItem('roshaket_is_admin');
     isUserLoggedIn = false;
     doneTasks = JSON.parse(sessionStorage.getItem('roshaket_demo_done_tasks') || '[]');
     userTaskNotes = JSON.parse(sessionStorage.getItem('roshaket_demo_user_notes') || '{}');
@@ -6070,8 +6075,17 @@ function hideWelcomeScreen() {
 async function enterApp(mode) {
     if (mode === 'demo') {
         sessionStorage.setItem('roshaket_gate_passed', 'true'); localStorage.setItem('roshaket_gate_passed', 'true');
+        isUserLoggedIn = false;
+        googleAccessToken = null;
+        googleUserEmail = null;
+        googleUserName = null;
+        localStorage.removeItem('roshaket_is_admin');
+        localStorage.removeItem('roshaket_user_name');
+        localStorage.removeItem('roshaket_user_email');
+        updateSyncUI();
         hideWelcomeScreen();
         showToast('🎭 נכנסת למצב התנסות (דמו). תהנה!');
+        render();
         return;
     }
 
