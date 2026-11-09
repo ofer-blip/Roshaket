@@ -2244,10 +2244,15 @@
         }
 
         .sunday-schedule-table tbody tr.row-current-sunday td {
-            background: #eef2ff;
-            border-top: 2px solid #4f46e5;
-            border-bottom: 2px solid #4f46e5;
-            font-weight: 800;
+            background: #eef2ff !important;
+            border-top: 2.5px solid #4f46e5 !important;
+            border-bottom: 2.5px solid #4f46e5 !important;
+            color: #1e1b4b !important;
+            font-weight: 800 !important;
+            position: relative;
+        }
+        .sunday-schedule-table tbody tr.row-current-sunday {
+            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.16);
         }
 
         .sched-pill {
@@ -3467,9 +3472,15 @@
                         סמסטר א': יום א' – 13 מפגשים | סמסטר ב': ימים א' – 14 מפגשים
                     </div>
                 </div>
-                <p style="font-size: 12px; color: #64748b; margin-bottom: 8px; font-weight: 600;">
-                    בטבלה זו מרוכזים כל ימי הראשון לאורך השנה (בקמפוס 09:00–18:00 בניין מייזר, למידה דיגיטלית וסיורים):
-                </p>
+                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+                    <p style="font-size: 12px; color: #64748b; margin: 0; font-weight: 600;">
+                        בטבלה זו מרוכזים כל ימי הראשון לאורך השנה (בקמפוס 09:00–18:00 בניין מייזר, למידה דיגיטלית וסיורים):
+                    </p>
+                    <div id="nextSundayMeetingBadge" style="font-size: 12px; font-weight: 800; color: #3730a3; background: #e0e7ff; padding: 4px 12px; border-radius: 999px; border: 1.5px solid #a5b4fc; display: inline-flex; align-items: center; gap: 6px;">
+                        <span>📍</span>
+                        <span id="nextSundayMeetingText">מחשב פגישה קרובה...</span>
+                    </div>
+                </div>
                 <div class="sunday-schedule-table-wrap">
                     <table class="sunday-schedule-table">
                         <thead>
@@ -3493,7 +3504,7 @@
                                 <td><span class="sched-pill sched-campus">🏛️ בקמפוס</span></td>
                                 <td>בקמפוס</td>
                             </tr>
-                            <tr class="row-current-sunday">
+                            <tr>
                                 <td><strong>25.10.26</strong></td>
                                 <td>סמסטר א' (שבוע 2)</td>
                                 <td><span class="sched-pill sched-digital">💻 למידה דיגיטלי</span></td>
@@ -4275,6 +4286,77 @@ let openPastWeekNums = {};
 const PRESS_FINGER_ICON_HTML = `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 6.5a4.5 4.5 0 0 1 9 0"/><circle cx="12" cy="6.5" r="1.6" fill="currentColor" stroke="none"/><path d="M10.5 13V7.5a1.5 1.5 0 0 1 3 0V12h1.5a1.5 1.5 0 0 1 1.5 1.5v.5h1a1.5 1.5 0 0 1 1.5 1.5v3a4 4 0 0 1-4 4h-4.5a4 4 0 0 1-3.4-1.9L5.2 17a1.4 1.4 0 0 1 2-1.8L10.5 17V13z"/></svg>`;
 const UP_ARROW_ICON_HTML = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>`;
 
+
+function syncSundayScheduleTable(shouldScroll = false) {
+    const tableWrap = document.querySelector('.sunday-schedule-table-wrap');
+    const table = document.querySelector('.sunday-schedule-table');
+    if (!table || !tableWrap) return;
+
+    const rows = table.querySelectorAll('tbody tr');
+    if (!rows || rows.length === 0) return;
+
+    const now = new Date();
+    let upcomingRow = null;
+    let upcomingInfo = '';
+
+    rows.forEach(r => {
+        r.classList.remove('row-current-sunday');
+        const badgeOld = r.querySelector('.active-sunday-badge');
+        if (badgeOld) badgeOld.remove();
+
+        const dateCell = r.querySelector('td:first-child');
+        if (!dateCell) return;
+        const dateMatch = dateCell.innerText.trim().match(/(\d{1,2})\.(\d{1,2})\.(\d{2,4})/);
+        if (!dateMatch) return;
+
+        const day = parseInt(dateMatch[1], 10);
+        const month = parseInt(dateMatch[2], 10) - 1;
+        let year = parseInt(dateMatch[3], 10);
+        if (year < 100) year += 2000;
+
+        // Active Sunday lasts through Sunday 23:59:59. On Monday 00:00 it jumps to next Sunday!
+        const sundayEndOfDay = new Date(year, month, day, 23, 59, 59, 999);
+
+        if (sundayEndOfDay >= now && !upcomingRow) {
+            upcomingRow = r;
+            const topicCell = r.querySelector('td:nth-child(2)');
+            const modeCell = r.querySelector('td:nth-child(3)');
+            const topicStr = topicCell ? topicCell.innerText.trim() : '';
+            const modeStr = modeCell ? modeCell.innerText.trim() : '';
+            upcomingInfo = `${dateMatch[1]}.${dateMatch[2]}.${year}${topicStr ? ' • ' + topicStr : ''}${modeStr ? ' (' + modeStr + ')' : ''}`;
+        }
+    });
+
+    if (upcomingRow) {
+        upcomingRow.classList.add('row-current-sunday');
+
+        const firstCell = upcomingRow.querySelector('td:first-child');
+        if (firstCell && !firstCell.querySelector('.active-sunday-badge')) {
+            const badge = document.createElement('span');
+            badge.className = 'active-sunday-badge';
+            badge.style.cssText = 'display: inline-block; background: #4f46e5; color: white; font-size: 10.5px; font-weight: 800; padding: 2px 7px; border-radius: 999px; margin-right: 6px; vertical-align: middle; white-space: nowrap; box-shadow: 0 2px 4px rgba(79, 70, 229, 0.3);';
+            badge.innerText = '📍 הפגישה הקרובה';
+            firstCell.appendChild(badge);
+        }
+
+        const badgeTextEl = document.getElementById('nextSundayMeetingText');
+        if (badgeTextEl && upcomingInfo) {
+            badgeTextEl.innerText = `הפגישה הבאה: ${upcomingInfo}`;
+        }
+
+        if (shouldScroll) {
+            setTimeout(() => {
+                const targetTop = upcomingRow.offsetTop;
+                const wrapHeight = tableWrap.clientHeight || 440;
+                tableWrap.scrollTo({
+                    top: Math.max(0, targetTop - (wrapHeight / 2) + 25),
+                    behavior: 'smooth'
+                });
+            }, 100);
+        }
+    }
+}
+
 function toggleCurriculumAccordion() {
     const acc = document.getElementById('curriculumAccordion');
     const tasksAcc = document.getElementById('tasksAccordion');
@@ -4283,6 +4365,10 @@ function toggleCurriculumAccordion() {
         acc.classList.toggle('open', willOpen);
         const icon = document.getElementById('curriculumTapIcon');
         if (icon) icon.innerHTML = willOpen ? UP_ARROW_ICON_HTML : PRESS_FINGER_ICON_HTML;
+
+        if (willOpen) {
+            syncSundayScheduleTable(true);
+        }
 
         // If opening Curriculum, automatically close Tasks Accordion so only one section is open
         if (willOpen && tasksAcc && tasksAcc.classList.contains('open')) {
