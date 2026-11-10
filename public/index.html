@@ -5466,6 +5466,15 @@ async function ensureRoshaketCalendarExists() {
     }
 }
 
+function getEventCourseKey(ev) {
+    if (!ev || !ev.summary) return null;
+    const s = ev.summary;
+    if (s.includes('הערכת תוכניות') || s.includes('מור')) return 'mor';
+    if (s.includes('פיתוח חדשנות') || s.includes('ואסל')) return 'wassel';
+    if (s.includes('סוגיות בהערכה') || s.includes('לוי')) return 'levy';
+    return null;
+}
+
 function getTaskEventId(taskObj, weekNum) {
     const weekStr = String(weekNum).padStart(2, '0');
     const rawSuffix = (taskObj.id.split('_c')[1] || '1').toLowerCase().replace(/[^a-v0-9]/g, '0');
@@ -5504,7 +5513,7 @@ async function handleCleanDuplicates() {
         return;
     }
     openSyncProgressModal();
-    document.getElementById('syncModalTitle').innerText = 'מנקה כפילויות מיומן Google 🧹';
+    document.getElementById('syncModalTitle').innerText = 'מנקה כפילויות ואירועים ישנים מיומן Google 🧹';
     document.getElementById('syncModalCurrentTask').innerText = 'סורק אירועים קיימים ביומן...';
 
     let targetCal = null;
@@ -5524,25 +5533,68 @@ async function handleCleanDuplicates() {
 
     try {
         const events = await getAllCalendarEvents(calId);
-        document.getElementById('syncModalCurrentTask').innerText = `נמצאו ${events.length} אירועים ביומן. מאתר כפילויות...`;
+        document.getElementById('syncModalCurrentTask').innerText = `נמצאו ${events.length} אירועים ביומן. מאתר כפילויות ואירועים ישנים...`;
 
-        const seen = new Map();
+        // Map all valid active tasks by slot: (dateFormatted + '__' + courseKey)
+        const validSlots = new Map();
+        for (const w of semesterSchedule) {
+            const parts = w.dateStr.split('.');
+            const dateFormatted = `${parts[2]}-${parts[1]}-${parts[0]}`;
+            for (const t of w.tasks) {
+                const slotKey = `${dateFormatted}__${t.courseKey}`;
+                validSlots.set(slotKey, { task: t, weekNum: w.weekNum, dateFormatted });
+            }
+        }
+
+        const slotClaimed = new Map();
         const toDelete = [];
 
         for (const ev of events) {
             if (!ev.summary) continue;
-            // Normalize summary to identify the task (strip prefix emojis, completed tags)
-            const normTitle = ev.summary
-                .replace(/^✅\s*\[הושלם\]\s*/, '')
-                .replace(/^[🟣🔵🟢🎯📦⏳⚡]\s*/, '')
-                .trim();
-            const date = ev.start?.date || ev.start?.dateTime?.split('T')[0] || '';
-            const key = `${normTitle}__${date}`;
+            const evDate = ev.start?.date || ev.start?.dateTime?.split('T')[0] || '';
+            const cKey = getEventCourseKey(ev);
 
-            if (seen.has(key)) {
-                toDelete.push(ev);
+            // If not a recognized course event on a date, check if duplicate by exact summary & date
+            if (!cKey || !evDate) {
+                const normTitle = ev.summary.replace(/^✅\s*\[הושלם\]\s*/, '').replace(/^[🟣🔵🟢🎯📦⏳⚡]\s*/, '').trim();
+                const generalKey = `${normTitle}__${evDate}`;
+                if (slotClaimed.has(generalKey)) {
+                    toDelete.push(ev);
+                } else {
+                    slotClaimed.set(generalKey, ev);
+                }
+                continue;
+            }
+
+            const slotKey = `${evDate}__${cKey}`;
+            const activeSlot = validSlots.get(slotKey);
+
+            if (activeSlot) {
+                // If this event matches the current syllabus title or deterministic ID, prioritize it
+                const targetId = getTaskEventId(activeSlot.task, activeSlot.weekNum);
+                const isExactMatch = (ev.id === targetId) || ev.summary.includes(activeSlot.task.title);
+
+                if (slotClaimed.has(slotKey)) {
+                    const existingClaim = slotClaimed.get(slotKey);
+                    const existingIsExact = (existingClaim.id === targetId) || existingClaim.summary.includes(activeSlot.task.title);
+
+                    if (isExactMatch && !existingIsExact) {
+                        // Current event is better match: delete the previous claim
+                        toDelete.push(existingClaim);
+                        slotClaimed.set(slotKey, ev);
+                    } else {
+                        // Previous claim is better or equal: delete current event
+                        toDelete.push(ev);
+                    }
+                } else {
+                    slotClaimed.set(slotKey, ev);
+                }
             } else {
-                seen.set(key, ev);
+                // Event is for a course but date is not in current active syllabus: obsolete orphan
+                const isRoshaketEvent = (ev.description && ev.description.includes('Roshaket')) || ev.summary.includes('הערכת תוכניות') || ev.summary.includes('פיתוח חדשנות') || ev.summary.includes('סוגיות בהערכה');
+                if (isRoshaketEvent) {
+                    toDelete.push(ev);
+                }
             }
         }
 
@@ -5551,20 +5603,20 @@ async function handleCleanDuplicates() {
             document.getElementById('syncModalTitle').innerText = dupCalRemoved > 0 ? 'היומן הכפול הוסר בהצלחה!' : 'היומן נקי לחלוטין!';
             document.getElementById('syncModalCurrentTask').innerText = dupCalRemoved > 0
                 ? `נמחקו ${dupCalRemoved} יומנים כפולים של Roshaket. ביומן הפעיל כל האירועים תקינים וללא כפילויות!`
-                : 'לא נמצאו יומנים כפולים או אירועים כפולים ביומן Google.';
-            document.getElementById('syncModalCounter').innerText = `${events.length} אירועים תקינים`;
+                : 'לא נמצאו אירועים כפולים או אירועים ישנים ביומן Google.';
+            document.getElementById('syncModalCounter').innerText = `${events.length} אירועים תקינים ומעודכנים`;
             document.getElementById('syncModalProgressBar').style.width = '100%';
             document.getElementById('syncModalCloseBtn').innerText = 'סגור';
             document.getElementById('syncModalCloseBtn').style.display = 'inline-flex';
             document.getElementById('syncModalCloseBtn').onclick = closeSyncProgressModal;
-            if (dupCalRemoved > 0) showToast(`🧹 נמחק יומן כפול בהצלחה!`);
+            if (dupCalRemoved > 0) showToast('🧹 נמחק יומן כפול בהצלחה!');
             return;
         }
 
-        document.getElementById('syncModalTitle').innerText = `מוחק ${toDelete.length} כפילויות... 🧹`;
+        document.getElementById('syncModalTitle').innerText = `מוחק ${toDelete.length} כפילויות ואירועים ישנים... 🧹`;
         let deleted = 0;
         for (const ev of toDelete) {
-            document.getElementById('syncModalCurrentTask').innerText = `מוחק כפילות: ${ev.summary}`;
+            document.getElementById('syncModalCurrentTask').innerText = `מוחק: ${ev.summary}`;
             try {
                 await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events/${encodeURIComponent(ev.id)}`, {
                     method: 'DELETE',
@@ -5576,27 +5628,25 @@ async function handleCleanDuplicates() {
             }
             const pct = Math.round((deleted / toDelete.length) * 100);
             document.getElementById('syncModalProgressBar').style.width = `${pct}%`;
-            document.getElementById('syncModalCounter').innerText = `${deleted} / ${toDelete.length} כפילויות נמחקו`;
+            document.getElementById('syncModalCounter').innerText = `${deleted} / ${toDelete.length} אירועים ישנים נמחקו`;
         }
 
         document.getElementById('syncModalIcon').innerText = '🎉';
         document.getElementById('syncModalTitle').innerText = 'ניקוי הכפילויות הושלם!';
-        document.getElementById('syncModalCurrentTask').innerText = `נמחקו בהצלחה ${deleted} אירועים כפולים${dupCalRemoved > 0 ? ` ו-${dupCalRemoved} יומנים כפולים` : ''}. נותרו ${seen.size} משימות יחידות ונקיות!`;
-        document.getElementById('syncModalCloseBtn').innerText = 'מעולה! פתח את יומן Google';
+        document.getElementById('syncModalCurrentTask').innerText = `נמחקו בהצלחה ${deleted} אירועים כפולים/ישנים${dupCalRemoved > 0 ? ` ו-${dupCalRemoved} יומנים כפולים` : ''}. כעת מומלץ ללחוץ על 'סנכרן מחדש' לעדכון מושלם!`;
+        document.getElementById('syncModalCloseBtn').innerText = 'סנכרן מחדש עכשיו 🔄';
         document.getElementById('syncModalCloseBtn').style.display = 'inline-flex';
         document.getElementById('syncModalCloseBtn').onclick = () => {
             closeSyncProgressModal();
-            window.open('https://calendar.google.com', '_blank');
+            handleSyncAllToGoogle();
         };
-        showToast(`🧹 נמחקו ${deleted} כפילויות בהצלחה!`);
+        showToast(`🧹 הוסרו ${deleted} אירועים ישנים וכפילויות בהצלחה!`);
     } catch (err) {
         console.error('Clean duplicates error:', err);
-        document.getElementById('syncModalIcon').innerText = '❌';
+        document.getElementById('syncModalIcon').innerText = '⚠️';
         document.getElementById('syncModalTitle').innerText = 'שגיאה בניקוי כפילויות';
-        document.getElementById('syncModalCurrentTask').innerText = err.message;
-        document.getElementById('syncModalCloseBtn').innerText = 'סגור';
+        document.getElementById('syncModalCurrentTask').innerText = err.message || 'אנא נסה שוב מאוחר יותר';
         document.getElementById('syncModalCloseBtn').style.display = 'inline-flex';
-        document.getElementById('syncModalCloseBtn').onclick = closeSyncProgressModal;
     }
 }
 
@@ -5659,6 +5709,8 @@ async function handleSyncAllToGoogle() {
     let createdCount = 0;
     let updatedCount = 0;
     let failed = 0;
+    const syncedEventIds = new Set();
+    const extraOrphansToDelete = [];
 
     for (const w of semesterSchedule) {
         const parts = w.dateStr.split('.');
@@ -5672,11 +5724,28 @@ async function handleSyncAllToGoogle() {
 
             document.getElementById('syncModalCurrentTask').innerText = `שבוע ${w.weekNum}: ${t.title}`;
 
-            // Check if this task already exists in Google Calendar
-            const existing = existingEvents.find(ev => 
-                ev.id === targetEventId || 
-                (ev.summary && ev.summary.includes(t.title))
-            );
+            // Match existing event by ID, Title, or Slot (same date + course)
+            const evCandidates = existingEvents.filter(ev => {
+                if (ev.id === targetEventId) return true;
+                if (ev.summary && ev.summary.includes(t.title)) return true;
+                const evDate = ev.start?.date || ev.start?.dateTime?.split('T')[0] || '';
+                return (evDate === dateFormatted) && (getEventCourseKey(ev) === t.courseKey);
+            });
+
+            // Best match: exact ID first, then title, then slot
+            let existing = null;
+            if (evCandidates.length > 0) {
+                existing = evCandidates.find(ev => ev.id === targetEventId) ||
+                           evCandidates.find(ev => ev.summary && ev.summary.includes(t.title)) ||
+                           evCandidates[0];
+
+                // If multiple candidates exist for this single slot (e.g. old "מפת מושגים אישית"), queue the others for deletion!
+                for (const extraEv of evCandidates) {
+                    if (extraEv.id !== existing.id && !extraOrphansToDelete.some(x => x.id === extraEv.id)) {
+                        extraOrphansToDelete.push(extraEv);
+                    }
+                }
+            }
 
             try {
                 if (existing) {
@@ -5697,6 +5766,7 @@ async function handleSyncAllToGoogle() {
                         })
                     });
                     if (patchRes.ok) {
+                        syncedEventIds.add(existing.id);
                         synced++;
                         updatedCount++;
                     } else if (patchRes.status === 401) {
@@ -5724,7 +5794,12 @@ async function handleSyncAllToGoogle() {
                     });
                     if (insRes.ok) {
                         const createdEv = await insRes.json().catch(() => null);
-                        if (createdEv) existingEvents.push(createdEv);
+                        if (createdEv) {
+                            existingEvents.push(createdEv);
+                            syncedEventIds.add(createdEv.id);
+                        } else {
+                            syncedEventIds.add(targetEventId);
+                        }
                         synced++;
                         createdCount++;
                     } else if (insRes.status === 401) {
@@ -5770,6 +5845,23 @@ async function handleSyncAllToGoogle() {
             const percent = Math.round((synced / totalTasks) * 100);
             document.getElementById('syncModalProgressBar').style.width = `${percent}%`;
             document.getElementById('syncModalCounter').innerText = `${synced} / ${totalTasks} משימות סונכרנו (${percent}%)`;
+        }
+    }
+
+    // Post-Sync Automatic Orphan & Obsolete Event Cleanup
+    let orphanDeletedCount = 0;
+    if (extraOrphansToDelete.length > 0) {
+        document.getElementById('syncModalCurrentTask').innerText = `מנקה ${extraOrphansToDelete.length} כפילויות ואירועים ישנים שהוחלפו... 🧹`;
+        for (const orphan of extraOrphansToDelete) {
+            try {
+                await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events/${encodeURIComponent(orphan.id)}`, {
+                    method: 'DELETE',
+                    headers: { Authorization: `Bearer ${googleAccessToken}` }
+                });
+                orphanDeletedCount++;
+            } catch(e) {
+                console.warn('Orphan delete error:', e);
+            }
         }
     }
 
