@@ -3439,6 +3439,25 @@ window.addEventListener('DOMContentLoaded', () => {
     background: rgba(255, 255, 255, 0.25);
 }
 
+
+/* --- Learning Log Specific Styling --- */
+.task-item-learning-log {
+    border-right: 4px solid #a855f7 !important;
+    background: linear-gradient(135deg, #ffffff 0%, #faf5ff 100%) !important;
+}
+.learning-log-badge {
+    font-size: 11px;
+    font-weight: 800;
+    color: #7e22ce;
+    background: #f3e8ff;
+    border: 1px solid #d8b4fe;
+    padding: 2px 8px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
 </style>
 </head>
 <body>
@@ -3604,10 +3623,7 @@ window.addEventListener('DOMContentLoaded', () => {
                                 <span>⚙️</span>
                                 <span>ניהול קורסים וסילבוס</span>
                             </button>
-                            <button class="dropdown-item" onclick="openAlmaStudioModal(); closeOptionsMenu();" style="background: #fdf4ff; color: #701a75; font-weight: 800;">
-                                <span>🎙️</span>
-                                <span>סטודיו אלמה – העלאת סיכום (.txt)</span>
-                            </button>
+                            
                             <button class="dropdown-item" onclick="handleCleanDuplicates(); closeOptionsMenu();">
                                 <span>🧹</span>
                                 <span>ניקוי כפילויות ביומן Google</span>
@@ -4695,43 +4711,24 @@ function renderTaskCardHtml(t) {
     const summariesForTask = (isMainCourseCard && typeof getSummariesForCourseWeek === 'function')
         ? getSummariesForCourseWeek(taskWeekNum, t.courseKey)
         : [];
-    const adminMode = (typeof isOferAdmin === 'function') && isOferAdmin();
-
     let summaryActionRowHtml = '';
-    if (isMainCourseCard && (summariesForTask.length > 0 || adminMode)) {
-        if (summariesForTask.length > 0) {
-            const btnLabel = summariesForTask.length > 1
-                ? `סיכומי שיעור ועזרים (${summariesForTask.length})`
-                : `סיכום שיעור + שליף לתרגיל`;
-            summaryActionRowHtml = `
-                <div class="task-summary-action-row">
-                    <button type="button" class="lesson-summary-btn" onclick="event.stopPropagation(); openLessonSummaryModal(${taskWeekNum}, '${t.courseKey}')">
-                        <span>✨</span>
-                        <span>${btnLabel}</span>
-                        <span class="lesson-summary-count-badge">${summariesForTask.length > 1 ? summariesForTask.length + ' סיכומים' : 'פתח חלונית עבודה'} ↗</span>
-                    </button>
-                    ${adminMode ? `
-                        <button type="button" class="btn-admin-add-summary-mini" onclick="event.stopPropagation(); openAlmaStudioModal(${taskWeekNum}, '${t.courseKey}', 'new')" title="הוסף סיכום נוסף לשיעור זה (מאלמה .txt)">
-                            <span>🎙️</span>
-                            <span>+ סיכום</span>
-                        </button>
-                    ` : ''}
-                </div>
-            `;
-        } else if (adminMode) {
-            summaryActionRowHtml = `
-                <div class="task-summary-action-row">
-                    <button type="button" class="btn-admin-add-summary-mini" style="width: 100%; justify-content: center;" onclick="event.stopPropagation(); openAlmaStudioModal(${taskWeekNum}, '${t.courseKey}', 'new')">
-                        <span>🎙️</span>
-                        <span>העלה תמלול אלמה (.txt) / סיכום לשיעור זה</span>
-                    </button>
-                </div>
-            `;
-        }
+    if (isMainCourseCard && summariesForTask.length > 0) {
+        const btnLabel = summariesForTask.length > 1
+            ? `סיכומי שיעור ועזרים (${summariesForTask.length})`
+            : `סיכום שיעור + שליף לתרגיל`;
+        summaryActionRowHtml = `
+            <div class="task-summary-action-row">
+                <button type="button" class="lesson-summary-btn" onclick="event.stopPropagation(); openLessonSummaryModal(${taskWeekNum}, '${t.courseKey}')">
+                    <span>✨</span>
+                    <span>${btnLabel}</span>
+                    <span class="lesson-summary-count-badge">${summariesForTask.length > 1 ? summariesForTask.length + ' סיכומים' : 'פתח חלונית עבודה'} ↗</span>
+                </button>
+            </div>
+        `;
     }
 
     return `
-        <div class="task-item ${t.courseClass} ${isDone ? 'done' : ''}" id="card_${t.id}">
+        <div class="task-item ${t.courseClass} ${isDone ? 'done' : ''} ${t.id.endsWith('_log') ? 'task-item-learning-log' : ''}" id="card_${t.id}">
             <div class="task-top">
                 <label class="task-checkbox-wrap">
                     <input type="checkbox" class="task-checkbox" 
@@ -4739,7 +4736,10 @@ function renderTaskCardHtml(t) {
                            onchange="toggleTask('${t.id}')">
                 </label>
                 <div class="task-content">
-                    <span class="task-course-pill">${t.emoji} ${t.course}</span>
+                    <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                        <span class="task-course-pill">${t.emoji} ${t.course}</span>
+                        ${t.id.endsWith('_log') ? '<span class="learning-log-badge">📝 יומן למידה שבועי</span>' : ''}
+                    </div>
                     ${['w1_c2', 'w2_c2_portfolio', 'w5_c2', 'w7_c2', 'w11_c2'].includes(t.id) ? `
                         <button class="portfolio-direct-pill" onclick="event.stopPropagation(); openPortfolioModalToTask('${t.id}')" title="לחץ לפתיחת מרחב והנחיות התלקיט">
                             📁 תלקיט ואסל ↗
@@ -7118,11 +7118,7 @@ function openLessonSummaryModal(weekNum, courseKey, specificSummaryId) {
 
     const summaries = getSummariesForCourseWeek(activeWorkspaceWeek, activeWorkspaceCourse);
     if (summaries.length === 0) {
-        if (isOferAdmin()) {
-            openAlmaStudioModal(activeWorkspaceWeek, activeWorkspaceCourse, 'new');
-        } else {
-            showToast('טרם הועלה סיכום למפגש זה');
-        }
+        showToast('טרם הועלה סיכום למפגש זה');
         return;
     }
 
@@ -7253,12 +7249,7 @@ function renderLessonSummaryWorkspace() {
                 `;
             }).join('');
 
-            const addSecondBtnHtml = isOferAdmin() ? `
-                <button type="button" class="btn-admin-add-summary-mini" style="margin-right: auto;" onclick="closeLessonSummaryModal(); openAlmaStudioModal(${current.weekNum}, '${current.courseKey}', 'new')">
-                    <span>🎙️</span>
-                    <span>+ הוסף סיכום נוסף לשיעור זה</span>
-                </button>
-            ` : '';
+            const addSecondBtnHtml = '';
 
             switcherBar.innerHTML = tabsHtml + addSecondBtnHtml;
         } else {
@@ -7274,20 +7265,9 @@ function renderLessonSummaryWorkspace() {
     // Admin Footer Actions
     const adminFooter = document.getElementById('summaryAdminFooterActions');
     if (adminFooter) {
-        if (isOferAdmin()) {
-            adminFooter.innerHTML = `
-                <button type="button" class="btn" style="padding: 7px 12px; min-height: 36px; font-size: 12.5px; background: #f5f3ff; color: #4338ca; border-color: #c4b5fd;" onclick="closeLessonSummaryModal(); openAlmaStudioModal(${current.weekNum}, '${current.courseKey}', '${current.id}')">
-                    ✏️ ערוך סיכום זה
-                </button>
-                <button type="button" class="btn" style="padding: 7px 12px; min-height: 36px; font-size: 12.5px; background: #ffffff; color: #4338ca; border-color: #cbd5e1;" onclick="closeLessonSummaryModal(); openAlmaStudioModal(${current.weekNum}, '${current.courseKey}', 'new')">
-                    🎙️ + סיכום שני לשיעור
-                </button>
-            `;
-        } else {
-            adminFooter.innerHTML = `
-                <span style="font-size: 12px; color: #64748b; font-weight: 700;">💡 מותאם לעבודה בנייד ובמחשב שולחני</span>
-            `;
-        }
+        adminFooter.innerHTML = `
+            <span style="font-size: 12px; color: #64748b; font-weight: 700;">💡 מותאם לעבודה בנייד ובמחשב שולחני | מבית D-Dialog</span>
+        `;
     }
 
     renderLessonSummaryWorkspaceBody();
