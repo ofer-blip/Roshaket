@@ -4247,7 +4247,13 @@ window.addEventListener('DOMContentLoaded', () => {
                     ד"ר חנין ואסל • 5 משימות א-סינכרוניות מצטברות • יעד הגשה במודל: <strong>27.01.2027</strong>
                 </p>
             </div>
-            <button class="modal-close-x" onclick="closePortfolioModal()" title="סגור" aria-label="סגור">✕</button>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <button id="portfolioBackToReportBtn" class="btn" onclick="returnToQuickStatusFromPortfolio()" style="display: none; align-items: center; gap: 5px; background: #ffffff; color: #0284c7; border: 1.5px solid #bae6fd; border-radius: 8px; padding: 4px 10px; font-size: 12.5px; font-weight: 800; cursor: pointer;">
+                    <span>↶</span>
+                    <span>חזור לדוח המצב</span>
+                </button>
+                <button class="modal-close-x" onclick="handlePortfolioCloseX()" title="סגור" aria-label="סגור">✕</button>
+            </div>
         </div>
 
         <!-- Progress Summary -->
@@ -4272,9 +4278,14 @@ window.addEventListener('DOMContentLoaded', () => {
             <!-- Dynamically populated via renderPortfolioModal() -->
         </div>
 
-        <button class="btn btn-primary" style="background: #0f172a; color: white; width: 100%; justify-content: center; font-size: 15px; margin-top: 10px;" onclick="closePortfolioModal()">
-            סגור
-        </button>
+        <div id="portfolioFooterButtons" style="display: flex; gap: 10px; margin-top: 10px;">
+            <button id="portfolioReturnFooterBtn" class="btn btn-primary" style="display: none; flex: 2; background: #0284c7; color: white; justify-content: center; font-size: 14.5px; font-weight: 800;" onclick="returnToQuickStatusFromPortfolio()">
+                ↶ חזור לדוח המצב
+            </button>
+            <button class="btn" id="portfolioCloseFooterBtn" style="flex: 1; background: #0f172a; color: white; justify-content: center; font-size: 14px; font-weight: 700;" onclick="closePortfolioModal()">
+                סגור
+            </button>
+        </div>
     </div>
 </div>
 
@@ -4292,7 +4303,13 @@ window.addEventListener('DOMContentLoaded', () => {
                     ד"ר מור רייכמן • 13 רפלקציות שבועיות בלוח השיתופי • חובת סמסטר
                 </p>
             </div>
-            <button class="modal-close-x" onclick="closeLearningLogModal()" title="סגור" aria-label="סגור">✕</button>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <button id="learningLogBackToReportBtn" class="btn" onclick="returnToQuickStatusFromLearningLog()" style="display: none; align-items: center; gap: 5px; background: #ffffff; color: #7e22ce; border: 1.5px solid #d8b4fe; border-radius: 8px; padding: 4px 10px; font-size: 12.5px; font-weight: 800; cursor: pointer;">
+                    <span>↶</span>
+                    <span>חזור לדוח המצב</span>
+                </button>
+                <button class="modal-close-x" onclick="handleLearningLogCloseX()" title="סגור" aria-label="סגור">✕</button>
+            </div>
         </div>
 
         <!-- Progress Summary -->
@@ -4333,9 +4350,14 @@ window.addEventListener('DOMContentLoaded', () => {
             <!-- Dynamically populated via renderLearningLogModal() -->
         </div>
 
-        <button class="btn btn-primary" style="background: #0f172a; color: white; width: 100%; justify-content: center; font-size: 15px; margin-top: 10px;" onclick="closeLearningLogModal()">
-            סגור
-        </button>
+        <div id="learningLogFooterButtons" style="display: flex; gap: 10px; margin-top: 10px;">
+            <button id="learningLogReturnFooterBtn" class="btn btn-primary" style="display: none; flex: 2; background: #7e22ce; color: white; justify-content: center; font-size: 14.5px; font-weight: 800;" onclick="returnToQuickStatusFromLearningLog()">
+                ↶ חזור לדוח המצב
+            </button>
+            <button class="btn" id="learningLogCloseFooterBtn" style="flex: 1; background: #0f172a; color: white; justify-content: center; font-size: 14px; font-weight: 700;" onclick="closeLearningLogModal()">
+                סגור
+            </button>
+        </div>
     </div>
 </div>
 
@@ -6347,7 +6369,97 @@ function openQuickStatusModal() {
             const bNames = behindCourses.map(b => b.name).join(' ו-');
             summaryMsg += `יש כמה משימות פתוחות להשלמה ב-${bNames}. כדאי לסמן לעצמך שעה השבוע להשלים אותן כדי לחזור לקצב מלא בלי לחץ! 💪`;
         }
-        bubbleTextEl.innerHTML = summaryMsg;
+
+        // --- Detailed Focus Check: Mor Learning Log & Wassel Portfolio ---
+        let focusItems = [];
+
+        // 1. Mor Learning Log count & check
+        let logCompleted = 0;
+        for (let i = 1; i <= 13; i++) {
+            if (doneTasks.includes(`w${i}_c1_log`)) logCompleted++;
+        }
+        const expectedLogsUntilNow = Math.min(Math.max(currentW, 1), 13);
+        const missingLogWeeks = [];
+        for (let i = 1; i <= expectedLogsUntilNow; i++) {
+            if (!doneTasks.includes(`w${i}_c1_log`)) missingLogWeeks.push(i);
+        }
+
+        if (missingLogWeeks.length === 0) {
+            focusItems.push(`
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; background: #fdf4ff; border: 1px solid #f0abfc; border-radius: 8px; padding: 7px 10px;">
+                    <div style="display: flex; align-items: center; gap: 7px;">
+                        <span style="font-size: 15px;">📝</span>
+                        <span style="font-size: 13px; color: #701a75; font-weight: 700;">
+                            <strong>יומן למידה (מור):</strong> מעודכן פיקס לשבוע ${currentW}! (${logCompleted}/13 פורסמו בלוח)
+                        </span>
+                    </div>
+                    <button class="btn" onclick="closeQuickStatusModal(); openLearningLogModal(true);" style="padding: 2px 8px; font-size: 11.5px; background: #ffffff; color: #7e22ce; border: 1px solid #d8b4fe; border-radius: 6px; font-weight: 800; white-space: nowrap;">צפה ביומן ←</button>
+                </div>
+            `);
+        } else {
+            const weeksStr = missingLogWeeks.map(w => `שבוע ${w}`).join(', ');
+            focusItems.push(`
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; background: #fffbeb; border: 1.5px solid #f59e0b; border-radius: 8px; padding: 7px 10px;">
+                    <div style="display: flex; align-items: center; gap: 7px;">
+                        <span style="font-size: 15px;">⏳</span>
+                        <span style="font-size: 13px; color: #92400e; font-weight: 700;">
+                            <strong>יומן למידה (מור):</strong> חסר פרסום בלוח ב-<strong>${weeksStr}</strong> (${logCompleted} מתוך ${expectedLogsUntilNow} עד כה).
+                        </span>
+                    </div>
+                    <button class="btn" onclick="closeQuickStatusModal(); openLearningLogModal(true);" style="padding: 2px 8px; font-size: 11.5px; background: #f59e0b; color: #ffffff; border: none; border-radius: 6px; font-weight: 800; white-space: nowrap;">עדכן יומן ←</button>
+                </div>
+            `);
+        }
+
+        // 2. Wassel Portfolio count & check
+        const portfolioCompleted = WASSEL_PORTFOLIO_TASKS.filter(t => getPortfolioStatus(t.taskId) === 'completed').length;
+        const missingPortfolioTasks = WASSEL_PORTFOLIO_TASKS.filter(t => t.week <= currentW && getPortfolioStatus(t.taskId) !== 'completed');
+
+        if (portfolioCompleted === WASSEL_PORTFOLIO_TASKS.length) {
+            focusItems.push(`
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 7px 10px;">
+                    <div style="display: flex; align-items: center; gap: 7px;">
+                        <span style="font-size: 15px;">📁</span>
+                        <span style="font-size: 13px; color: #166534; font-weight: 700;">
+                            <strong>תלקיט חדשנות (ואסל):</strong> כל 5 התוצרים מוכנים להגשה ב-27.01! 🏆
+                        </span>
+                    </div>
+                    <button class="btn" onclick="closeQuickStatusModal(); openPortfolioModal(true);" style="padding: 2px 8px; font-size: 11.5px; background: #ffffff; color: #15803d; border: 1px solid #86efac; border-radius: 6px; font-weight: 800; white-space: nowrap;">לתלקיט ←</button>
+                </div>
+            `);
+        } else if (missingPortfolioTasks.length === 0) {
+            focusItems.push(`
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 7px 10px;">
+                    <div style="display: flex; align-items: center; gap: 7px;">
+                        <span style="font-size: 15px;">📁</span>
+                        <span style="font-size: 13px; color: #0369a1; font-weight: 700;">
+                            <strong>תלקיט חדשנות (ואסל):</strong> ${portfolioCompleted}/5 תוצרים מוכנים (בקצב מצוין לפי לוח השבועות).
+                        </span>
+                    </div>
+                    <button class="btn" onclick="closeQuickStatusModal(); openPortfolioModal(true);" style="padding: 2px 8px; font-size: 11.5px; background: #ffffff; color: #0284c7; border: 1px solid #bae6fd; border-radius: 6px; font-weight: 800; white-space: nowrap;">לתלקיט ←</button>
+                </div>
+            `);
+        } else {
+            const missingWeeksStr = missingPortfolioTasks.map(t => `שבוע ${t.week}`).join(', ');
+            focusItems.push(`
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 7px 10px;">
+                    <div style="display: flex; align-items: center; gap: 7px;">
+                        <span style="font-size: 15px;">📁</span>
+                        <span style="font-size: 13px; color: #0369a1; font-weight: 700;">
+                            <strong>תלקיט חדשנות (ואסל):</strong> ${portfolioCompleted}/5 תוצרים מוכנים (${missingPortfolioTasks.length} תוצרים מ-${missingWeeksStr} ממתינים להכנה לקראת 27.01).
+                        </span>
+                    </div>
+                    <button class="btn" onclick="closeQuickStatusModal(); openPortfolioModal(true);" style="padding: 2px 8px; font-size: 11.5px; background: #0284c7; color: #ffffff; border: none; border-radius: 6px; font-weight: 800; white-space: nowrap;">לתלקיט ←</button>
+                </div>
+            `);
+        }
+
+        bubbleTextEl.innerHTML = `
+            <div style="margin-bottom: 8px;">${summaryMsg}</div>
+            <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px;">
+                ${focusItems.join('')}
+            </div>
+        `;
     }
 
     // Dedicated Portfolio row for Wassel's portfolio
@@ -6356,7 +6468,7 @@ function openQuickStatusModal() {
     const pTr = document.createElement('tr');
     pTr.style.cursor = 'pointer';
     pTr.style.background = '#f0f9ff';
-    pTr.onclick = () => { closeQuickStatusModal(); openPortfolioModal(); };
+    pTr.onclick = () => { closeQuickStatusModal(); openPortfolioModal(true); };
     pTr.title = "לחץ לפתיחת מרחב התלקיט";
     pTr.innerHTML = `
         <td style="font-weight: 800; color: #0369a1;">
@@ -6385,7 +6497,7 @@ function openQuickStatusModal() {
     const lTr = document.createElement('tr');
     lTr.style.cursor = 'pointer';
     lTr.style.background = '#fdf4ff';
-    lTr.onclick = () => { closeQuickStatusModal(); openLearningLogModal(); };
+    lTr.onclick = () => { closeQuickStatusModal(); openLearningLogModal(true); };
     lTr.title = "לחץ לפתיחת מרחב יומן הלמידה";
     lTr.innerHTML = `
         <td style="font-weight: 800; color: #701a75;">
@@ -6710,19 +6822,63 @@ document.addEventListener('keydown', (e) => {
 
 
 // --- Mor Learning Log Hub Logic ---
-function openLearningLogModal() {
+let isLearningLogFromQuickStatus = false;
+
+function openLearningLogModal(fromQuickStatus = false) {
+    if (fromQuickStatus === true) {
+        isLearningLogFromQuickStatus = true;
+    }
+    const backBtn = document.getElementById('learningLogBackToReportBtn');
+    const returnFooterBtn = document.getElementById('learningLogReturnFooterBtn');
+    const closeFooterBtn = document.getElementById('learningLogCloseFooterBtn');
+    if (isLearningLogFromQuickStatus) {
+        if (backBtn) backBtn.style.display = 'inline-flex';
+        if (returnFooterBtn) returnFooterBtn.style.display = 'inline-flex';
+        if (closeFooterBtn) {
+            closeFooterBtn.style.background = '#f1f5f9';
+            closeFooterBtn.style.color = '#475569';
+            closeFooterBtn.style.border = '1px solid #cbd5e1';
+            closeFooterBtn.innerText = 'סגור הכל';
+        }
+    } else {
+        if (backBtn) backBtn.style.display = 'none';
+        if (returnFooterBtn) returnFooterBtn.style.display = 'none';
+        if (closeFooterBtn) {
+            closeFooterBtn.style.background = '#0f172a';
+            closeFooterBtn.style.color = '#ffffff';
+            closeFooterBtn.style.border = 'none';
+            closeFooterBtn.innerText = 'סגור';
+        }
+    }
+
     renderLearningLogModal();
     const modal = document.getElementById('learningLogModal');
     if (modal) modal.classList.add('open');
 }
 
 function closeLearningLogModal() {
+    isLearningLogFromQuickStatus = false;
     const modal = document.getElementById('learningLogModal');
     if (modal) modal.classList.remove('open');
 }
 
+function handleLearningLogCloseX() {
+    if (isLearningLogFromQuickStatus) {
+        returnToQuickStatusFromLearningLog();
+    } else {
+        closeLearningLogModal();
+    }
+}
+
+function returnToQuickStatusFromLearningLog() {
+    const modal = document.getElementById('learningLogModal');
+    if (modal) modal.classList.remove('open');
+    isLearningLogFromQuickStatus = false;
+    openQuickStatusModal();
+}
+
 function openLearningLogModalToWeek(weekNum) {
-    openLearningLogModal();
+    openLearningLogModal(false);
     setTimeout(() => {
         const el = document.getElementById('learning_log_week_' + weekNum);
         if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -6739,7 +6895,7 @@ function setLearningLogStatus(taskId, status) {
     }
 
     let statuses = JSON.parse(localStorage.getItem('roshaket_log_statuses') || '{}');
-    statuses[taskId] = status;
+    statuses[taskId] = isDone ? 'completed' : 'not_started';
     localStorage.setItem('roshaket_log_statuses', JSON.stringify(statuses));
 
     if (isUserLoggedIn) {
@@ -6759,7 +6915,7 @@ function setLearningLogStatus(taskId, status) {
 function getLearningLogStatus(taskId) {
     if (doneTasks.includes(taskId)) return 'completed';
     const statuses = JSON.parse(localStorage.getItem('roshaket_log_statuses') || '{}');
-    return statuses[taskId] || 'not_started';
+    return statuses[taskId] === 'completed' ? 'completed' : 'not_started';
 }
 
 function renderLearningLogModal() {
@@ -6775,22 +6931,25 @@ function renderLearningLogModal() {
         const dateStr = weekObj ? weekObj.dateStr : '';
         const morMainTask = weekObj ? weekObj.tasks.find(t => t.id === `w${w}_c1`) : null;
         const mainTitle = morMainTask ? morMainTask.title : `שיעור ${w}`;
-        const status = getLearningLogStatus(taskId);
-        if (status === 'completed') completedCount++;
+        const isCompleted = (getLearningLogStatus(taskId) === 'completed');
+        if (isCompleted) completedCount++;
 
         html += `
-            <div class="portfolio-task-card status-${status.replace('_', '-')}" id="learning_log_week_${w}" style="border-right: 4px solid ${status === 'completed' ? '#10b981' : (status === 'draft' ? '#f59e0b' : '#c084fc')}; background: #ffffff;">
+            <div class="portfolio-task-card" id="learning_log_week_${w}" style="border: 1.5px solid ${isCompleted ? '#a7f3d0' : '#fed7aa'}; border-right: 5px solid ${isCompleted ? '#059669' : '#f59e0b'}; background: ${isCompleted ? '#f0fdf4' : '#ffffff'}; border-radius: 12px; padding: 14px 16px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; flex-wrap: wrap;">
-                    <div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="flex: 1; min-width: 200px;">
+                        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                             <span style="background: #9333ea; color: white; font-size: 11.5px; font-weight: 800; padding: 2px 8px; border-radius: 6px;">
                                 שבוע ${w} מתוך 13
                             </span>
                             <span style="font-size: 12px; color: #64748b; font-weight: 700;">
                                 יום א', ${dateStr}
                             </span>
+                            <span style="background: ${isCompleted ? '#dcfce7' : '#fef3c7'}; color: ${isCompleted ? '#15803d' : '#b45309'}; border: 1px solid ${isCompleted ? '#86efac' : '#fcd34d'}; font-size: 11.5px; font-weight: 800; padding: 2px 8px; border-radius: 6px;">
+                                ${isCompleted ? '✅ פורסם בלוח' : '⏳ טרם פורסם'}
+                            </span>
                         </div>
-                        <h4 style="font-size: 15.5px; font-weight: 800; color: #1e1b4b; margin-top: 5px; margin-bottom: 2px;">
+                        <h4 style="font-size: 15.5px; font-weight: 800; color: #1e1b4b; margin-top: 6px; margin-bottom: 2px;">
                             יומן למידה: רישום על הלוח
                         </h4>
                         <div style="font-size: 12.5px; color: #64748b;">
@@ -6802,17 +6961,31 @@ function renderLearningLogModal() {
                     </button>
                 </div>
 
-                <div class="portfolio-status-selector" style="margin-top: 10px;">
-                    <span style="font-size: 12px; font-weight: 800; color: #64748b; margin-left: 6px;">סטטוס רישום:</span>
-                    <button class="portfolio-status-btn btn-not-started ${status === 'not_started' ? 'active' : ''}" onclick="setLearningLogStatus('${taskId}', 'not_started')">
-                        ⏳ טרם פורסם
-                    </button>
-                    <button class="portfolio-status-btn btn-draft ${status === 'draft' ? 'active' : ''}" onclick="setLearningLogStatus('${taskId}', 'draft')">
-                        ✏️ בטיוטה
-                    </button>
-                    <button class="portfolio-status-btn btn-completed ${status === 'completed' ? 'active' : ''}" onclick="setLearningLogStatus('${taskId}', 'completed')" style="${status === 'completed' ? 'background: #059669; color: white;' : ''}">
-                        ✅ פורסם בלוח
-                    </button>
+                <!-- 2-Button Toggle in a single horizontal row -->
+                <div style="margin-top: 12px; padding-top: 10px; border-top: 1px dashed ${isCompleted ? '#bbf7d0' : '#fed7aa'}; display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 12px; font-weight: 800; color: #64748b; white-space: nowrap;">עדכן סטטוס:</span>
+                    <div style="display: flex; gap: 8px; flex: 1; flex-wrap: nowrap;">
+                        <button type="button" 
+                            onclick="setLearningLogStatus('${taskId}', 'not_started')" 
+                            style="flex: 1; height: 38px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; border-radius: 8px; font-size: 13px; cursor: pointer; transition: all 0.15s ease; ${
+                                !isCompleted 
+                                ? 'background: #fef3c7; color: #b45309; border: 1.5px solid #f59e0b; font-weight: 800; box-shadow: 0 1px 3px rgba(245, 158, 11, 0.25);' 
+                                : 'background: #ffffff; color: #94a3b8; border: 1px solid #e2e8f0; font-weight: 600;'
+                            }">
+                            <span>⏳</span>
+                            <span>טרם פורסם</span>
+                        </button>
+                        <button type="button" 
+                            onclick="setLearningLogStatus('${taskId}', 'completed')" 
+                            style="flex: 1; height: 38px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; border-radius: 8px; font-size: 13px; cursor: pointer; transition: all 0.15s ease; ${
+                                isCompleted 
+                                ? 'background: #059669; color: #ffffff; border: 1.5px solid #047857; font-weight: 800; box-shadow: 0 2px 4px rgba(5, 150, 105, 0.25);' 
+                                : 'background: #ffffff; color: #94a3b8; border: 1px solid #e2e8f0; font-weight: 600;'
+                            }">
+                            <span>✅</span>
+                            <span>פורסם בלוח</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         `;
@@ -6932,15 +7105,59 @@ function setPortfolioStatus(taskId, status) {
     render();
 }
 
-function openPortfolioModal() {
+let isPortfolioFromQuickStatus = false;
+
+function openPortfolioModal(fromQuickStatus = false) {
+    if (fromQuickStatus === true) {
+        isPortfolioFromQuickStatus = true;
+    }
+    const backBtn = document.getElementById('portfolioBackToReportBtn');
+    const returnFooterBtn = document.getElementById('portfolioReturnFooterBtn');
+    const closeFooterBtn = document.getElementById('portfolioCloseFooterBtn');
+    if (isPortfolioFromQuickStatus) {
+        if (backBtn) backBtn.style.display = 'inline-flex';
+        if (returnFooterBtn) returnFooterBtn.style.display = 'inline-flex';
+        if (closeFooterBtn) {
+            closeFooterBtn.style.background = '#f1f5f9';
+            closeFooterBtn.style.color = '#475569';
+            closeFooterBtn.style.border = '1px solid #cbd5e1';
+            closeFooterBtn.innerText = 'סגור הכל';
+        }
+    } else {
+        if (backBtn) backBtn.style.display = 'none';
+        if (returnFooterBtn) returnFooterBtn.style.display = 'none';
+        if (closeFooterBtn) {
+            closeFooterBtn.style.background = '#0f172a';
+            closeFooterBtn.style.color = '#ffffff';
+            closeFooterBtn.style.border = 'none';
+            closeFooterBtn.innerText = 'סגור';
+        }
+    }
+
     renderPortfolioModal();
     const modal = document.getElementById('portfolioModal');
     if (modal) modal.classList.add('open');
 }
 
 function closePortfolioModal() {
+    isPortfolioFromQuickStatus = false;
     const modal = document.getElementById('portfolioModal');
     if (modal) modal.classList.remove('open');
+}
+
+function handlePortfolioCloseX() {
+    if (isPortfolioFromQuickStatus) {
+        returnToQuickStatusFromPortfolio();
+    } else {
+        closePortfolioModal();
+    }
+}
+
+function returnToQuickStatusFromPortfolio() {
+    const modal = document.getElementById('portfolioModal');
+    if (modal) modal.classList.remove('open');
+    isPortfolioFromQuickStatus = false;
+    openQuickStatusModal();
 }
 
 function openPortfolioModalToTask(taskId) {
