@@ -3730,6 +3730,20 @@ window.addEventListener('DOMContentLoaded', () => {
                 </button>
             </div>
 
+            <!-- Learning Log Hub Banner (Mor) -->
+            <div style="background: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%); border: 1.5px solid #e9d5ff; border-radius: 14px; padding: 14px 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 26px;">📝</span>
+                    <div>
+                        <div style="font-weight: 800; font-size: 15.5px; color: #701a75;">מרחב יומן למידה שבועי – הערכת תוכניות (מור)</div>
+                        <div style="font-size: 12.5px; color: #86198f;">ריכוז 13 הרפלקציות השבועיות בלוח השיתופי • חובת סמסטר לציון</div>
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="openLearningLogModal()" style="background: #9333ea; color: white; padding: 8px 16px; font-size: 13.5px; border-radius: 10px; box-shadow: 0 4px 12px rgba(147, 51, 234, 0.25);">
+                    📝 פתח מרחב יומן למידה
+                </button>
+            </div>
+
             <div style="border-top: 1px dashed #cbd5e1; padding-top: 14px;">
                 <div class="curriculum-section-title" style="justify-content: space-between; flex-wrap: wrap;">
                     <div style="display: flex; align-items: center; gap: 8px;">
@@ -4264,6 +4278,67 @@ window.addEventListener('DOMContentLoaded', () => {
     </div>
 </div>
 
+
+<!-- Learning Log Hub Modal (Mor) -->
+<div class="modal-overlay" id="learningLogModal" onclick="if(event.target === this) closeLearningLogModal()">
+    <div class="modal-card">
+        <div class="portfolio-header" style="background: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%); border-bottom: 1.5px solid #f0abfc;">
+            <div>
+                <h3 style="font-size: 20px; font-weight: 800; color: #701a75; display: flex; align-items: center; gap: 8px; margin-bottom: 2px;">
+                    <span>📝</span>
+                    <span>מרחב יומן למידה – הערכת תוכניות</span>
+                </h3>
+                <p style="font-size: 13px; color: #86198f; margin: 0; font-weight: 600;">
+                    ד"ר מור רייכמן • 13 רפלקציות שבועיות בלוח השיתופי • חובת סמסטר
+                </p>
+            </div>
+            <button class="modal-close-x" onclick="closeLearningLogModal()" title="סגור" aria-label="סגור">✕</button>
+        </div>
+
+        <!-- Progress Summary -->
+        <div class="portfolio-progress-bar-wrap" style="background: #faf5ff; border: 1.5px solid #e9d5ff;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <div style="font-size: 14.5px; font-weight: 800; color: #6b21a8;" id="learningLogProgressLabel">
+                    התקדמות יומן למידה: 0 מתוך 13 שבועות מולאו בלוח
+                </div>
+                <div style="font-size: 13px; font-weight: 800; color: #7e22ce; background: #ffffff; padding: 2px 10px; border-radius: 999px; border: 1px solid #d8b4fe;" id="learningLogPctBadge">
+                    0% הושלמו
+                </div>
+            </div>
+            <div style="height: 10px; background: #ffffff; border-radius: 999px; overflow: hidden; border: 1px solid #d8b4fe;">
+                <div id="learningLogProgressBar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #9333ea, #c084fc); transition: width 0.25s ease;"></div>
+            </div>
+        </div>
+
+        <!-- Guidelines Accordion -->
+        <div style="background: #ffffff; border: 1px solid #e9d5ff; border-radius: 12px; padding: 12px 14px; margin-bottom: 12px;">
+            <details style="cursor: pointer;">
+                <summary style="font-size: 13.5px; font-weight: 800; color: #7e22ce; outline: none; display: flex; align-items: center; gap: 6px;">
+                    <span>💡</span>
+                    <span>מה כותבים ביומן הלמידה השבועי של מור? (הנחיות ודגשים)</span>
+                </summary>
+                <div style="font-size: 13px; color: #475569; margin-top: 8px; line-height: 1.55; padding-right: 8px;">
+                    <ul style="margin: 0; padding-right: 18px; display: flex; flex-direction: column; gap: 4px;">
+                        <li><strong>תובנה מרכזית:</strong> מה המושג או הרעיון החשוב ביותר שלמדת בשיעור (למשל: מודל לוגי, דורות הערכה, CIPP).</li>
+                        <li><strong>חיבור למיזם האישי:</strong> כיצד התובנה הזו מתקשרת או יכולה לסייע לפרויקט החינוכי שלך.</li>
+                        <li><strong>שאלות ודילמות:</strong> שאלה אחת או אתגר שעלו אצלך בעקבות המפגש.</li>
+                        <li><strong>פרסום:</strong> מעלים את הפוסט ללוח השיתופי של הקורס ומסמנים כאן "פורסם בלוח" ✅.</li>
+                    </ul>
+                </div>
+            </details>
+        </div>
+
+        <!-- 13 Weekly Log Cards Container -->
+        <div id="learningLogTasksContainer" style="max-height: 52vh; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 2px;">
+            <!-- Dynamically populated via renderLearningLogModal() -->
+        </div>
+
+        <button class="btn btn-primary" style="background: #0f172a; color: white; width: 100%; justify-content: center; font-size: 15px; margin-top: 10px;" onclick="closeLearningLogModal()">
+            סגור
+        </button>
+    </div>
+</div>
+
 <!-- Course Settings & Syllabus Upload Modal -->
 <div class="modal-overlay" id="courseSettingsModal">
     <div class="modal-card" style="max-width: 580px; text-align: right;">
@@ -4739,6 +4814,11 @@ function renderTaskCardHtml(t) {
                     <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
                         <span class="task-course-pill">${t.emoji} ${t.course}</span>
                         ${t.id.endsWith('_log') ? '<span class="learning-log-badge">📝 יומן למידה שבועי</span>' : ''}
+                        ${t.id.endsWith('_log') ? `
+                            <button class="portfolio-direct-pill" style="background: #faf5ff; color: #7e22ce; border-color: #d8b4fe;" onclick="event.stopPropagation(); openLearningLogModalToWeek(${taskWeekNum})" title="לחץ לפתיחת מרחב יומן הלמידה של מור">
+                                📝 מרחב יומן למידה ↗
+                            </button>
+                        ` : ''}
                     </div>
                     ${['w1_c2', 'w2_c2_portfolio', 'w5_c2', 'w7_c2', 'w11_c2'].includes(t.id) ? `
                         <button class="portfolio-direct-pill" onclick="event.stopPropagation(); openPortfolioModalToTask('${t.id}')" title="לחץ לפתיחת מרחב והנחיות התלקיט">
@@ -6296,6 +6376,35 @@ function openQuickStatusModal() {
     `;
     tbody.appendChild(pTr);
 
+    // Dedicated Learning Log row for Mor
+    let logCompleted = 0;
+    for (let i = 1; i <= 13; i++) {
+        if (doneTasks.includes(`w${i}_c1_log`)) logCompleted++;
+    }
+    const logPct = Math.round((logCompleted / 13) * 100);
+    const lTr = document.createElement('tr');
+    lTr.style.cursor = 'pointer';
+    lTr.style.background = '#fdf4ff';
+    lTr.onclick = () => { closeQuickStatusModal(); openLearningLogModal(); };
+    lTr.title = "לחץ לפתיחת מרחב יומן הלמידה";
+    lTr.innerHTML = `
+        <td style="font-weight: 800; color: #701a75;">
+            <span class="course-mini-pill" style="background: #fae8ff; color: #701a75; border: 1px solid #f0abfc; font-weight: 800;">
+                📝 יומן למידה (מור)
+            </span>
+        </td>
+        <td style="text-align: center;">
+            <span class="status-badge-inline" style="background: ${logCompleted === 13 ? '#dcfce7' : '#ffffff'}; color: ${logCompleted === 13 ? '#15803d' : '#701a75'}; border: 1.5px solid ${logCompleted === 13 ? '#86efac' : '#e9d5ff'};">
+                ${logCompleted === 13 ? '✅ כל 13 השבועות פורסמו' : `⏳ ${logCompleted}/13 שבועות`}
+            </span>
+        </td>
+        <td style="text-align: center; font-weight: 700;">
+            <div style="font-size: 13.5px; color: #9333ea; font-weight: 800;">${logPct}%</div>
+            <div style="font-size: 11px; color: #64748b; font-weight: 700;">שבועי</div>
+        </td>
+    `;
+    tbody.appendChild(lTr);
+
     // Long-Term Deliverables Cards
     // 1. Vassel Portfolio
     const wasselPortfolioTasks = ['w1_c2', 'w2_c2', 'w3_c2', 'w5_c2', 'w7_c2', 'w11_c2'];
@@ -6598,6 +6707,127 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
+
+
+// --- Mor Learning Log Hub Logic ---
+function openLearningLogModal() {
+    renderLearningLogModal();
+    const modal = document.getElementById('learningLogModal');
+    if (modal) modal.classList.add('open');
+}
+
+function closeLearningLogModal() {
+    const modal = document.getElementById('learningLogModal');
+    if (modal) modal.classList.remove('open');
+}
+
+function openLearningLogModalToWeek(weekNum) {
+    openLearningLogModal();
+    setTimeout(() => {
+        const el = document.getElementById('learning_log_week_' + weekNum);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 120);
+}
+
+function setLearningLogStatus(taskId, status) {
+    const isDone = (status === 'completed');
+    const currentlyDone = doneTasks.includes(taskId);
+    if (isDone && !currentlyDone) {
+        doneTasks.push(taskId);
+    } else if (!isDone && currentlyDone) {
+        doneTasks = doneTasks.filter(id => id !== taskId);
+    }
+
+    let statuses = JSON.parse(localStorage.getItem('roshaket_log_statuses') || '{}');
+    statuses[taskId] = status;
+    localStorage.setItem('roshaket_log_statuses', JSON.stringify(statuses));
+
+    if (isUserLoggedIn) {
+        localStorage.setItem('roshaket_done_tasks', JSON.stringify(doneTasks));
+    } else {
+        sessionStorage.setItem('roshaket_demo_done_tasks', JSON.stringify(doneTasks));
+    }
+
+    renderLearningLogModal();
+    render();
+
+    if (googleAccessToken) {
+        syncSingleTaskToGoogle(taskId, isDone);
+    }
+}
+
+function getLearningLogStatus(taskId) {
+    if (doneTasks.includes(taskId)) return 'completed';
+    const statuses = JSON.parse(localStorage.getItem('roshaket_log_statuses') || '{}');
+    return statuses[taskId] || 'not_started';
+}
+
+function renderLearningLogModal() {
+    const container = document.getElementById('learningLogTasksContainer');
+    if (!container) return;
+
+    let completedCount = 0;
+    let html = '';
+
+    for (let w = 1; w <= 13; w++) {
+        const taskId = `w${w}_c1_log`;
+        const weekObj = semesterSchedule.find(x => x.weekNum === w);
+        const dateStr = weekObj ? weekObj.dateStr : '';
+        const morMainTask = weekObj ? weekObj.tasks.find(t => t.id === `w${w}_c1`) : null;
+        const mainTitle = morMainTask ? morMainTask.title : `שיעור ${w}`;
+        const status = getLearningLogStatus(taskId);
+        if (status === 'completed') completedCount++;
+
+        html += `
+            <div class="portfolio-task-card status-${status.replace('_', '-')}" id="learning_log_week_${w}" style="border-right: 4px solid ${status === 'completed' ? '#10b981' : (status === 'draft' ? '#f59e0b' : '#c084fc')}; background: #ffffff;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; flex-wrap: wrap;">
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="background: #9333ea; color: white; font-size: 11.5px; font-weight: 800; padding: 2px 8px; border-radius: 6px;">
+                                שבוע ${w} מתוך 13
+                            </span>
+                            <span style="font-size: 12px; color: #64748b; font-weight: 700;">
+                                יום א', ${dateStr}
+                            </span>
+                        </div>
+                        <h4 style="font-size: 15.5px; font-weight: 800; color: #1e1b4b; margin-top: 5px; margin-bottom: 2px;">
+                            יומן למידה: רישום על הלוח
+                        </h4>
+                        <div style="font-size: 12.5px; color: #64748b;">
+                            נושא השיעור: <strong>${escapeHtml(mainTitle)}</strong>
+                        </div>
+                    </div>
+                    <button class="btn" style="padding: 5px 10px; font-size: 11.5px; background: #f8fafc; color: #334155; border: 1px solid #cbd5e1;" onclick="closeLearningLogModal(); scrollToWeekCard(${w})">
+                        קפוץ לשבוע ${w} ↗
+                    </button>
+                </div>
+
+                <div class="portfolio-status-selector" style="margin-top: 10px;">
+                    <span style="font-size: 12px; font-weight: 800; color: #64748b; margin-left: 6px;">סטטוס רישום:</span>
+                    <button class="portfolio-status-btn btn-not-started ${status === 'not_started' ? 'active' : ''}" onclick="setLearningLogStatus('${taskId}', 'not_started')">
+                        ⏳ טרם פורסם
+                    </button>
+                    <button class="portfolio-status-btn btn-draft ${status === 'draft' ? 'active' : ''}" onclick="setLearningLogStatus('${taskId}', 'draft')">
+                        ✏️ בטיוטה
+                    </button>
+                    <button class="portfolio-status-btn btn-completed ${status === 'completed' ? 'active' : ''}" onclick="setLearningLogStatus('${taskId}', 'completed')" style="${status === 'completed' ? 'background: #059669; color: white;' : ''}">
+                        ✅ פורסם בלוח
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    container.innerHTML = html;
+
+    const pct = Math.round((completedCount / 13) * 100);
+    const label = document.getElementById('learningLogProgressLabel');
+    if (label) label.innerText = `התקדמות יומן למידה: ${completedCount} מתוך 13 שבועות מולאו בלוח`;
+    const bar = document.getElementById('learningLogProgressBar');
+    if (bar) bar.style.width = `${pct}%`;
+    const badge = document.getElementById('learningLogPctBadge');
+    if (badge) badge.innerText = `${pct}% הושלמו`;
+}
 
 // --- Wassel Portfolio Tracking Logic ---
 const WASSEL_PORTFOLIO_TASKS = [
