@@ -18,6 +18,23 @@ function doGet(e) {
     const isConsentApproved = (consent === 'true' || consent === 'approved' || consent === '1');
     
     // בדיקת סטטוס משתמש
+    // רישום אירוע פעילות שקט בטאב יומן פעילות
+    if (action === 'log_event') {
+      let logSheet = ss.getSheetByName('יומן פעילות');
+      if (!logSheet) {
+        logSheet = ss.insertSheet('יומן פעילות');
+        logSheet.appendRow(['תאריך ושעה', 'שם', 'אימייל', 'אירוע', 'פירוט', 'פלטפורמה']);
+        logSheet.getRange(1, 1, 1, 6).setFontWeight('bold').setBackground('#E0E7FF');
+        logSheet.setFrozenRows(1);
+      }
+      const eventName = params.event || '';
+      const eventDetails = params.details || '';
+      const platform = params.platform || 'Web';
+      const nowStr = Utilities.formatDate(new Date(), 'Asia/Jerusalem', 'yyyy-MM-dd HH:mm:ss');
+      logSheet.appendRow([nowStr, name || 'אורח/ת', email || 'ללא מייל', eventName, eventDetails, platform]);
+      return createJsonResponse({ status: 'logged' });
+    }
+
     if (action === 'check') {
       const data = sheet.getDataRange().getValues();
       for (let i = 1; i < data.length; i++) {

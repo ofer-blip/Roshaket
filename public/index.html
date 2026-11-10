@@ -18,6 +18,18 @@
     <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
     <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
+    <!-- Google tag (gtag.js) - Firebase Analytics GA4 (d-dialog-hub / roshaket) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E7KQQ85BVX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-E7KQQ85BVX', {
+            send_page_view: true,
+            cookie_flags: 'SameSite=None;Secure'
+        });
+    </script>
+
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&display=swap" rel="stylesheet">
@@ -3473,18 +3485,14 @@ window.addEventListener('DOMContentLoaded', () => {
         <div class="welcome-actions-wrap">
             <button class="btn-welcome-primary" onclick="enterApp('google')">
                 <span>🔑</span>
-                <span>התחבר לחשבון שלי (Google)</span>
-            </button>
-            <button class="btn-welcome-register" onclick="enterApp('google')" title="הרשמה והצטרפות לקורס עם חשבון Google">
-                <span>📝</span>
-                <span>הרשמה והצטרפות לקורס</span>
+                <span>כניסה והרשמה עם חשבון Google</span>
             </button>
             <button class="btn-welcome-secondary" onclick="enterApp('demo')">
                 <span>🚀</span>
-                <span>כניסה להתנסות (מצב דמו)</span>
+                <span>כניסה ישירה כאורחת (מצב דמו)</span>
             </button>
             <button class="btn-welcome-install" id="welcomeInstallAppBtn" onclick="triggerPwaInstall()" style="display: none;">
-                <span>📲</span>
+                <span>📱</span>
                 <span>התקן את ראשקט למסך הבית</span>
             </button>
         </div>
@@ -4988,6 +4996,12 @@ async function saveTaskNote(taskId) {
 
 function toggleTask(id) {
     const isNowDone = !doneTasks.includes(id);
+    if (typeof trackEvent === 'function') {
+        trackEvent('task_toggle', {
+            task_id: id,
+            is_done: isNowDone
+        });
+    }
     if (isNowDone) {
         doneTasks.push(id);
         triggerCelebrationMeme();
@@ -5296,11 +5310,13 @@ function handleAuthClick() {
             scope: SCOPES,
             callback: async (resp) => {
                 if (resp.error !== undefined) {
-                    throw resp;
+                    console.warn('OAuth prompt cancelled or returned error:', resp);
+                    showToast('ההתחברות בוטלה. ניתן להמשיך כאורחת.');
+                    return;
                 }
                 googleAccessToken = resp.access_token;
 
-                showToast('🔍 מאמת הרשאות כניסה לקורס...');
+                showToast('🚀 מתחבר וטוען פרטים...');
                 await fetchGoogleUserEmail();
 
                 // Silent Access: immediate login with background registration
@@ -5315,7 +5331,7 @@ function handleAuthClick() {
         tokenClient.requestAccessToken({ prompt: 'consent' });
     } catch (err) {
         console.error('Auth error:', err);
-        openConfigModal();
+        showToast('ההתחברות לא הושלמה. ניתן להמשיך במצב אורחת.');
     }
 }
 
@@ -6433,6 +6449,12 @@ async function enterApp(mode) {
 
 // Smart Gate: Return users directly to their board without welcome screen jump
 window.addEventListener('DOMContentLoaded', () => {
+    if (typeof trackEvent === 'function') {
+        trackEvent('app_opened', {
+            standalone: isRunningStandalone(),
+            is_ios: isIOS()
+        });
+    }
     const gatePassed = localStorage.getItem('roshaket_gate_passed') || sessionStorage.getItem('roshaket_gate_passed');
     const hasUser = localStorage.getItem('roshaket_user_email') || localStorage.getItem('roshaket_user_name');
     if (gatePassed || hasUser || location.protocol === 'file:') {
@@ -6996,6 +7018,16 @@ function openLessonSummaryModal(weekNum, courseKey, specificSummaryId) {
     summaries.forEach(s => markSummaryAsRead(s.id));
     updateWhatsNewUI();
 
+    window._summaryOpenTime = Date.now();
+    window._currentSummaryInfo = { weekNum: activeWorkspaceWeek, courseKey: activeWorkspaceCourse, summaryId: activeWorkspaceSummaryId };
+    if (typeof trackEvent === 'function') {
+        trackEvent('summary_view', {
+            course_id: activeWorkspaceCourse,
+            week_num: activeWorkspaceWeek,
+            summary_id: activeWorkspaceSummaryId
+        });
+    }
+
     renderLessonSummaryWorkspace();
     const modal = document.getElementById('lessonSummaryModal');
     if (modal) {
@@ -7008,6 +7040,21 @@ function openLessonSummaryModal(weekNum, courseKey, specificSummaryId) {
 }
 
 function closeLessonSummaryModal() {
+    if (window._summaryOpenTime && window._currentSummaryInfo && typeof trackEvent === 'function') {
+        const elapsed = Math.round((Date.now() - window._summaryOpenTime) / 1000);
+        if (elapsed >= 3) {
+            trackEvent('summary_reading_time', {
+                course_id: window._currentSummaryInfo.courseKey,
+                week_num: window._currentSummaryInfo.weekNum,
+                summary_id: window._currentSummaryInfo.summaryId,
+                duration_seconds: elapsed,
+                duration_minutes: Number((elapsed / 60).toFixed(1))
+            });
+        }
+        window._summaryOpenTime = null;
+        window._currentSummaryInfo = null;
+    }
+
     const modal = document.getElementById('lessonSummaryModal');
     if (modal) {
         modal.classList.remove('open');
@@ -7326,6 +7373,13 @@ function renderLessonSummaryWorkspaceBody() {
 
 
 function copySummaryTemplateToClipboard() {
+    if (typeof trackEvent === 'function') {
+        trackEvent('summary_copy_template', {
+            course_id: activeWorkspaceCourse,
+            week_num: activeWorkspaceWeek,
+            summary_id: activeWorkspaceSummaryId
+        });
+    }
     const current = getActiveSummaryObject();
     if (!current) return;
     const textToCopy = current.template || current.title;
@@ -7445,6 +7499,13 @@ function buildPrintableSummaryHtml(summaryObj, autoPrint) {
 }
 
 function downloadCurrentSummaryPdf() {
+    if (typeof trackEvent === 'function') {
+        trackEvent('summary_download_pdf', {
+            course_id: activeWorkspaceCourse,
+            week_num: activeWorkspaceWeek,
+            summary_id: activeWorkspaceSummaryId
+        });
+    }
     const current = getActiveSummaryObject();
     if (!current) return;
     const htmlContent = buildPrintableSummaryHtml(current, true);
@@ -8270,22 +8331,78 @@ async function checkPendingApprovalAgain() {
 
 
 // ==========================================
-// ROSHAKET LIGHTWEIGHT ANALYTICS & EVENT TRACKING
+// ROSHAKET LIGHTWEIGHT ANALYTICS & EVENT TRACKING (GA4 & Firebase)
 // ==========================================
-window.ROSHAKET_GA_ID = window.ROSHAKET_GA_ID || '';
+window.ROSHAKET_GA_ID = 'G-E7KQQ85BVX';
+
+function getOrGenerateUserId() {
+    let uid = localStorage.getItem('roshaket_analytics_uid');
+    if (!uid) {
+        if (googleUserEmail) {
+            uid = 'user_' + btoa(unescape(encodeURIComponent(googleUserEmail))).replace(/=/g, '').slice(0, 14);
+        } else {
+            uid = 'guest_' + Math.random().toString(36).substring(2, 10);
+        }
+        localStorage.setItem('roshaket_analytics_uid', uid);
+    }
+    return uid;
+}
+
 window.trackEvent = function(eventName, params = {}) {
     try {
+        const enrichedParams = {
+            ...params,
+            user_type: googleUserEmail ? 'registered' : 'guest',
+            platform: isRunningStandalone() ? 'pwa' : (isIOS() ? 'ios_web' : 'desktop_web'),
+            screen_name: 'roshaket_main'
+        };
+
+        const uid = getOrGenerateUserId();
+
         if (typeof window.gtag === 'function') {
-            window.gtag('event', eventName, params);
+            window.gtag('set', 'user_properties', {
+                user_role: (googleUserEmail && (googleUserEmail === PRIMARY_ADMIN_EMAIL || googleUserEmail.includes('saritofer'))) ? 'admin' : 'student',
+                app_mode: isRunningStandalone() ? 'pwa' : 'browser'
+            });
+            window.gtag('config', 'G-E7KQQ85BVX', { user_id: uid });
+            window.gtag('event', eventName, enrichedParams);
         }
         if (typeof window.clarity === 'function') {
             window.clarity('event', eventName);
         }
-        console.log('📊 [Analytics]', eventName, params);
+
+        // Silent background logging to Google Sheet via GAS (zero lag)
+        if (typeof ACCESS_CONTROL_SCRIPT_URL !== 'undefined' && ACCESS_CONTROL_SCRIPT_URL) {
+            const userDisplay = googleUserName || (googleUserEmail ? googleUserEmail.split('@')[0] : 'אורח/ת');
+            const userEmail = googleUserEmail || '';
+            const detailsStr = typeof params === 'object' ? JSON.stringify(params) : String(params);
+            const sheetUrl = `${ACCESS_CONTROL_SCRIPT_URL}?action=log_event&event=${encodeURIComponent(eventName)}&name=${encodeURIComponent(userDisplay)}&email=${encodeURIComponent(userEmail)}&details=${encodeURIComponent(detailsStr)}&platform=${encodeURIComponent(enrichedParams.platform)}`;
+            
+            if (navigator.sendBeacon) {
+                navigator.sendBeacon(sheetUrl);
+            } else {
+                fetch(sheetUrl, { mode: 'no-cors' }).catch(() => {});
+            }
+        }
+
+        console.log('📊 [Roshaket Analytics]', eventName, enrichedParams);
     } catch (e) {
         console.warn('Analytics tracking error:', e);
     }
 };
+
+// Delegated listener for accordion / collapsible expand-collapse in lesson summary
+document.addEventListener('toggle', (e) => {
+    if (e.target && e.target.tagName === 'DETAILS' && e.target.closest('#summaryModalBody')) {
+        const title = e.target.querySelector('summary')?.innerText?.trim() || 'פרק בסיכום';
+        window.trackEvent('accordion_toggle', {
+            section_title: title.slice(0, 50),
+            is_open: e.target.open,
+            course_id: window._currentSummaryInfo?.courseKey || activeWorkspaceCourse || '',
+            week_num: window._currentSummaryInfo?.weekNum || activeWorkspaceWeek || 0
+        });
+    }
+}, true);
 
 
 
