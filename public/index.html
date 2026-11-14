@@ -4810,16 +4810,20 @@ function renderTaskCardHtml(t) {
         : [];
     let summaryActionRowHtml = '';
     if (isMainCourseCard && summariesForTask.length > 0) {
+        const hasVideo = summariesForTask.some(s => s.videoUrl);
         const hasAudio = summariesForTask.some(s => s.audioUrl);
-        const btnLabel = hasAudio 
-            ? `🎙️ סיכום שיעור ${taskWeekNum} + פודקאסט AI`
-            : (summariesForTask.length > 1 ? `סיכומי שיעור ועזרים (${summariesForTask.length})` : `סיכום שיעור + שליף לתרגיל`);
+        const hasMedia = hasVideo || hasAudio;
+        const btnLabel = hasVideo 
+            ? `🎬 סיכום שיעור ${taskWeekNum} + סרטון AI`
+            : (hasAudio 
+                ? `🎙️ סיכום שיעור ${taskWeekNum} + פודקאסט AI`
+                : (summariesForTask.length > 1 ? `סיכומי שיעור ועזרים (${summariesForTask.length})` : `סיכום שיעור + שליף לתרגיל`));
         summaryActionRowHtml = `
             <div class="task-summary-action-row">
-                <button type="button" class="lesson-summary-btn" onclick="event.stopPropagation(); openLessonSummaryModal(${taskWeekNum}, '${t.courseKey}')" style="${hasAudio ? 'background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); box-shadow: 0 4px 12px rgba(124, 58, 237, 0.28);' : ''}">
-                    <span>${hasAudio ? '🎙️' : '✨'}</span>
+                <button type="button" class="lesson-summary-btn" onclick="event.stopPropagation(); openLessonSummaryModal(${taskWeekNum}, '${t.courseKey}')" style="${hasMedia ? 'background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); box-shadow: 0 4px 12px rgba(124, 58, 237, 0.28);' : ''}">
+                    <span>${hasVideo ? '🎬' : (hasAudio ? '🎙️' : '✨')}</span>
                     <span>${btnLabel}</span>
-                    <span class="lesson-summary-count-badge">${hasAudio ? 'האזן עכשיו' : (summariesForTask.length > 1 ? summariesForTask.length + ' סיכומים' : 'פתח חלונית עבודה')} ↗</span>
+                    <span class="lesson-summary-count-badge">${hasVideo ? 'צפה עכשיו' : (hasAudio ? 'האזן עכשיו' : (summariesForTask.length > 1 ? summariesForTask.length + ' סיכומים' : 'פתח חלונית עבודה'))} ↗</span>
                 </button>
             </div>
         `;
@@ -6197,10 +6201,10 @@ if ('serviceWorker' in navigator) {
         }
     });
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=42', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=80', { updateViaCache: 'none' })
             .then(reg => {
                 reg.update();
-                console.log('Roshaket SW v37 Registered!', reg);
+                console.log('Roshaket SW v80 Registered!', reg);
             })
             .catch(err => console.log('SW Registration failed: ', err));
     });
@@ -7203,6 +7207,9 @@ const DEFAULT_LESSON_SUMMARIES = [
         tabLabel: 'סיכום מפגש + 4 דורות הערכה',
         title: 'ארבעה דורות של הערכה (גובה ולינקולן) ושבוע יישור קו',
         teaser: 'עלה סיכום מפגש 4 של ד"ר ישי מור: אין מטלות חדשות השבוע! דגשים ליישור קו במודל הלוגי, חובת יומן למידה, ו-4 דורות ההערכה.',
+        videoUrl: 'audio/yishai_lesson_04_video.mp4',
+        videoTitle: 'סרטון סיכום המפגש (התאום הדיגיטלי של עופר)',
+        videoDuration: '1:18 דק\'',
         audioUrl: 'audio/yishai_lesson_04_summary.mp3',
         audioTitle: 'פודקאסט סיכום המפגש (התאום הדיגיטלי של עופר)',
         audioDuration: '2:40 דק\'',
@@ -7444,7 +7451,11 @@ const DEFAULT_LESSON_SUMMARIES = [
 ];
 
 function loadAllLessonSummaries() {
-    // Clean up any legacy summaries so fresh audio-enabled summaries are loaded
+    // Clean up any legacy summaries so fresh video & media-enabled summaries are loaded
+    if (!localStorage.getItem('roshaket_cleaned_v80_video')) {
+        localStorage.removeItem('roshaket_lesson_summaries_v1');
+        localStorage.setItem('roshaket_cleaned_v80_video', 'true');
+    }
     if (!localStorage.getItem('roshaket_cleaned_v77_audio')) {
         localStorage.removeItem('roshaket_lesson_summaries_v1');
         localStorage.setItem('roshaket_cleaned_v77_audio', 'true');
@@ -7481,6 +7492,9 @@ function loadAllLessonSummaries() {
 
     if (mergedMap.has('sum_w4_mor_1')) {
         const w4 = mergedMap.get('sum_w4_mor_1');
+        w4.videoUrl = 'audio/yishai_lesson_04_video.mp4';
+        w4.videoTitle = 'סרטון סיכום המפגש (התאום הדיגיטלי של עופר)';
+        w4.videoDuration = '1:18 דק\'';
         w4.audioUrl = 'audio/yishai_lesson_04_summary.mp3';
         w4.audioTitle = 'פודקאסט סיכום המפגש (התאום הדיגיטלי של עופר)';
         w4.audioDuration = '2:40 דק\'';
@@ -7641,11 +7655,14 @@ function renderLessonSummaryWorkspace() {
             const tabsHtml = allSummariesList.map((s, idx) => {
                 const isAct = s.id === current.id;
                 const cM = COURSE_META_MAP[s.courseKey] || COURSE_META_MAP.mor;
+                const hasVideo = !!s.videoUrl;
                 const hasAudio = !!s.audioUrl;
-                const label = `שבוע ${s.weekNum}: ${s.tabLabel || s.title.slice(0, 24)}${hasAudio ? ' 🎙️' : ''}`;
+                const hasMedia = hasVideo || hasAudio;
+                const mediaIcon = hasVideo ? '🎬' : (hasAudio ? '🎙️' : cM.emoji);
+                const label = `שבוע ${s.weekNum}: ${s.tabLabel || s.title.slice(0, 24)}${hasVideo ? ' 🎬' : (hasAudio ? ' 🎙️' : '')}`;
                 return `
-                    <button type="button" class="summary-switcher-tab ${isAct ? 'active' : ''}" onclick="openLessonSummaryModal(${s.weekNum}, '${s.courseKey}', '${s.id}')" style="${hasAudio && !isAct ? 'border: 1px solid #c4b5fd; background: #faf5ff;' : ''}">
-                        <span>${hasAudio ? '🎙️' : cM.emoji}</span>
+                    <button type="button" class="summary-switcher-tab ${isAct ? 'active' : ''}" onclick="openLessonSummaryModal(${s.weekNum}, '${s.courseKey}', '${s.id}')" style="${hasMedia && !isAct ? 'border: 1px solid #c4b5fd; background: #faf5ff;' : ''}">
+                        <span>${mediaIcon}</span>
                         <span>${escapeHtml(label)}</span>
                     </button>
                 `;
@@ -7714,7 +7731,42 @@ function renderLessonSummaryWorkspaceBody() {
 
     let html = '';
 
-    if (current.audioUrl) {
+    if (current.videoUrl) {
+        html += `
+            <div class="study-block-card block-video-summary" style="padding: 16px 20px; margin-bottom: 18px; background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%); border: 1.5px solid #c4b5fd; border-radius: 14px; box-shadow: 0 4px 14px rgba(139, 92, 246, 0.08);">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; flex-wrap: wrap;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 28px; background: #ffffff; width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(139, 92, 246, 0.15);">🎬</span>
+                        <div>
+                            <h4 style="margin: 0; font-size: 16px; font-weight: 800; color: #4c1d95;">${escapeHtml(current.videoTitle || 'סרטון סיכום השיעור')}</h4>
+                            <div style="font-size: 12.5px; color: #6d28d9; font-weight: 600; margin-top: 2px;">תקציר וידאו בפורמט 9:16 לנייד • מוגש ע"י התאום הדיגיטלי של עופר ${current.videoDuration ? `(${escapeHtml(current.videoDuration)})` : ''}</div>
+                        </div>
+                    </div>
+                    <span style="background: #8b5cf6; color: #ffffff; font-size: 11.5px; font-weight: 700; padding: 4px 12px; border-radius: 20px; letter-spacing: 0.3px;">🎬 צפייה מהירה</span>
+                </div>
+                <div style="display: flex; justify-content: center; margin: 10px 0;">
+                    <video controls playsinline preload="metadata" style="width: 100%; max-width: 320px; aspect-ratio: 9/16; max-height: 520px; border-radius: 14px; background: #000000; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.25); object-fit: contain; outline: none; display: block;">
+                        <source src="${current.videoUrl}" type="video/mp4">
+                        הדפדפן שלך אינו תומך בניגון וידאו.
+                    </video>
+                </div>
+                ${current.audioUrl ? `
+                <details style="margin-top: 10px; background: rgba(255,255,255,0.75); border: 1px solid #c4b5fd; border-radius: 10px; padding: 8px 12px;">
+                    <summary style="font-size: 12.5px; font-weight: 700; color: #6d28d9; cursor: pointer; display: flex; align-items: center; justify-content: space-between;">
+                        <span>🎧 מעדיף רק להאזין? (גרסת שמע מלאה)</span>
+                        <span style="font-size: 11px; background: #ede9fe; color: #5b21b6; font-weight: 700; padding: 2px 8px; border-radius: 12px;">${escapeHtml(current.audioDuration || '2:40 דק\'')}</span>
+                    </summary>
+                    <div style="margin-top: 8px;">
+                        <audio controls preload="metadata" style="width: 100%; height: 40px; border-radius: 8px; outline: none;">
+                            <source src="${current.audioUrl}" type="audio/mpeg">
+                            הדפדפן שלך אינו תומך בניגון אודיו.
+                        </audio>
+                    </div>
+                </details>
+                ` : ''}
+            </div>
+        `;
+    } else if (current.audioUrl) {
         html += `
             <div class="study-block-card block-audio-podcast" style="padding: 16px 20px; margin-bottom: 18px; background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%); border: 1.5px solid #c4b5fd; border-radius: 14px; box-shadow: 0 4px 14px rgba(139, 92, 246, 0.08);">
                 <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; flex-wrap: wrap;">
