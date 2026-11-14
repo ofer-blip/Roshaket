@@ -4810,15 +4810,16 @@ function renderTaskCardHtml(t) {
         : [];
     let summaryActionRowHtml = '';
     if (isMainCourseCard && summariesForTask.length > 0) {
-        const btnLabel = summariesForTask.length > 1
-            ? `סיכומי שיעור ועזרים (${summariesForTask.length})`
-            : `סיכום שיעור + שליף לתרגיל`;
+        const hasAudio = summariesForTask.some(s => s.audioUrl);
+        const btnLabel = hasAudio 
+            ? `🎙️ סיכום שיעור ${taskWeekNum} + פודקאסט AI`
+            : (summariesForTask.length > 1 ? `סיכומי שיעור ועזרים (${summariesForTask.length})` : `סיכום שיעור + שליף לתרגיל`);
         summaryActionRowHtml = `
             <div class="task-summary-action-row">
-                <button type="button" class="lesson-summary-btn" onclick="event.stopPropagation(); openLessonSummaryModal(${taskWeekNum}, '${t.courseKey}')">
-                    <span>✨</span>
+                <button type="button" class="lesson-summary-btn" onclick="event.stopPropagation(); openLessonSummaryModal(${taskWeekNum}, '${t.courseKey}')" style="${hasAudio ? 'background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); box-shadow: 0 4px 12px rgba(124, 58, 237, 0.28);' : ''}">
+                    <span>${hasAudio ? '🎙️' : '✨'}</span>
                     <span>${btnLabel}</span>
-                    <span class="lesson-summary-count-badge">${summariesForTask.length > 1 ? summariesForTask.length + ' סיכומים' : 'פתח חלונית עבודה'} ↗</span>
+                    <span class="lesson-summary-count-badge">${hasAudio ? 'האזן עכשיו' : (summariesForTask.length > 1 ? summariesForTask.length + ' סיכומים' : 'פתח חלונית עבודה')} ↗</span>
                 </button>
             </div>
         `;
@@ -7478,6 +7479,13 @@ function loadAllLessonSummaries() {
         });
     }
 
+    if (mergedMap.has('sum_w4_mor_1')) {
+        const w4 = mergedMap.get('sum_w4_mor_1');
+        w4.audioUrl = 'audio/yishai_lesson_04_summary.mp3';
+        w4.audioTitle = 'פודקאסט סיכום המפגש (התאום הדיגיטלי של עופר)';
+        w4.audioDuration = '2:40 דק\'';
+    }
+
     return Array.from(mergedMap.values()).sort((a, b) => {
         if (b.weekNum !== a.weekNum) return b.weekNum - a.weekNum;
         return String(b.createdAt || '').localeCompare(String(a.createdAt || ''));
@@ -8104,7 +8112,8 @@ function updateWhatsNewUI() {
         return;
     }
 
-    const latest = unreadSummaries.length > 0 ? unreadSummaries[0] : allSummaries[0];
+    // Always anchor to the newest summary (Week 4), so the main screen banner always opens the current week and podcast!
+    const latest = allSummaries[0];
     const dismissedId = sessionStorage.getItem('roshaket_dismissed_bubble_id');
     if (dismissedId === latest.id && unreadSummaries.length === 0) {
         banner.style.display = 'none';
