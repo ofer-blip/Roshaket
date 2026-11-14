@@ -3649,16 +3649,16 @@ window.addEventListener('DOMContentLoaded', () => {
     </header>
 
     <!-- 0. Slim Compact What's New Bubble Banner (Single Line) -->
-    <div class="whats-new-bubble" id="whatsNewBubbleBanner" onclick="openLessonSummaryModal(3, 'mor')" style="display: none; cursor: pointer;">
+    <div class="whats-new-bubble" id="whatsNewBubbleBanner" onclick="openLessonSummaryModal(4, 'mor')" style="display: flex; cursor: pointer;">
         <div class="whats-new-bubble-left" id="whatsNewBubbleClickArea">
-            <div class="whats-new-bubble-icon">✨</div>
+            <div class="whats-new-bubble-icon">🎙️</div>
             <div class="whats-new-bubble-text">
-                <div class="whats-new-bubble-title" id="whatsNewBubbleTitle">סיכום שיעור 3 • המודל הלוגי (ד"ר ישי מור)</div>
+                <div class="whats-new-bubble-title" id="whatsNewBubbleTitle">סיכום שיעור 4 • 4 דורות הערכה + פודקאסט AI (ד"ר ישי מור)</div>
             </div>
         </div>
         <div class="whats-new-bubble-actions">
-            <button type="button" class="btn-whats-new-open" id="whatsNewBubbleOpenBtn" onclick="event.stopPropagation(); openLessonSummaryModal(3, 'mor')">
-                <span>פתח סיכום</span>
+            <button type="button" class="btn-whats-new-open" id="whatsNewBubbleOpenBtn" onclick="event.stopPropagation(); openLessonSummaryModal(4, 'mor')">
+                <span>האזן לפודקאסט וקרא סיכום</span>
                 <span style="font-size: 13px; font-weight: 800; line-height: 1;">↗</span>
             </button>
         </div>
@@ -7624,27 +7624,26 @@ function renderLessonSummaryWorkspace() {
         titleEl.innerText = current.title;
     }
 
-    // Render Multi-Summary Switcher Bar (shows all summaries available in this week across courses!)
-    const weekSummaries = loadAllLessonSummaries().filter(s => Number(s.weekNum) === Number(activeWorkspaceWeek));
+    // Render Multi-Summary Switcher Bar (shows all summaries across weeks so user can easily switch!)
+    const allSummariesList = loadAllLessonSummaries().sort((a, b) => Number(b.weekNum) - Number(a.weekNum));
     const switcherBar = document.getElementById('summarySwitcherBar');
     if (switcherBar) {
-        if (weekSummaries.length > 1 || isOferAdmin()) {
+        if (allSummariesList.length > 1 || isOferAdmin()) {
             switcherBar.style.display = 'flex';
-            const tabsHtml = weekSummaries.map((s, idx) => {
+            const tabsHtml = allSummariesList.map((s, idx) => {
                 const isAct = s.id === current.id;
                 const cM = COURSE_META_MAP[s.courseKey] || COURSE_META_MAP.mor;
-                const label = s.tabLabel || `${cM.shortName}: ${s.title.slice(0, 24)}`;
+                const hasAudio = !!s.audioUrl;
+                const label = `שבוע ${s.weekNum}: ${s.tabLabel || s.title.slice(0, 24)}${hasAudio ? ' 🎙️' : ''}`;
                 return `
-                    <button type="button" class="summary-switcher-tab ${isAct ? 'active' : ''}" onclick="switchActiveSummaryInModal('${s.id}', '${s.courseKey}')">
-                        <span>${cM.emoji}</span>
+                    <button type="button" class="summary-switcher-tab ${isAct ? 'active' : ''}" onclick="openLessonSummaryModal(${s.weekNum}, '${s.courseKey}', '${s.id}')" style="${hasAudio && !isAct ? 'border: 1px solid #c4b5fd; background: #faf5ff;' : ''}">
+                        <span>${hasAudio ? '🎙️' : cM.emoji}</span>
                         <span>${escapeHtml(label)}</span>
                     </button>
                 `;
             }).join('');
 
-            const addSecondBtnHtml = '';
-
-            switcherBar.innerHTML = tabsHtml + addSecondBtnHtml;
+            switcherBar.innerHTML = tabsHtml;
         } else {
             switcherBar.style.display = 'none';
         }
