@@ -7202,6 +7202,9 @@ const DEFAULT_LESSON_SUMMARIES = [
         tabLabel: 'סיכום מפגש + 4 דורות הערכה',
         title: 'ארבעה דורות של הערכה (גובה ולינקולן) ושבוע יישור קו',
         teaser: 'עלה סיכום מפגש 4 של ד"ר ישי מור: אין מטלות חדשות השבוע! דגשים ליישור קו במודל הלוגי, חובת יומן למידה, ו-4 דורות ההערכה.',
+        audioUrl: 'audio/yishai_lesson_04_summary.mp3',
+        audioTitle: 'פודקאסט סיכום המפגש (התאום הדיגיטלי של עופר)',
+        audioDuration: '2:40 דק\'',
         rules: [
             '<strong>אין מטלות חדשות לשבוע זה (שבוע יישור קו והשלמת פערים):</strong> ישי הודיע חד-משמעית כי לא הועלתה מטלה חדשה השבוע. המטרה היא להגיע למפגש הבא בקמפוס (15.11) כשחזון, תיאוריית שינוי ומודל לוגי שלמים ומוגשים.',
             '<strong>סדר עדיפויות בהגשות במודל:</strong> מטלה 4 (בניית מודל לוגי) ומטלה 2 (חזון ותיאוריית שינוי) הן הלב המהותי של הקורס. מטלה 3 (הערכה עצמית עם בוט בינה מלאכותית) נפתחה בטעות בשלב מוקדם מדי – מי שלא עשה אינו מחויב כעת.',
@@ -7440,7 +7443,11 @@ const DEFAULT_LESSON_SUMMARIES = [
 ];
 
 function loadAllLessonSummaries() {
-    // Clean up any legacy rough draft summaries created before v68 so only pristine verified summaries are shown
+    // Clean up any legacy summaries so fresh audio-enabled summaries are loaded
+    if (!localStorage.getItem('roshaket_cleaned_v77_audio')) {
+        localStorage.removeItem('roshaket_lesson_summaries_v1');
+        localStorage.setItem('roshaket_cleaned_v77_audio', 'true');
+    }
     if (!localStorage.getItem('roshaket_cleaned_v68_summaries')) {
         localStorage.removeItem('roshaket_lesson_summaries_v1');
         localStorage.setItem('roshaket_cleaned_v68_summaries', 'true');
@@ -7699,6 +7706,27 @@ function renderLessonSummaryWorkspaceBody() {
     const showExercise = (activeSummarySectionFilter === 'all' || activeSummarySectionFilter === 'exercise') && ((current.steps && current.steps.length > 0) || current.template);
 
     let html = '';
+
+    if (current.audioUrl) {
+        html += `
+            <div class="study-block-card block-audio-podcast" style="padding: 16px 20px; margin-bottom: 18px; background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%); border: 1.5px solid #c4b5fd; border-radius: 14px; box-shadow: 0 4px 14px rgba(139, 92, 246, 0.08);">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; flex-wrap: wrap;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 28px; background: #ffffff; width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(139, 92, 246, 0.15);">🎙️</span>
+                        <div>
+                            <h4 style="margin: 0; font-size: 16px; font-weight: 800; color: #4c1d95;">${escapeHtml(current.audioTitle || 'פודקאסט סיכום השיעור')}</h4>
+                            <div style="font-size: 12.5px; color: #6d28d9; font-weight: 600; margin-top: 2px;">תקציר שמע קולח • מוגש על ידי התאום הדיגיטלי של עופר ${current.audioDuration ? `(${escapeHtml(current.audioDuration)})` : ''}</div>
+                        </div>
+                    </div>
+                    <span style="background: #8b5cf6; color: #ffffff; font-size: 11.5px; font-weight: 700; padding: 4px 12px; border-radius: 20px; letter-spacing: 0.3px;">🎧 האזנה מהירה</span>
+                </div>
+                <audio controls preload="metadata" style="width: 100%; height: 44px; border-radius: 10px; outline: none;">
+                    <source src="${current.audioUrl}" type="audio/mpeg">
+                    הדפדפן שלך אינו תומך בניגון אודיו.
+                </audio>
+            </div>
+        `;
+    }
 
     if (showRules) {
         const rulesListHtml = current.rules.map((r, idx) => {
