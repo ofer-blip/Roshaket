@@ -6221,7 +6221,7 @@ if ('serviceWorker' in navigator) {
     });
 
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=86', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=87', { updateViaCache: 'none' })
             .then(reg => {
                 swRegistration = reg;
                 reg.update();
@@ -7545,6 +7545,62 @@ function saveCustomLessonSummaries(summariesArray) {
     }
 }
 
+const ROSHAKET_PODCAST_API = 'https://roshaket-podcast-engine-914327372720.europe-west1.run.app';
+
+async function syncCloudSummariesFromServer() {
+    try {
+        const resp = await fetch(`${ROSHAKET_PODCAST_API}/summaries?t=${Date.now()}`, { cache: 'no-store' });
+        if (!resp.ok) return;
+        const data = await resp.json();
+        const cloudList = Array.isArray(data.summaries) ? data.summaries : [];
+        if (cloudList.length === 0) return;
+
+        const deletedIds = JSON.parse(localStorage.getItem('roshaket_deleted_summary_ids') || '[]');
+        let localCustom = [];
+        try {
+            const saved = localStorage.getItem('roshaket_lesson_summaries_v1');
+            if (saved) localCustom = JSON.parse(saved);
+        } catch (e) {}
+
+        const map = new Map();
+        (Array.isArray(localCustom) ? localCustom : []).forEach(item => {
+            if (item && item.id) map.set(item.id, item);
+        });
+
+        let changed = false;
+        cloudList.forEach(cloudItem => {
+            if (!cloudItem || !cloudItem.id || deletedIds.includes(cloudItem.id)) return;
+            const existing = map.get(cloudItem.id);
+            if (!existing || String(cloudItem.createdAt || '') > String(existing.createdAt || '') || (cloudItem.audioUrl && !existing.audioUrl)) {
+                map.set(cloudItem.id, cloudItem);
+                changed = true;
+            }
+        });
+
+        if (changed) {
+            saveCustomLessonSummaries(Array.from(map.values()));
+            if (typeof render === 'function') render();
+            if (typeof updateWhatsNewUI === 'function') updateWhatsNewUI();
+        }
+    } catch (e) {
+        console.warn('Cloud summaries sync skipped:', e);
+    }
+}
+
+async function pushSummaryToCloudServer(action, summaryObj, summaryId) {
+    try {
+        await fetch(`${ROSHAKET_PODCAST_API}/save-summary`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action, summary: summaryObj || null, id: summaryId || null })
+        });
+    } catch (e) {
+        console.warn('Cloud summary push failed:', e);
+    }
+}
+
+setTimeout(() => { syncCloudSummariesFromServer(); }, 600);
+
 function getSummariesForCourseWeek(weekNum, courseKey) {
     const all = loadAllLessonSummaries();
     return all.filter(s => Number(s.weekNum) === Number(weekNum) && s.courseKey === courseKey)
@@ -8385,6 +8441,12 @@ function onAlmaExistingSelectChange() {
         document.getElementById('almaEditSteps').value = '';
         document.getElementById('almaEditTemplate').value = '';
         document.getElementById('almaRawTranscriptInput').value = '';
+        const audioUrlEl = document.getElementById('almaEditAudioUrl');
+        const audioDurEl = document.getElementById('almaEditAudioDuration');
+        const podStatusEl = document.getElementById('almaPodcastStatus');
+        if (audioUrlEl) audioUrlEl.value = '';
+        if (audioDurEl) audioDurEl.value = '';
+        if (podStatusEl) podStatusEl.style.display = 'none';
         return;
     }
 
@@ -8400,6 +8462,20 @@ function onAlmaExistingSelectChange() {
     document.getElementById('almaEditConcepts').value = (found.concepts || []).map(stripHtmlTags).join('\n');
     document.getElementById('almaEditSteps').value = (found.steps || []).map(st => `${st.title || ''} | ${st.question || ''} | ${st.desc || ''} | ${st.example || ''}`).join('\n');
     document.getElementById('almaEditTemplate').value = found.template || '';
+    const audioUrlEl = document.getElementById('almaEditAudioUrl');
+    const audioDurEl = document.getElementById('almaEditAudioDuration');
+    const podStatusEl = document.getElementById('almaPodcastStatus');
+    if (audioUrlEl) audioUrlEl.value = found.audioUrl || '';
+    if (audioDurEl) audioDurEl.value = found.audioDuration || '';
+    if (podStatusEl) {
+        if (found.audioUrl) {
+            podStatusEl.style.display = 'block';
+            podStatusEl.style.color = '#059669';
+            podStatusEl.innerHTML = `🎧 פודקאסט קיים מקושר לסיכום זה (${found.audioDuration || 'מוכן להשמעה'})`;
+        } else {
+            podStatusEl.style.display = 'none';
+        }
+    }
 }
 
 function stripHtmlTags(htmlStr) {
@@ -8603,6 +8679,10 @@ function saveAndPublishAlmaSummary() {
     }) : [];
 
     const summaryId = selectedId === 'new' ? `sum_w${weekNum}_${courseKey}_${Date.now()}` : selectedId;
+    const all = loadAllLessonSummaries();
+    const prevObj = all.find(s => s.id === summaryId) || {};
+    const customAudioUrl = document.getElementById('almaEditAudioUrl')?.value.trim() || '';
+    const customAudioDur = document.getElementById('almaEditAudioDuration')?.value.trim() || '';
 
     const newSummaryObj = {
         id: summaryId,
@@ -8619,10 +8699,25 @@ function saveAndPublishAlmaSummary() {
         template: template
     };
 
-    const all = loadAllLessonSummaries();
+    if (prevObj.videoUrl) {
+        newSummaryObj.videoUrl = prevObj.videoUrl;
+        newSummaryObj.videoTitle = prevObj.videoTitle;
+        newSummaryObj.videoDuration = prevObj.videoDuration;
+    }
+    if (customAudioUrl) {
+        newSummaryObj.audioUrl = customAudioUrl;
+        newSummaryObj.audioTitle = prevObj.audioTitle || 'פודקאסט סיכום המפגש (אורית ועופר)';
+        newSummaryObj.audioDuration = customAudioDur || prevObj.audioDuration || '~5 דק\'';
+    } else if (prevObj.audioUrl) {
+        newSummaryObj.audioUrl = prevObj.audioUrl;
+        newSummaryObj.audioTitle = prevObj.audioTitle;
+        newSummaryObj.audioDuration = prevObj.audioDuration;
+    }
+
     const filtered = all.filter(s => s.id !== summaryId);
     filtered.push(newSummaryObj);
     saveCustomLessonSummaries(filtered);
+    pushSummaryToCloudServer('upsert', newSummaryObj);
 
     // Remove from read list so notification bubble shows it fresh
     const readIds = getReadSummaryIds().filter(id => id !== summaryId);
@@ -8649,11 +8744,89 @@ function deleteCurrentAlmaSummary() {
 
     const custom = loadAllLessonSummaries().filter(s => s.id !== selectedId);
     saveCustomLessonSummaries(custom);
+    pushSummaryToCloudServer('delete', null, selectedId);
 
     closeAlmaStudioModal();
     render();
     updateWhatsNewUI();
     showToast('🗑️ הסיכום נמחק');
+}
+
+async function generateAlmaPodcastInCloud() {
+    const rawText = (document.getElementById('almaRawTranscriptInput')?.value || '').trim();
+    const fallbackText = [
+        document.getElementById('almaEditTitle')?.value || '',
+        document.getElementById('almaEditTeaser')?.value || '',
+        document.getElementById('almaEditRules')?.value || '',
+        document.getElementById('almaEditConcepts')?.value || '',
+        document.getElementById('almaEditSteps')?.value || ''
+    ].join('\n').trim();
+    const transcript = rawText.length >= 40 ? rawText : fallbackText;
+
+    if (transcript.length < 40) {
+        alert('נא להדביק או לטעון תמלול מאלמה (לפחות מספר משפטים) לפני הפקת פודקאסט.');
+        return;
+    }
+
+    const weekNum = Number(document.getElementById('almaWeekSelect')?.value || 1);
+    const courseKey = document.getElementById('almaCourseSelect')?.value || 'mor';
+    const title = (document.getElementById('almaEditTitle')?.value || '').trim() || `סיכום שיעור שבוע ${weekNum}`;
+    const selectedId = document.getElementById('almaExistingSelect')?.value || 'new';
+    const summaryId = selectedId === 'new' ? '' : selectedId;
+
+    const btn = document.getElementById('almaPodcastBtn');
+    const statusEl = document.getElementById('almaPodcastStatus');
+    const origHtml = btn ? btn.innerHTML : '';
+
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span>⏳</span><span>מפיק פודקאסט דו-שיחי בענן (כ-60–90 שניות)...</span>';
+    }
+    if (statusEl) {
+        statusEl.style.display = 'block';
+        statusEl.style.color = '#4338ca';
+        statusEl.innerHTML = '⏳ מייצר תסריט שיחה (אורית ועופר), מדבב ב־ElevenLabs ומאחד עם מוזיקת רקע בענן...';
+    }
+
+    try {
+        const resp = await fetch(`${ROSHAKET_PODCAST_API}/generate-podcast`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                transcript: transcript,
+                week_num: weekNum,
+                course_key: courseKey,
+                title: title,
+                summary_id: summaryId
+            })
+        });
+        if (!resp.ok) {
+            const errTxt = await resp.text();
+            throw new Error(`HTTP ${resp.status}: ${errTxt.slice(0, 200)}`);
+        }
+        const data = await resp.json();
+        const urlEl = document.getElementById('almaEditAudioUrl');
+        const durEl = document.getElementById('almaEditAudioDuration');
+        if (urlEl) urlEl.value = data.audioUrl || '';
+        if (durEl) durEl.value = data.audioDuration || '~5 דק\'';
+        if (statusEl) {
+            statusEl.style.color = '#059669';
+            statusEl.innerHTML = `✅ הפודקאסט הופק בהצלחה! (${data.audioDuration || 'מוכן'}) — לחץ על "פרסם לסטודנטים בראשקט!" כדי לפרסם.`;
+        }
+        showToast('🎙️ הפודקאסט הדו-שיחי הופק בהצלחה בענן!');
+    } catch (e) {
+        console.error('Podcast generation error:', e);
+        if (statusEl) {
+            statusEl.style.color = '#dc2626';
+            statusEl.innerHTML = `❌ שגיאה בהפקת הפודקאסט: ${e.message}`;
+        }
+        showToast('❌ שגיאה בהפקת הפודקאסט בענן');
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = origHtml;
+        }
+    }
 }
 
 // Re-render and initialize What's New UI once Lesson Summary Engine is loaded
@@ -9147,6 +9320,13 @@ document.addEventListener('toggle', (e) => {
                     <span>✨</span>
                     <span>זקק תמלול אוטומטית לבלוקים מרווחים (ניקוי שגיאות + שליף לתרגיל)</span>
                 </button>
+                <button type="button" class="btn" id="almaPodcastBtn" style="width: 100%; justify-content: center; padding: 11px; font-size: 14.5px; margin-top: 8px; background: #ecfdf5; color: #065f46; border-color: #6ee7b7; font-weight: 800;" onclick="generateAlmaPodcastInCloud()">
+                    <span>🎙️</span>
+                    <span>הפק פודקאסט דו-שיחי (5 דק') בענן מתמלול זה</span>
+                </button>
+                <div id="almaPodcastStatus" style="display: none; margin-top: 8px; font-size: 13px; font-weight: 700; padding: 8px 12px; border-radius: 10px; background: #f8fafc; border: 1px solid #e2e8f0;"></div>
+                <input type="hidden" id="almaEditAudioUrl" value="">
+                <input type="hidden" id="almaEditAudioDuration" value="">
             </div>
 
             <!-- Step 3: Spacious Block Editor before publishing -->
