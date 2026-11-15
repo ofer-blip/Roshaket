@@ -6221,7 +6221,7 @@ if ('serviceWorker' in navigator) {
     });
 
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=90', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=91', { updateViaCache: 'none' })
             .then(reg => {
                 swRegistration = reg;
                 reg.update();
@@ -8278,25 +8278,37 @@ function updateWhatsNewUI() {
     if (clickArea) clickArea.onclick = (e) => { e.stopPropagation(); openHandler(); };
 
     if (weekSummaries.length > 1) {
+        banner.style.flexDirection = 'column';
+        banner.style.alignItems = 'stretch';
+        banner.style.gap = '10px';
         if (titleEl) titleEl.innerText = `📚 סיכומי שבוע ${latestWeek} (${weekSummaries.length} שיעורים זמינים):`;
         if (tagEl) tagEl.innerText = `שבוע ${latestWeek} • ${unreadSummaries.length > 0 ? 'חדש!' : 'זמין'}`;
         if (descEl) descEl.innerText = 'בחר שיעור לצפייה בסיכום והאזנה לפודקאסט הדו-שיחי.';
         if (actionsEl) {
+            actionsEl.style.flexDirection = 'column';
+            actionsEl.style.alignItems = 'stretch';
+            actionsEl.style.width = '100%';
             actionsEl.innerHTML = weekSummaries.map(s => {
                 const m = COURSE_META_MAP[s.courseKey] || COURSE_META_MAP.mor;
-                const shortTitle = (s.tabLabel || s.title || '').replace(/^סיכום מפגש \d+:\s*/, '').slice(0, 26);
+                const shortTitle = (s.tabLabel || s.title || '').replace(/^סיכום מפגש \d+:\s*/, '').slice(0, 38);
                 const icon = s.audioUrl ? '🎙️' : '📝';
-                return `<button type="button" class="btn-whats-new-open" onclick="event.stopPropagation(); openLessonSummaryModal(${Number(s.weekNum)}, '${String(s.courseKey)}', '${String(s.id)}')">
+                return `<button type="button" class="btn-whats-new-open" style="width: 100%; justify-content: space-between;" onclick="event.stopPropagation(); openLessonSummaryModal(${Number(s.weekNum)}, '${String(s.courseKey)}', '${String(s.id)}')">
                     <span>${icon} ${m.lecturer || m.name}${shortTitle ? ' • ' + escapeHtml(shortTitle) : ''}</span>
                     <span style="font-size: 13px; font-weight: 800; line-height: 1;">↗</span>
                 </button>`;
             }).join('');
         }
     } else {
+        banner.style.flexDirection = '';
+        banner.style.alignItems = '';
+        banner.style.gap = '';
         if (titleEl) titleEl.innerText = `${cMeta.emoji} סיכום שיעור ${latest.weekNum}: ${latest.title}`;
         if (tagEl) tagEl.innerText = `שבוע ${latest.weekNum} • ${unreadSummaries.length > 0 ? 'חדש!' : 'זמין'}`;
         if (descEl) descEl.innerText = latest.teaser || `לחץ לצפייה בסיכום השיעור, מושגי הליבה והשליף המובנה לתרגיל (${sameWeekCourseCount > 1 ? sameWeekCourseCount + ' סיכומים זמינים' : 'נייד + שולחני + PDF'}).`;
         if (actionsEl) {
+            actionsEl.style.flexDirection = '';
+            actionsEl.style.alignItems = 'center';
+            actionsEl.style.width = '';
             actionsEl.innerHTML = `<button type="button" class="btn-whats-new-open" id="whatsNewBubbleOpenBtn" onclick="event.stopPropagation(); openLessonSummaryModal(${Number(latest.weekNum)}, '${String(latest.courseKey)}', '${String(latest.id)}')">
                 <span>האזן לפודקאסט וקרא סיכום</span>
                 <span style="font-size: 13px; font-weight: 800; line-height: 1;">↗</span>
