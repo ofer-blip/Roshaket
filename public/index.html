@@ -3514,6 +3514,10 @@ window.addEventListener('DOMContentLoaded', () => {
                 <span>📱</span>
                 <span>התקן את ראשקט למסך הבית</span>
             </button>
+            <button type="button" class="btn-welcome-secondary" onclick="openGuideVideoModal()" style="background: linear-gradient(135deg, #eef2ff, #f5f3ff); border-color: #c7d2fe; color: #3730a3; display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+                <span>🎬</span>
+                <span>סרטון הדרכה (דקה): איך שומרים בנייד ומתחילים</span>
+            </button>
         </div>
 
         <div style="text-align: center; margin-top: 12px; font-size: 13px; color: #475569; font-weight: 600;">
@@ -3581,7 +3585,7 @@ window.addEventListener('DOMContentLoaded', () => {
                         <div style="padding: 10px 14px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; font-size: 12px; color: #475569;">
                             <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
                                 <div style="font-weight: 800; color: #1e1b4b; font-size: 13.5px;" id="menuUserDisplayName">משתמש מחובר</div>
-                                <span style="font-size: 10.5px; font-weight: 700; color: #4338ca; background: #eef2ff; padding: 2px 7px; border-radius: 999px;">v86</span>
+                                <span style="font-size: 10.5px; font-weight: 700; color: #4338ca; background: #eef2ff; padding: 2px 7px; border-radius: 999px;">v92</span>
                             </div>
                             <div style="font-size: 11.5px; color: #64748b; direction: ltr; text-align: right; word-break: break-all;" id="menuUserEmail"></div>
                         </div>
@@ -3600,6 +3604,10 @@ window.addEventListener('DOMContentLoaded', () => {
                         <button class="dropdown-item" onclick="showWelcomeScreen(); closeOptionsMenu();">
                             <span>❓</span>
                             <span>הסבר ועזרה על ראשקט</span>
+                        </button>
+                        <button class="dropdown-item" onclick="openGuideVideoModal(); closeOptionsMenu();" style="color: #4338ca; font-weight: 700;">
+                            <span>🎬</span>
+                            <span>סרטון הדרכה קצר (דקה)</span>
                         </button>
                         <button class="dropdown-item" id="menuInstallAppItem" onclick="triggerPwaInstall(); closeOptionsMenu();" style="display: none; color: #4338ca; font-weight: 800; background: #eef2ff;">
                             <span>📲</span>
@@ -6221,11 +6229,11 @@ if ('serviceWorker' in navigator) {
     });
 
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=91', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=92', { updateViaCache: 'none' })
             .then(reg => {
                 swRegistration = reg;
                 reg.update();
-                console.log('Roshaket SW v86 Registered!', reg);
+                console.log('Roshaket SW v92 Registered!', reg);
             })
             .catch(err => console.log('SW Registration failed: ', err));
     });
@@ -9474,6 +9482,55 @@ document.addEventListener('toggle', (e) => {
         </div>
     </div>
 </div>
+
+<!-- Quick Guide Video Modal (Lazy-loaded 9:16 mobile-first player) -->
+<div class="modal-overlay" id="guideVideoModal" onclick="if(event.target === this) closeGuideVideoModal()" style="z-index: 10050;">
+    <div class="modal-card" style="max-width: 390px; width: 92vw; padding: 14px 14px 16px; border-radius: 22px; background: #ffffff; box-shadow: 0 24px 60px rgba(15, 23, 42, 0.32);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 0 4px;">
+            <div style="font-size: 15px; font-weight: 800; color: #1e1b4b; display: flex; align-items: center; gap: 6px;">
+                <span>🎬</span>
+                <span>מדריך מהיר לראשקט (דקה)</span>
+            </div>
+            <button type="button" onclick="closeGuideVideoModal()" aria-label="סגור" style="background: #f1f5f9; border: none; width: 34px; height: 34px; border-radius: 50%; font-size: 17px; color: #475569; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
+        </div>
+        <div style="border-radius: 16px; overflow: hidden; background: #0f172a; box-shadow: inset 0 0 0 1px rgba(148,163,184,0.2);">
+            <video id="guideVideoPlayer" controls playsinline preload="none" style="width: 100%; max-height: 72vh; display: block; margin: 0 auto; object-fit: contain;">
+                <source src="./guide.mp4" type="video/mp4">
+            </video>
+        </div>
+    </div>
+</div>
+
+<script>
+function openGuideVideoModal() {
+    const modal = document.getElementById('guideVideoModal');
+    const player = document.getElementById('guideVideoPlayer');
+    if (modal) modal.classList.add('open');
+    if (player) {
+        try {
+            player.play().catch(() => {});
+        } catch (e) {}
+    }
+}
+
+function closeGuideVideoModal() {
+    const modal = document.getElementById('guideVideoModal');
+    const player = document.getElementById('guideVideoPlayer');
+    if (player) {
+        try {
+            player.pause();
+        } catch (e) {}
+    }
+    if (modal) modal.classList.remove('open');
+}
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        const gm = document.getElementById('guideVideoModal');
+        if (gm && gm.classList.contains('open')) closeGuideVideoModal();
+    }
+});
+</script>
 
 </body>
 </html>

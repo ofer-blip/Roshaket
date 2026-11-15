@@ -1,5 +1,5 @@
-﻿// Service Worker for Roshaket PWA - v91
-const CACHE_NAME = 'roshaket-v91';
+﻿// Service Worker for Roshaket PWA - v92
+const CACHE_NAME = 'roshaket-v92';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
@@ -21,6 +21,7 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(event.request.url);
   if (url.origin !== self.location.origin) return;
+  if (url.pathname.endsWith('.mp4')) return;
 
   if (event.request.mode === 'navigate' || event.request.destination === 'document') {
     event.respondWith(
