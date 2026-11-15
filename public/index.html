@@ -3579,7 +3579,10 @@ window.addEventListener('DOMContentLoaded', () => {
                     <div class="dropdown-panel" id="optionsDropdownMenu">
                         <!-- User Account Details Header -->
                         <div style="padding: 10px 14px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; font-size: 12px; color: #475569;">
-                            <div style="font-weight: 800; color: #1e1b4b; font-size: 13.5px;" id="menuUserDisplayName">משתמש מחובר</div>
+                            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                                <div style="font-weight: 800; color: #1e1b4b; font-size: 13.5px;" id="menuUserDisplayName">משתמש מחובר</div>
+                                <span style="font-size: 10.5px; font-weight: 700; color: #4338ca; background: #eef2ff; padding: 2px 7px; border-radius: 999px;">v86</span>
+                            </div>
                             <div style="font-size: 11.5px; color: #64748b; direction: ltr; text-align: right; word-break: break-all;" id="menuUserEmail"></div>
                         </div>
 
@@ -4451,7 +4454,8 @@ const PRIMARY_ADMIN_EMAIL = 'saritofer.k@gmail.com';
 // Google OAuth & Calendar API Configuration
 const DEFAULT_CLIENT_ID = '889823725975-l5p1o8nnnsffqpc9lb9dr5vfdq15vsrn.apps.googleusercontent.com';
 localStorage.setItem('roshaket_client_id', DEFAULT_CLIENT_ID);
-const SCOPES = 'https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile';
+const SCOPES = 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile';
+const CALENDAR_SCOPES = 'https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile';
 
 let tokenClient = null;
 let googleAccessToken = localStorage.getItem('roshaket_g_token') || null;
@@ -5267,20 +5271,7 @@ function getNextDay(dateFormatted) {
 async function fetchGoogleUserEmail() {
     if (!googleAccessToken) return;
     try {
-        // Primary calendar ID in Google Calendar is always the user's primary Google account email
-        const calRes = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary', {
-            headers: { Authorization: `Bearer ${googleAccessToken}` }
-        });
-        if (calRes.ok) {
-            const calData = await calRes.json();
-            if (calData && calData.id && calData.id.includes('@')) {
-                googleUserEmail = calData.id;
-                localStorage.setItem('roshaket_user_email', googleUserEmail);
-                updateSyncUI();
-                return;
-            }
-        }
-        // Fetch user profile info (name + email)
+        // Fetch user profile info (name + email) first so both email & name are always populated
         const infoRes = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
             headers: { Authorization: `Bearer ${googleAccessToken}` }
         });
@@ -5302,6 +5293,19 @@ async function fetchGoogleUserEmail() {
                     googleUserName = resolvedName;
                     localStorage.setItem('roshaket_user_name', googleUserName);
                 }
+                updateSyncUI();
+                if (googleUserEmail) return;
+            }
+        }
+        // Fallback: Primary calendar ID in Google Calendar is the user's primary Google account email
+        const calRes = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary', {
+            headers: { Authorization: `Bearer ${googleAccessToken}` }
+        });
+        if (calRes.ok) {
+            const calData = await calRes.json();
+            if (calData && calData.id && calData.id.includes('@')) {
+                googleUserEmail = calData.id;
+                localStorage.setItem('roshaket_user_email', googleUserEmail);
                 updateSyncUI();
             }
         }
@@ -5416,25 +5420,33 @@ function handleLogoutClick() {
     showToast('🚪 התנתקת מחשבון Google. חזרת למצב דמו נקי.');
 }
 
-function handleAuthClick() {
+function handleAuthClick(withCalendar = false, onSuccessCallback = null) {
     if (typeof google === 'undefined' || !google.accounts) {
         showToast('טוען ספריות Google... נסה שוב בעוד כמה שניות');
         return;
     }
 
     const clientId = localStorage.getItem('roshaket_client_id') || DEFAULT_CLIENT_ID;
+    const requestedScopes = withCalendar ? CALENDAR_SCOPES : SCOPES;
 
     try {
         tokenClient = google.accounts.oauth2.initTokenClient({
             client_id: clientId,
-            scope: SCOPES,
+            scope: requestedScopes,
             callback: async (resp) => {
                 if (resp.error !== undefined) {
                     console.warn('OAuth prompt cancelled or returned error:', resp);
-                    showToast('ההתחברות בוטלה. ניתן להמשיך כאורחת.');
+                    if (resp.error === 'access_denied') {
+                        showToast('⚠️ הגישה נדחתה ע״י Google. יש לוודא שהמייל מאושר או להמשיך במצב דמו.');
+                    } else {
+                        showToast('ההתחברות בוטלה. ניתן להמשיך כאורחת.');
+                    }
                     return;
                 }
                 googleAccessToken = resp.access_token;
+                if (withCalendar) {
+                    localStorage.setItem('roshaket_cal_scope_granted', 'true');
+                }
 
                 showToast('🚀 מתחבר וטוען פרטים...');
                 await fetchGoogleUserEmail();
@@ -5446,9 +5458,13 @@ function handleAuthClick() {
                 try {
                     fetch(`${ACCESS_CONTROL_SCRIPT_URL}?action=register&email=${encodeURIComponent(googleUserEmail)}&name=${encodeURIComponent(googleUserName || '')}&consent=approved`, { mode: 'no-cors' }).catch(() => {});
                 } catch(e) {}
+
+                if (typeof onSuccessCallback === 'function') {
+                    onSuccessCallback();
+                }
             },
         });
-        tokenClient.requestAccessToken({ prompt: 'consent' });
+        tokenClient.requestAccessToken({ prompt: withCalendar ? 'consent' : 'select_account' });
     } catch (err) {
         console.error('Auth error:', err);
         showToast('ההתחברות לא הושלמה. ניתן להמשיך במצב אורחת.');
@@ -5781,8 +5797,8 @@ async function handleCleanDuplicates() {
 }
 
 async function handleSyncAllToGoogle() {
-    if (!googleAccessToken) {
-        handleAuthClick();
+    if (!googleAccessToken || localStorage.getItem('roshaket_cal_scope_granted') !== 'true') {
+        handleAuthClick(true, () => handleSyncAllToGoogle());
         return;
     }
     if (isSyncingAll) {
@@ -6191,22 +6207,37 @@ function downloadICS() {
     showToast('קובץ היומן הורד בהצלחה!');
 }
 
-// Service Worker Registration for PWA (with instant update detection)
+// Service Worker Registration for PWA (with instant update detection on load & resume)
 if ('serviceWorker' in navigator) {
     let refreshing = false;
+    let swRegistration = null;
+    let lastSwUpdateCheck = 0;
+
     navigator.serviceWorker.addEventListener('controllerchange', () => {
         if (!refreshing) {
             refreshing = true;
             window.location.reload();
         }
     });
+
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=85', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=86', { updateViaCache: 'none' })
             .then(reg => {
+                swRegistration = reg;
                 reg.update();
-                console.log('Roshaket SW v85 Registered!', reg);
+                console.log('Roshaket SW v86 Registered!', reg);
             })
             .catch(err => console.log('SW Registration failed: ', err));
+    });
+
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && swRegistration) {
+            const now = Date.now();
+            if (now - lastSwUpdateCheck > 30000) {
+                lastSwUpdateCheck = now;
+                swRegistration.update().catch(() => {});
+            }
+        }
     });
 }
 
@@ -8666,7 +8697,7 @@ async function proceedSuccessfulLogin(userName) {
     if (pendingGuidedSync || !localStorage.getItem('roshaket_initial_sync_done')) {
         pendingGuidedSync = false;
         openOnboardingSyncModal();
-    } else {
+    } else if (localStorage.getItem('roshaket_cal_scope_granted') === 'true') {
         ensureRoshaketCalendarExists();
     }
 }
