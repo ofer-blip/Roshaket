@@ -6221,7 +6221,7 @@ if ('serviceWorker' in navigator) {
     });
 
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=87', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=88', { updateViaCache: 'none' })
             .then(reg => {
                 swRegistration = reg;
                 reg.update();
@@ -7589,10 +7589,14 @@ async function syncCloudSummariesFromServer() {
 
 async function pushSummaryToCloudServer(action, summaryObj, summaryId) {
     try {
+        const adminEmail = (typeof currentUserEmail !== 'undefined' && currentUserEmail) ? currentUserEmail : 'saritofer.k@gmail.com';
+        const payload = action === 'delete'
+            ? { deleteId: summaryId || null, adminEmail }
+            : { summaryObj: summaryObj || null, adminEmail };
         await fetch(`${ROSHAKET_PODCAST_API}/save-summary`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action, summary: summaryObj || null, id: summaryId || null })
+            body: JSON.stringify(payload)
         });
     } catch (e) {
         console.warn('Cloud summary push failed:', e);
@@ -8789,15 +8793,18 @@ async function generateAlmaPodcastInCloud() {
     }
 
     try {
+        const cMeta = (typeof COURSE_META_MAP !== 'undefined' && COURSE_META_MAP[courseKey]) ? COURSE_META_MAP[courseKey] : null;
+        const adminEmail = (typeof currentUserEmail !== 'undefined' && currentUserEmail) ? currentUserEmail : 'saritofer.k@gmail.com';
         const resp = await fetch(`${ROSHAKET_PODCAST_API}/generate-podcast`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                transcript: transcript,
-                week_num: weekNum,
-                course_key: courseKey,
-                title: title,
-                summary_id: summaryId
+                rawText: transcript,
+                weekNum: weekNum,
+                courseKey: courseKey,
+                courseName: cMeta ? `${cMeta.name} – ${cMeta.lecturer}` : title,
+                summaryId: summaryId || null,
+                adminEmail: adminEmail
             })
         });
         if (!resp.ok) {
