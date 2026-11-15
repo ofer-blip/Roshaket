@@ -3652,7 +3652,7 @@ window.addEventListener('DOMContentLoaded', () => {
     </header>
 
     <!-- 0. Slim Compact What's New Bubble Banner (Single Line) -->
-    <div class="whats-new-bubble" id="whatsNewBubbleBanner" onclick="openLessonSummaryModal(4, 'mor')" style="display: flex; cursor: pointer;">
+    <div class="whats-new-bubble" id="whatsNewBubbleBanner" style="display: flex; cursor: pointer;">
         <div class="whats-new-bubble-left" id="whatsNewBubbleClickArea">
             <div class="whats-new-bubble-icon">🎙️</div>
             <div class="whats-new-bubble-text">
@@ -3660,7 +3660,7 @@ window.addEventListener('DOMContentLoaded', () => {
             </div>
         </div>
         <div class="whats-new-bubble-actions">
-            <button type="button" class="btn-whats-new-open" id="whatsNewBubbleOpenBtn" onclick="event.stopPropagation(); openLessonSummaryModal(4, 'mor')">
+            <button type="button" class="btn-whats-new-open" id="whatsNewBubbleOpenBtn">
                 <span>האזן לפודקאסט וקרא סיכום</span>
                 <span style="font-size: 13px; font-weight: 800; line-height: 1;">↗</span>
             </button>
@@ -6221,7 +6221,7 @@ if ('serviceWorker' in navigator) {
     });
 
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=88', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=89', { updateViaCache: 'none' })
             .then(reg => {
                 swRegistration = reg;
                 reg.update();
@@ -8276,8 +8276,9 @@ function updateWhatsNewUI() {
     const openHandler = () => {
         openLessonSummaryModal(latest.weekNum, latest.courseKey, latest.id);
     };
-    if (clickArea) clickArea.onclick = openHandler;
-    if (openBtn) openBtn.onclick = openHandler;
+    banner.onclick = openHandler;
+    if (clickArea) clickArea.onclick = (e) => { e.stopPropagation(); openHandler(); };
+    if (openBtn) openBtn.onclick = (e) => { e.stopPropagation(); openHandler(); };
 
     const jumpBtn = document.getElementById('whatsNewBubbleJumpBtn');
     if (jumpBtn) {
