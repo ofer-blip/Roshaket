@@ -35,6 +35,31 @@ function doGet(e) {
       return createJsonResponse({ status: 'logged' });
     }
 
+    // שליפת מצב משתמשת לסנכרון בין מכשירים
+    if (action === 'get_state') {
+      if (!email) return createJsonResponse({ status: 'not_found' });
+      let stateSheet = ss.getSheetByName('מצב משתמשים');
+      if (!stateSheet) return createJsonResponse({ status: 'not_found' });
+      const data = stateSheet.getDataRange().getValues();
+      for (let i = 1; i < data.length; i++) {
+        const rowEmail = (data[i][0] || '').toString().toLowerCase().trim();
+        if (rowEmail === email) {
+          let doneTasks = [];
+          let userNotes = {};
+          try { doneTasks = JSON.parse(data[i][2] || '[]'); } catch (err) {}
+          try { userNotes = JSON.parse(data[i][3] || '{}'); } catch (err) {}
+          return createJsonResponse({
+            status: 'found',
+            updatedAt: data[i][1] || '',
+            doneTasks: Array.isArray(doneTasks) ? doneTasks : [],
+            userNotes: (userNotes && typeof userNotes === 'object') ? userNotes : {},
+            userName: data[i][4] || ''
+          });
+        }
+      }
+      return createJsonResponse({ status: 'not_found' });
+    }
+
     if (action === 'check') {
       const data = sheet.getDataRange().getValues();
       for (let i = 1; i < data.length; i++) {
@@ -160,6 +185,57 @@ function sendTestNotification() {
     subject: '🎓 בדיקת אישור הרשאות מייל לראשקט',
     htmlBody: '<div dir="rtl"><h2>בדיקת אישור הרשאות!</h2><p>אם המייל הזה התקבל, הרשאת השליחה ב-Google Apps Script פעילה ומאושרת בהצלחה.</p></div>'
   });
+}
+
+function doPost(e) {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(8000);
+    const body = JSON.parse((e && e.postData && e.postData.contents) || '{}');
+    if (body.action !== 'save_state') {
+      return createJsonResponse({ error: 'Unknown action' });
+    }
+    const email = (body.email || '').toLowerCase().trim();
+    if (!email) {
+      return createJsonResponse({ error: 'Missing email' });
+    }
+
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    let stateSheet = ss.getSheetByName('מצב משתמשים');
+    if (!stateSheet) {
+      stateSheet = ss.insertSheet('מצב משתמשים');
+      stateSheet.appendRow(['אימייל', 'עודכן לאחרונה', 'משימות שבוצעו', 'הערות אישיות', 'שם תצוגה']);
+      stateSheet.getRange(1, 1, 1, 5).setFontWeight('bold').setBackground('#E0E7FF');
+      stateSheet.setFrozenRows(1);
+    }
+
+    const nowStr = Utilities.formatDate(new Date(), 'Asia/Jerusalem', 'yyyy-MM-dd HH:mm:ss');
+    const tasksJson = JSON.stringify(Array.isArray(body.doneTasks) ? body.doneTasks : []);
+    const notesJson = JSON.stringify((body.userNotes && typeof body.userNotes === 'object') ? body.userNotes : {});
+    const userName = (body.userName || '').toString().trim();
+
+    const data = stateSheet.getDataRange().getValues();
+    let existingRow = -1;
+    for (let i = 1; i < data.length; i++) {
+      const rowEmail = (data[i][0] || '').toString().toLowerCase().trim();
+      if (rowEmail === email) {
+        existingRow = i + 1;
+        break;
+      }
+    }
+
+    if (existingRow > 0) {
+      stateSheet.getRange(existingRow, 2, 1, 4).setValues([[nowStr, tasksJson, notesJson, userName]]);
+    } else {
+      stateSheet.appendRow([email, nowStr, tasksJson, notesJson, userName]);
+    }
+
+    return createJsonResponse({ status: 'saved', updatedAt: nowStr });
+  } catch (err) {
+    return createJsonResponse({ error: err.toString() });
+  } finally {
+    try { lock.releaseLock(); } catch (e2) {}
+  }
 }
 
 function createJsonResponse(obj) {

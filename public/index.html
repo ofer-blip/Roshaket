@@ -3592,7 +3592,7 @@ window.addEventListener('DOMContentLoaded', () => {
                         <div style="padding: 10px 14px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; font-size: 12px; color: #475569;">
                             <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
                                 <div style="font-weight: 800; color: #1e1b4b; font-size: 13.5px;" id="menuUserDisplayName">משתמש מחובר</div>
-                                <span style="font-size: 10.5px; font-weight: 700; color: #4338ca; background: #eef2ff; padding: 2px 7px; border-radius: 999px;">v93</span>
+                                <span style="font-size: 10.5px; font-weight: 700; color: #4338ca; background: #eef2ff; padding: 2px 7px; border-radius: 999px;">v95</span>
                             </div>
                             <div style="font-size: 11.5px; color: #64748b; direction: ltr; text-align: right; word-break: break-all;" id="menuUserEmail"></div>
                         </div>
@@ -5121,6 +5121,7 @@ async function saveTaskNote(taskId) {
     }
     if (isUserLoggedIn) {
         localStorage.setItem('roshaket_user_notes', JSON.stringify(userTaskNotes));
+        scheduleCloudStateSave();
     } else {
         sessionStorage.setItem('roshaket_demo_user_notes', JSON.stringify(userTaskNotes));
     }
@@ -5149,6 +5150,7 @@ function toggleTask(id) {
     }
     if (isUserLoggedIn) {
         localStorage.setItem('roshaket_done_tasks', JSON.stringify(doneTasks));
+        scheduleCloudStateSave();
     } else {
         sessionStorage.setItem('roshaket_demo_done_tasks', JSON.stringify(doneTasks));
     }
@@ -6236,11 +6238,11 @@ if ('serviceWorker' in navigator) {
     });
 
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=93', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=95', { updateViaCache: 'none' })
             .then(reg => {
                 swRegistration = reg;
                 reg.update();
-                console.log('Roshaket SW v93 Registered!', reg);
+                console.log('Roshaket SW v94 Registered!', reg);
             })
             .catch(err => console.log('SW Registration failed: ', err));
     });
@@ -6890,6 +6892,7 @@ function setLearningLogStatus(taskId, status) {
 
     if (isUserLoggedIn) {
         localStorage.setItem('roshaket_done_tasks', JSON.stringify(doneTasks));
+        scheduleCloudStateSave();
     } else {
         sessionStorage.setItem('roshaket_demo_done_tasks', JSON.stringify(doneTasks));
     }
@@ -8500,9 +8503,15 @@ function onAlmaExistingSelectChange() {
         const audioUrlEl = document.getElementById('almaEditAudioUrl');
         const audioDurEl = document.getElementById('almaEditAudioDuration');
         const podStatusEl = document.getElementById('almaPodcastStatus');
+        const videoUrlEl = document.getElementById('almaEditVideoUrl');
+        const videoDurEl = document.getElementById('almaEditVideoDuration');
+        const vidStatusEl = document.getElementById('almaVideoStatus');
         if (audioUrlEl) audioUrlEl.value = '';
         if (audioDurEl) audioDurEl.value = '';
         if (podStatusEl) podStatusEl.style.display = 'none';
+        if (videoUrlEl) videoUrlEl.value = '';
+        if (videoDurEl) videoDurEl.value = '';
+        if (vidStatusEl) vidStatusEl.style.display = 'none';
         return;
     }
 
@@ -8521,8 +8530,13 @@ function onAlmaExistingSelectChange() {
     const audioUrlEl = document.getElementById('almaEditAudioUrl');
     const audioDurEl = document.getElementById('almaEditAudioDuration');
     const podStatusEl = document.getElementById('almaPodcastStatus');
+    const videoUrlEl = document.getElementById('almaEditVideoUrl');
+    const videoDurEl = document.getElementById('almaEditVideoDuration');
+    const vidStatusEl = document.getElementById('almaVideoStatus');
     if (audioUrlEl) audioUrlEl.value = found.audioUrl || '';
     if (audioDurEl) audioDurEl.value = found.audioDuration || '';
+    if (videoUrlEl) videoUrlEl.value = found.videoUrl || '';
+    if (videoDurEl) videoDurEl.value = found.videoDuration || '';
     if (podStatusEl) {
         if (found.audioUrl) {
             podStatusEl.style.display = 'block';
@@ -8530,6 +8544,15 @@ function onAlmaExistingSelectChange() {
             podStatusEl.innerHTML = `🎧 פודקאסט קיים מקושר לסיכום זה (${found.audioDuration || 'מוכן להשמעה'})`;
         } else {
             podStatusEl.style.display = 'none';
+        }
+    }
+    if (vidStatusEl) {
+        if (found.videoUrl) {
+            vidStatusEl.style.display = 'block';
+            vidStatusEl.style.color = '#7c3aed';
+            vidStatusEl.innerHTML = `🎬 סרטון סיכום קיים מקושר לסיכום זה (${found.videoDuration || 'מוכן לצפייה'})`;
+        } else {
+            vidStatusEl.style.display = 'none';
         }
     }
 }
@@ -8739,6 +8762,8 @@ function saveAndPublishAlmaSummary() {
     const prevObj = all.find(s => s.id === summaryId) || {};
     const customAudioUrl = document.getElementById('almaEditAudioUrl')?.value.trim() || '';
     const customAudioDur = document.getElementById('almaEditAudioDuration')?.value.trim() || '';
+    const customVideoUrl = document.getElementById('almaEditVideoUrl')?.value.trim() || '';
+    const customVideoDur = document.getElementById('almaEditVideoDuration')?.value.trim() || '';
 
     const newSummaryObj = {
         id: summaryId,
@@ -8755,7 +8780,11 @@ function saveAndPublishAlmaSummary() {
         template: template
     };
 
-    if (prevObj.videoUrl) {
+    if (customVideoUrl) {
+        newSummaryObj.videoUrl = customVideoUrl;
+        newSummaryObj.videoTitle = prevObj.videoTitle || 'סרטון סיכום המפגש (התאום הדיגיטלי של עופר)';
+        newSummaryObj.videoDuration = customVideoDur || prevObj.videoDuration || '~1:15 דק\'';
+    } else if (prevObj.videoUrl) {
         newSummaryObj.videoUrl = prevObj.videoUrl;
         newSummaryObj.videoTitle = prevObj.videoTitle;
         newSummaryObj.videoDuration = prevObj.videoDuration;
@@ -8888,6 +8917,86 @@ async function generateAlmaPodcastInCloud() {
     }
 }
 
+async function generateAlmaVideoInCloud() {
+    const rawText = (document.getElementById('almaRawTranscriptInput')?.value || '').trim();
+    const fallbackText = [
+        document.getElementById('almaEditTitle')?.value || '',
+        document.getElementById('almaEditTeaser')?.value || '',
+        document.getElementById('almaEditRules')?.value || '',
+        document.getElementById('almaEditConcepts')?.value || '',
+        document.getElementById('almaEditSteps')?.value || ''
+    ].join('\n').trim();
+    const transcript = rawText.length >= 40 ? rawText : fallbackText;
+
+    if (transcript.length < 40) {
+        alert('נא להדביק או לטעון תמלול מאלמה (לפחות מספר משפטים) לפני הפקת סרטון.');
+        return;
+    }
+
+    const weekNum = Number(document.getElementById('almaWeekSelect')?.value || 1);
+    const courseKey = document.getElementById('almaCourseSelect')?.value || 'mor';
+    const title = (document.getElementById('almaEditTitle')?.value || '').trim() || `סיכום שיעור שבוע ${weekNum}`;
+    const selectedId = document.getElementById('almaExistingSelect')?.value || 'new';
+    const summaryId = selectedId === 'new' ? '' : selectedId;
+
+    const btn = document.getElementById('almaVideoBtn');
+    const statusEl = document.getElementById('almaVideoStatus');
+    const origHtml = btn ? btn.innerHTML : '';
+
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span>⏳</span><span>מפיק סרטון סיכום 9:16 בענן (כ-45–75 שניות)...</span>';
+    }
+    if (statusEl) {
+        statusEl.style.display = 'block';
+        statusEl.style.color = '#5b21b6';
+        statusEl.innerHTML = '⏳ מייצר 5 שקופיות RTL, מדבב בקול עופר ומאחד לסרטון מובייל בענן...';
+    }
+
+    try {
+        const cMeta = (typeof COURSE_META_MAP !== 'undefined' && COURSE_META_MAP[courseKey]) ? COURSE_META_MAP[courseKey] : null;
+        const adminEmail = (typeof currentUserEmail !== 'undefined' && currentUserEmail) ? currentUserEmail : 'saritofer.k@gmail.com';
+        const resp = await fetch(`${ROSHAKET_PODCAST_API}/generate-video`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                rawText: transcript,
+                weekNum: weekNum,
+                courseKey: courseKey,
+                courseName: cMeta ? `${cMeta.name} – ${cMeta.lecturer}` : title,
+                summaryId: summaryId || null,
+                adminEmail: adminEmail
+            })
+        });
+        if (!resp.ok) {
+            const errTxt = await resp.text();
+            throw new Error(`HTTP ${resp.status}: ${errTxt.slice(0, 200)}`);
+        }
+        const data = await resp.json();
+        const urlEl = document.getElementById('almaEditVideoUrl');
+        const durEl = document.getElementById('almaEditVideoDuration');
+        if (urlEl) urlEl.value = data.videoUrl || '';
+        if (durEl) durEl.value = data.videoDuration || '~1:15 דק\'';
+        if (statusEl) {
+            statusEl.style.color = '#7c3aed';
+            statusEl.innerHTML = `✅ הסרטון הופק בהצלחה! (${data.videoDuration || 'מוכן'}) — לחץ על "פרסם לסטודנטים בראשקט!" כדי לפרסם.`;
+        }
+        showToast('🎬 סרטון הסיכום הופק בהצלחה בענן!');
+    } catch (e) {
+        console.error('Video generation error:', e);
+        if (statusEl) {
+            statusEl.style.color = '#dc2626';
+            statusEl.innerHTML = `❌ שגיאה בהפקת הסרטון: ${e.message}`;
+        }
+        showToast('❌ שגיאה בהפקת הסרטון בענן');
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = origHtml;
+        }
+    }
+}
+
 // Re-render and initialize What's New UI once Lesson Summary Engine is loaded
 render();
 updateWhatsNewUI();
@@ -8899,6 +9008,70 @@ render();
 // ACCESS CONTROL & COURSE REGISTRATION (Google Sheets)
 // ==========================================
 const ACCESS_CONTROL_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyvK9BQDE3VYPkpq8NbkNxg_VKqMWKMluCFN1_NGrQ5-Di-WUWmZxa1v3E0A-VYCLtY/exec';
+
+let cloudSaveTimer = null;
+function scheduleCloudStateSave() {
+    if (!isUserLoggedIn || !googleUserEmail) return;
+    if (cloudSaveTimer) clearTimeout(cloudSaveTimer);
+    cloudSaveTimer = setTimeout(() => {
+        try {
+            fetch(ACCESS_CONTROL_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({
+                    action: 'save_state',
+                    email: googleUserEmail,
+                    doneTasks: doneTasks,
+                    userNotes: userTaskNotes,
+                    userName: googleUserName || localStorage.getItem('roshaket_user_name') || ''
+                })
+            }).catch(() => {});
+        } catch (e) {}
+    }, 1200);
+}
+
+async function loadCloudUserState(email) {
+    if (!email) return;
+    try {
+        const res = await fetch(`${ACCESS_CONTROL_SCRIPT_URL}?action=get_state&email=${encodeURIComponent(email)}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data && data.status === 'found') {
+            const cloudTasks = Array.isArray(data.doneTasks) ? data.doneTasks : [];
+            const mergedTasks = Array.from(new Set([...(doneTasks || []), ...cloudTasks]));
+            const cloudNotes = (data.userNotes && typeof data.userNotes === 'object') ? data.userNotes : {};
+            const mergedNotes = { ...cloudNotes, ...(userTaskNotes || {}) };
+
+            const tasksChanged = mergedTasks.length !== (doneTasks || []).length;
+            const notesChanged = Object.keys(mergedNotes).length !== Object.keys(userTaskNotes || {}).length;
+
+            doneTasks = mergedTasks;
+            userTaskNotes = mergedNotes;
+            localStorage.setItem('roshaket_done_tasks', JSON.stringify(doneTasks));
+            localStorage.setItem('roshaket_user_notes', JSON.stringify(userTaskNotes));
+
+            if (tasksChanged || notesChanged) {
+                render();
+                if (typeof renderLearningLogModal === 'function') {
+                    const logModal = document.getElementById('learningLogModal');
+                    if (logModal && logModal.classList.contains('open')) renderLearningLogModal();
+                }
+            }
+            if ((doneTasks || []).length > cloudTasks.length) {
+                scheduleCloudStateSave();
+            }
+        } else if ((doneTasks || []).length > 0 || Object.keys(userTaskNotes || {}).length > 0) {
+            scheduleCloudStateSave();
+        }
+    } catch (e) {
+        console.warn('Cloud state sync skipped:', e);
+    }
+}
+
+if (isUserLoggedIn && googleUserEmail) {
+    loadCloudUserState(googleUserEmail);
+}
 
 // PRIMARY_ADMIN_EMAIL declared at top
 
@@ -8916,6 +9089,9 @@ async function proceedSuccessfulLogin(userName) {
     userTaskNotes = JSON.parse(localStorage.getItem('roshaket_user_notes') || '{}');
     showToast('🔑 התחברת בהצלחה! ברוך/ה הבא/ה לראשקט.');
     updateSyncUI();
+    if (googleUserEmail) {
+        loadCloudUserState(googleUserEmail);
+    }
 
     // Update strip badge visibility
     ['mor', 'wassel', 'levy'].forEach(cKey => {
@@ -9384,8 +9560,15 @@ document.addEventListener('toggle', (e) => {
                     <span>הפק פודקאסט דו-שיחי (5 דק') בענן מתמלול זה</span>
                 </button>
                 <div id="almaPodcastStatus" style="display: none; margin-top: 8px; font-size: 13px; font-weight: 700; padding: 8px 12px; border-radius: 10px; background: #f8fafc; border: 1px solid #e2e8f0;"></div>
+                <button type="button" class="btn" id="almaVideoBtn" style="width: 100%; justify-content: center; padding: 11px; font-size: 14.5px; margin-top: 8px; background: #f5f3ff; color: #5b21b6; border-color: #c4b5fd; font-weight: 800;" onclick="generateAlmaVideoInCloud()">
+                    <span>🎬</span>
+                    <span>הפק סרטון סיכום (9:16) בענן מתמלול זה</span>
+                </button>
+                <div id="almaVideoStatus" style="display: none; margin-top: 8px; font-size: 13px; font-weight: 700; padding: 8px 12px; border-radius: 10px; background: #f8fafc; border: 1px solid #e2e8f0;"></div>
                 <input type="hidden" id="almaEditAudioUrl" value="">
                 <input type="hidden" id="almaEditAudioDuration" value="">
+                <input type="hidden" id="almaEditVideoUrl" value="">
+                <input type="hidden" id="almaEditVideoDuration" value="">
             </div>
 
             <!-- Step 3: Spacious Block Editor before publishing -->
