@@ -3592,7 +3592,7 @@ window.addEventListener('DOMContentLoaded', () => {
                         <div style="padding: 10px 14px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; font-size: 12px; color: #475569;">
                             <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
                                 <div style="font-weight: 800; color: #1e1b4b; font-size: 13.5px;" id="menuUserDisplayName">משתמש מחובר</div>
-                                <span style="font-size: 10.5px; font-weight: 700; color: #4338ca; background: #eef2ff; padding: 2px 7px; border-radius: 999px;">v95</span>
+                                <span style="font-size: 10.5px; font-weight: 700; color: #4338ca; background: #eef2ff; padding: 2px 7px; border-radius: 999px;">v96</span>
                             </div>
                             <div style="font-size: 11.5px; color: #64748b; direction: ltr; text-align: right; word-break: break-all;" id="menuUserEmail"></div>
                         </div>
@@ -7549,10 +7549,13 @@ function loadAllLessonSummaries() {
         w4.audioDuration = '5:03 דק\'';
     }
 
-    return Array.from(mergedMap.values()).sort((a, b) => {
-        if (b.weekNum !== a.weekNum) return b.weekNum - a.weekNum;
-        return String(b.createdAt || '').localeCompare(String(a.createdAt || ''));
-    });
+    const isAdmin = (typeof isOferAdmin === 'function') ? isOferAdmin() : false;
+    return Array.from(mergedMap.values())
+        .filter(item => isAdmin || item.status !== 'draft')
+        .sort((a, b) => {
+            if (b.weekNum !== a.weekNum) return b.weekNum - a.weekNum;
+            return String(b.createdAt || '').localeCompare(String(a.createdAt || ''));
+        });
 }
 
 function saveCustomLessonSummaries(summariesArray) {
@@ -7567,7 +7570,8 @@ const ROSHAKET_PODCAST_API = 'https://roshaket-podcast-engine-914327372720.europ
 
 async function syncCloudSummariesFromServer() {
     try {
-        const resp = await fetch(`${ROSHAKET_PODCAST_API}/summaries?t=${Date.now()}`, { cache: 'no-store' });
+        const includeDrafts = (typeof isOferAdmin === 'function' && isOferAdmin()) ? '&includeDrafts=true' : '';
+        const resp = await fetch(`${ROSHAKET_PODCAST_API}/summaries?t=${Date.now()}${includeDrafts}`, { cache: 'no-store' });
         if (!resp.ok) return;
         const data = await resp.json();
         const cloudList = Array.isArray(data.summaries) ? data.summaries : [];
@@ -8512,6 +8516,9 @@ function onAlmaExistingSelectChange() {
         if (videoUrlEl) videoUrlEl.value = '';
         if (videoDurEl) videoDurEl.value = '';
         if (vidStatusEl) vidStatusEl.style.display = 'none';
+        window.almaCurrentSlides = [];
+        window.almaCurrentSlideImages = [];
+        if (typeof renderAlmaMediaPreview === 'function') renderAlmaMediaPreview();
         return;
     }
 
@@ -8537,6 +8544,9 @@ function onAlmaExistingSelectChange() {
     if (audioDurEl) audioDurEl.value = found.audioDuration || '';
     if (videoUrlEl) videoUrlEl.value = found.videoUrl || '';
     if (videoDurEl) videoDurEl.value = found.videoDuration || '';
+    window.almaCurrentSlides = Array.isArray(found.slides) ? found.slides : [];
+    window.almaCurrentSlideImages = Array.isArray(found.slideImages) ? found.slideImages : [];
+    if (typeof renderAlmaMediaPreview === 'function') renderAlmaMediaPreview();
     if (podStatusEl) {
         if (found.audioUrl) {
             podStatusEl.style.display = 'block';
@@ -8631,43 +8641,39 @@ async function processRawAlmaTranscript(fileNameHint) {
     const weekObj = semesterSchedule.find(w => w.weekNum === weekNum);
     const taskObj = weekObj ? weekObj.tasks.find(t => t.courseKey === courseKey) : null;
 
-    const geminiKey = localStorage.getItem('roshaket_gemini_key');
+    const geminiKey = localStorage.getItem('roshaket_gemini_key') || '';
+    const adminEmail = (typeof currentUserEmail !== 'undefined' && currentUserEmail) ? currentUserEmail : 'saritofer.k@gmail.com';
     let distilled = null;
 
-    if (geminiKey) {
-        try {
-            const promptText = `אתה עוזר הוראה אקדמי בתוכנית התואר השני בחינוך (מכללת בית ברל).
-לפניך תמלול גולמי של שיעור מאפליקציית התמלול "אלמה" בקורס "${cMeta.name}" (שבוע ${weekNum}).
-תקן שגיאות שמיעה פונטיות, סנן דיבורי סרק, והחזר אך ורק אובייקט JSON תקני במבנה הבא:
-{
-  "title": "כותרת אקדמית ברורה לשיעור",
-  "teaser": "משפט קצר ומזמין לבועית מה חדש",
-  "rules": ["סעיף נוהל/הגשה 1", "סעיף 2"],
-  "concepts": ["שם מושג: הסבר בהיר ודוגמה מהכיתה", "מושג 2: הסבר"],
-  "steps": [
-    {"title": "שלב 1: ...", "question": "שאלה מנחה?", "desc": "הסבר קצר", "example": "דוגמה מהכיתה"}
-  ],
-  "template": "תבנית טקסט מוכנה לסטודנטים להעתקה לתרגיל"
-}
-התמלול:
-${rawText.slice(0, 28000)}`;
+    if (btn) {
+        const charK = Math.round(rawText.length / 1000);
+        btn.innerHTML = `<span>⏳</span> <span>מזקק בענן (${charK}K תווים${rawText.length > 26000 ? ' • פיצול חכם להרצאה ארוכה' : ''})...</span>`;
+    }
 
-            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(geminiKey)}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: promptText }] }],
-                    generationConfig: { responseMimeType: 'application/json' }
-                })
-            });
-            if (res.ok) {
-                const data = await res.json();
-                const txt = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-                if (txt) distilled = JSON.parse(txt);
+    try {
+        const cloudRes = await fetch(`${ROSHAKET_PODCAST_API}/distill-transcript`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                rawText: rawText,
+                weekNum: weekNum,
+                courseKey: courseKey,
+                courseName: `${cMeta.name} – ${cMeta.lecturer}`,
+                adminEmail: adminEmail,
+                geminiKey: geminiKey || null
+            })
+        });
+        if (cloudRes.ok) {
+            const cloudData = await cloudRes.json();
+            if (cloudData && cloudData.distilled) {
+                distilled = cloudData.distilled;
+                if (cloudData.chunksUsed > 1) {
+                    showToast(`🧠 ההרצאה הארוכה זוקקה ב-${cloudData.chunksUsed} מקטעים ללא חיתוך!`);
+                }
             }
-        } catch (e) {
-            console.warn('Gemini distillation fallback to smart local parser:', e);
         }
+    } catch (e) {
+        console.warn('Cloud distill fallback to local:', e);
     }
 
     if (!distilled) {
@@ -8723,7 +8729,8 @@ function formatLineWithBoldPrefix(line) {
     return clean;
 }
 
-function saveAndPublishAlmaSummary() {
+function saveAndPublishAlmaSummary(targetStatus = 'published') {
+    const isDraft = targetStatus === 'draft';
     const weekNum = Number(document.getElementById('almaWeekSelect')?.value || 3);
     const courseKey = document.getElementById('almaCourseSelect')?.value || 'mor';
     const selectedId = document.getElementById('almaExistingSelect')?.value || 'new';
@@ -8767,6 +8774,7 @@ function saveAndPublishAlmaSummary() {
 
     const newSummaryObj = {
         id: summaryId,
+        status: isDraft ? 'draft' : 'published',
         weekNum: weekNum,
         courseKey: courseKey,
         dateStr: dateStr,
@@ -8813,7 +8821,7 @@ function saveAndPublishAlmaSummary() {
     render();
     updateWhatsNewUI();
     openLessonSummaryModal(weekNum, courseKey, summaryId);
-    showToast('🚀 הסיכום פורסם בהצלחה בראשקט וזמין לסטודנטים!');
+    showToast(isDraft ? '📝 הטיוטה נשמרה לבקרה שלך (מוסתרת מסטודנטים)!' : '🚀 הסיכום פורסם בהצלחה בראשקט וזמין לסטודנטים!');
 }
 
 function deleteCurrentAlmaSummary() {
@@ -8899,8 +8907,9 @@ async function generateAlmaPodcastInCloud() {
         if (durEl) durEl.value = data.audioDuration || '~5 דק\'';
         if (statusEl) {
             statusEl.style.color = '#059669';
-            statusEl.innerHTML = `✅ הפודקאסט הופק בהצלחה! (${data.audioDuration || 'מוכן'}) — לחץ על "פרסם לסטודנטים בראשקט!" כדי לפרסם.`;
+            statusEl.innerHTML = `✅ הפודקאסט הופק בהצלחה! (${data.audioDuration || 'מוכן'}) — בדוק את הנגן למטה לפני פרסום.`;
         }
+        if (typeof renderAlmaMediaPreview === 'function') renderAlmaMediaPreview();
         showToast('🎙️ הפודקאסט הדו-שיחי הופק בהצלחה בענן!');
     } catch (e) {
         console.error('Podcast generation error:', e);
@@ -8977,10 +8986,13 @@ async function generateAlmaVideoInCloud() {
         const durEl = document.getElementById('almaEditVideoDuration');
         if (urlEl) urlEl.value = data.videoUrl || '';
         if (durEl) durEl.value = data.videoDuration || '~1:15 דק\'';
+        window.almaCurrentSlides = Array.isArray(data.slides) ? data.slides : [];
+        window.almaCurrentSlideImages = Array.isArray(data.slideImages) ? data.slideImages : [];
         if (statusEl) {
             statusEl.style.color = '#7c3aed';
-            statusEl.innerHTML = `✅ הסרטון הופק בהצלחה! (${data.videoDuration || 'מוכן'}) — לחץ על "פרסם לסטודנטים בראשקט!" כדי לפרסם.`;
+            statusEl.innerHTML = `✅ הסרטון הופק בהצלחה! (${data.videoDuration || 'מוכן'}) — בדוק למטה את השקופיות והסרטון לפני פרסום.`;
         }
+        if (typeof renderAlmaMediaPreview === 'function') renderAlmaMediaPreview();
         showToast('🎬 סרטון הסיכום הופק בהצלחה בענן!');
     } catch (e) {
         console.error('Video generation error:', e);
@@ -8994,6 +9006,135 @@ async function generateAlmaVideoInCloud() {
             btn.disabled = false;
             btn.innerHTML = origHtml;
         }
+    }
+}
+
+window.almaCurrentSlides = [];
+window.almaCurrentSlideImages = [];
+
+function renderAlmaMediaPreview() {
+    const box = document.getElementById('almaPreviewBox');
+    if (!box) return;
+    const videoUrl = (document.getElementById('almaEditVideoUrl')?.value || '').trim();
+    const audioUrl = (document.getElementById('almaEditAudioUrl')?.value || '').trim();
+    const slides = Array.isArray(window.almaCurrentSlides) ? window.almaCurrentSlides : [];
+    const slideImages = Array.isArray(window.almaCurrentSlideImages) ? window.almaCurrentSlideImages : [];
+
+    if (!videoUrl && !audioUrl && slides.length === 0) {
+        box.style.display = 'none';
+        return;
+    }
+    box.style.display = 'block';
+
+    const mediaPlayers = document.getElementById('almaPreviewMediaPlayers');
+    if (mediaPlayers) {
+        let html = '';
+        if (audioUrl) {
+            html += `<div style="margin-bottom: 12px; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 12px; padding: 10px 12px;">
+                <div style="font-size: 13px; font-weight: 800; color: #065f46; margin-bottom: 6px;">🎙️ תצוגה מקדימה — פודקאסט</div>
+                <audio controls preload="metadata" src="${escapeHtml(audioUrl)}" style="width: 100%; height: 38px;"></audio>
+            </div>`;
+        }
+        if (videoUrl) {
+            html += `<div style="margin-bottom: 12px; background: #f5f3ff; border: 1px solid #ddd6fe; border-radius: 12px; padding: 10px 12px; text-align: center;">
+                <div style="font-size: 13px; font-weight: 800; color: #5b21b6; margin-bottom: 8px; text-align: right;">🎬 תצוגה מקדימה — סרטון סיכום (9:16)</div>
+                <video controls playsinline preload="metadata" src="${escapeHtml(videoUrl)}" style="width: 100%; max-width: 260px; aspect-ratio: 9/16; border-radius: 14px; background: #0f172a;"></video>
+            </div>`;
+        }
+        mediaPlayers.innerHTML = html;
+    }
+
+    const slidesContainer = document.getElementById('almaPreviewSlidesGrid');
+    const rerenderBtn = document.getElementById('almaRerenderVideoBtn');
+    if (slidesContainer) {
+        if (slides.length === 0 && slideImages.length === 0) {
+            slidesContainer.innerHTML = '';
+            if (rerenderBtn) rerenderBtn.style.display = 'none';
+        } else {
+            if (rerenderBtn) rerenderBtn.style.display = slides.length > 0 ? 'inline-flex' : 'none';
+            slidesContainer.innerHTML = slides.map((s, idx) => {
+                const imgUrl = slideImages[idx] || '';
+                return `<div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px; display: flex; flex-direction: column; gap: 6px;">
+                    <div style="font-size: 12px; font-weight: 800; color: #4338ca;">שקופית ${idx + 1}</div>
+                    ${imgUrl ? `<a href="${escapeHtml(imgUrl)}" target="_blank" title="לחץ להגדלה"><img src="${escapeHtml(imgUrl)}" alt="שקופית ${idx + 1}" style="width: 100%; aspect-ratio: 9/16; object-fit: cover; border-radius: 8px; border: 1px solid #cbd5e1;"></a>` : ''}
+                    <input type="text" class="alma-studio-input alma-slide-title" data-idx="${idx}" value="${escapeHtml(s.title || '')}" placeholder="כותרת שקופית" style="font-size: 12px; padding: 6px 8px;">
+                    <textarea class="alma-studio-textarea alma-slide-sec1" data-idx="${idx}" rows="2" placeholder="בלוק 1" style="font-size: 11.5px; padding: 6px 8px;">${escapeHtml(s.sec1Body || '')}</textarea>
+                    <textarea class="alma-studio-textarea alma-slide-sec2" data-idx="${idx}" rows="2" placeholder="בלוק 2" style="font-size: 11.5px; padding: 6px 8px;">${escapeHtml(s.sec2Body || '')}</textarea>
+                </div>`;
+            }).join('');
+        }
+    }
+}
+
+async function rerenderAlmaVideoFromSlides() {
+    const slides = Array.isArray(window.almaCurrentSlides) ? window.almaCurrentSlides.map(s => ({ ...s })) : [];
+    if (slides.length === 0) return;
+
+    document.querySelectorAll('.alma-slide-title').forEach(el => {
+        const i = Number(el.dataset.idx);
+        if (slides[i]) slides[i].title = el.value.trim();
+    });
+    document.querySelectorAll('.alma-slide-sec1').forEach(el => {
+        const i = Number(el.dataset.idx);
+        if (slides[i]) slides[i].sec1Body = el.value.trim();
+    });
+    document.querySelectorAll('.alma-slide-sec2').forEach(el => {
+        const i = Number(el.dataset.idx);
+        if (slides[i]) slides[i].sec2Body = el.value.trim();
+    });
+
+    const btn = document.getElementById('almaRerenderVideoBtn');
+    const orig = btn ? btn.innerHTML : '';
+    if (btn) { btn.disabled = true; btn.innerHTML = '⏳ מרנדר סרטון מתוקן בענן...'; }
+
+    try {
+        const weekNum = Number(document.getElementById('almaWeekSelect')?.value || 1);
+        const courseKey = document.getElementById('almaCourseSelect')?.value || 'mor';
+        const cMeta = (typeof COURSE_META_MAP !== 'undefined' && COURSE_META_MAP[courseKey]) ? COURSE_META_MAP[courseKey] : null;
+        const adminEmail = (typeof currentUserEmail !== 'undefined' && currentUserEmail) ? currentUserEmail : 'saritofer.k@gmail.com';
+        const resp = await fetch(`${ROSHAKET_PODCAST_API}/rerender-video`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                slides: slides,
+                weekNum: weekNum,
+                courseKey: courseKey,
+                courseName: cMeta ? `${cMeta.name} – ${cMeta.lecturer}` : `שבוע ${weekNum}`,
+                adminEmail: adminEmail
+            })
+        });
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const data = await resp.json();
+        document.getElementById('almaEditVideoUrl').value = data.videoUrl || '';
+        document.getElementById('almaEditVideoDuration').value = data.videoDuration || '';
+        window.almaCurrentSlides = data.slides || slides;
+        window.almaCurrentSlideImages = data.slideImages || [];
+        renderAlmaMediaPreview();
+        showToast('✅ הסרטון רונדר מחדש עם השקופיות המעודכנות!');
+    } catch (e) {
+        console.error('Rerender error:', e);
+        showToast('❌ שגיאה ברינדור מחדש של הסרטון');
+    } finally {
+        if (btn) { btn.disabled = false; btn.innerHTML = orig; }
+    }
+}
+
+async function runFullAlmaDraftPipeline() {
+    const rawText = (document.getElementById('almaRawTranscriptInput')?.value || '').trim();
+    if (rawText.length < 40) {
+        alert('אנא בחר קובץ .txt מאלמה או הדבק תמלול תחילה.');
+        return;
+    }
+    const btn = document.getElementById('almaFullPipelineBtn');
+    const orig = btn ? btn.innerHTML : '';
+    if (btn) { btn.disabled = true; btn.innerHTML = '⏳ שלב 1/3: מזקק תמלול בענן...'; }
+    try {
+        await processRawAlmaTranscript();
+        if (btn) btn.innerHTML = '⏳ שלב 2/3: מפיק פודקאסט וסרטון במקביל...';
+        await Promise.all([generateAlmaPodcastInCloud(), generateAlmaVideoInCloud()]);
+        showToast('🎉 הטיוטה מוכנה לבקרה! בדוק את השקופיות, הסרטון והפודקאסט למטה.');
+    } finally {
+        if (btn) { btn.disabled = false; btn.innerHTML = orig; }
     }
 }
 
@@ -9551,6 +9692,10 @@ document.addEventListener('toggle', (e) => {
                     <textarea id="almaRawTranscriptInput" class="alma-studio-textarea" rows="4" style="margin-top: 8px;" placeholder="הדבק כאן את התמלול הגולמי (למשל: דובר 1: ...) ולחץ על כפתור הזיקוק האוטומטי למטה"></textarea>
                 </details>
 
+                <button type="button" class="btn btn-primary" id="almaFullPipelineBtn" style="width: 100%; justify-content: center; padding: 13px; font-size: 15.5px; margin-bottom: 10px; background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); box-shadow: 0 4px 14px rgba(79, 70, 229, 0.25);" onclick="runFullAlmaDraftPipeline()">
+                    <span>⚡</span>
+                    <span>הפקה מלאה לטיוטה בלחיצה (זיקוק + פודקאסט + סרטון 9:16)</span>
+                </button>
                 <button type="button" class="btn btn-primary" id="almaDistillBtn" style="width: 100%; justify-content: center; padding: 12px; font-size: 15px;" onclick="processRawAlmaTranscript()">
                     <span>✨</span>
                     <span>זקק תמלול אוטומטית לבלוקים מרווחים (ניקוי שגיאות + שליף לתרגיל)</span>
@@ -9614,6 +9759,21 @@ document.addEventListener('toggle', (e) => {
                     <textarea id="almaEditTemplate" class="alma-studio-textarea" rows="4" placeholder="טקסט מוכן שיועתק ללוח של הסטודנט בלחיצה על כפתור 'העתק תבנית'..."></textarea>
                 </div>
             </div>
+
+            <!-- Step 4: Visual QC & Preview Station before Publishing -->
+            <div class="study-block-card" id="almaPreviewBox" style="display: none; padding: 18px 20px; border: 2px solid #c4b5fd; background: #faf5ff;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px;">
+                    <div style="font-weight: 800; font-size: 16px; color: #4c1d95; display: flex; align-items: center; gap: 8px;">
+                        <span>4️⃣</span>
+                        <span>תחנת בקרה חזותית לפני פרסום (וידוא גרפיקה, כיתוב וסאונד):</span>
+                    </div>
+                    <button type="button" class="btn" id="almaRerenderVideoBtn" style="display: none; background: #ede9fe; color: #5b21b6; border-color: #a78bfa; font-weight: 800; font-size: 13px;" onclick="rerenderAlmaVideoFromSlides()">
+                        🔄 רנדר סרטון מחדש עם התיקונים
+                    </button>
+                </div>
+                <div id="almaPreviewMediaPlayers"></div>
+                <div id="almaPreviewSlidesGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px;"></div>
+            </div>
         </div>
 
         <div class="study-workspace-footer">
@@ -9622,9 +9782,13 @@ document.addEventListener('toggle', (e) => {
             </button>
             <div style="display: flex; gap: 10px; margin-right: auto; flex-wrap: wrap;">
                 <button type="button" class="btn" onclick="closeAlmaStudioModal()">ביטול</button>
-                <button type="button" class="btn btn-primary" style="padding: 10px 22px; font-size: 15px;" onclick="saveAndPublishAlmaSummary()">
+                <button type="button" class="btn" style="padding: 10px 16px; font-size: 14px; background: #fef3c7; color: #92400e; border-color: #fcd34d; font-weight: 800;" onclick="saveAndPublishAlmaSummary('draft')">
+                    <span>📝</span>
+                    <span>שמור כטיוטה (לבדיקה שלי)</span>
+                </button>
+                <button type="button" class="btn btn-primary" style="padding: 10px 22px; font-size: 15px;" onclick="saveAndPublishAlmaSummary('published')">
                     <span>🚀</span>
-                    <span>פרסם לסטודנטים בראשקט!</span>
+                    <span>אשר ופרסם לסטודנטים!</span>
                 </button>
             </div>
         </div>

@@ -44,10 +44,134 @@ class GeneratePodcastRequest(BaseModel):
     summaryObj: Optional[Dict[str, Any]] = None
 
 
+class DistillRequest(BaseModel):
+    rawText: str
+    weekNum: int = 1
+    courseKey: str = "mor"
+    courseName: str = "הערכת תוכניות חינוכיות"
+    adminEmail: Optional[str] = None
+    geminiKey: Optional[str] = None
+
+
+class RerenderVideoRequest(BaseModel):
+    slides: List[Dict[str, Any]]
+    weekNum: int
+    courseKey: str = "mor"
+    courseName: str = "הערכת תוכניות חינוכיות"
+    adminEmail: Optional[str] = None
+
+
 class SaveSummaryRequest(BaseModel):
     summaryObj: Optional[Dict[str, Any]] = None
     deleteId: Optional[str] = None
     adminEmail: Optional[str] = None
+
+
+def clean_alma_speech_errors(raw_text: str) -> str:
+    if not raw_text:
+        return ""
+    text = raw_text
+    text = re.sub(r"קרבולכאלט|קרדו קאדו", "Cargo Cult (פולחן המטען)", text)
+    text = re.sub(r"design to pinking", "Design Thinking", text, flags=re.IGNORECASE)
+    text = re.sub(r"\bStemp\b", "STEM", text, flags=re.IGNORECASE)
+    text = re.sub(r"\bPDL\b", "PBL", text)
+    text = re.sub(r"גוגל טורקס", "Google Docs", text)
+    text = re.sub(r"נורטבוק|נורדפרוק|לנופו", "NotebookLM", text)
+    text = re.sub(r"\*\*דובר \d+:\*\*", "\n", text)
+    return text.strip()
+
+
+def _summarize_chunk_with_gemini(idx: int, chunk: str, course_name: str, week_num: int, api_key: str) -> str:
+    prompt = f"""אתה עוזר הוראה אקדמי. לפניך מקטע #{idx + 1} מתוך תמלול שיעור {week_num} בקורס "{course_name}".
+חלץ בצורה מדויקת, מרוכזת ובעברית ברורה את כל:
+1. הנהלים, ההנחיות, התאריכים ודרישות ההגשה שהוזכרו במקטע זה.
+2. המושגים התיאורטיים, ההגדרות, השלבים והדוגמאות מהכיתה.
+3. השאלות החשובות והתובנות המעשיות.
+החזר טקסט מרוכז וענייני (עד 450 מילים) בלי להמציא מידע שלא הופיע במקטע.
+
+המקטע:
+{chunk}"""
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
+    resp = requests.post(
+        url,
+        json={
+            "contents": [{"parts": [{"text": prompt}]}],
+            "generationConfig": {"temperature": 0.3},
+        },
+        timeout=90,
+    )
+    if resp.status_code != 200:
+        raise HTTPException(status_code=502, detail=f"Gemini chunk error [{resp.status_code}]: {resp.text[:250]}")
+    data = resp.json()
+    return data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "").strip()
+
+
+def condense_long_transcript(raw_text: str, course_name: str, week_num: int, api_key: str) -> Dict[str, Any]:
+    cleaned = clean_alma_speech_errors(raw_text)
+    if len(cleaned) <= 26000:
+        return {"text": cleaned, "chunksUsed": 1, "originalLength": len(raw_text)}
+
+    chunk_size = 22000
+    overlap = 600
+    chunks: List[str] = []
+    pos = 0
+    while pos < len(cleaned) and len(chunks) < 12:
+        end = min(len(cleaned), pos + chunk_size)
+        chunks.append(cleaned[pos:end])
+        if end >= len(cleaned):
+            break
+        pos = end - overlap
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as pool:
+        summaries = list(
+            pool.map(
+                lambda item: _summarize_chunk_with_gemini(item[0], item[1], course_name, week_num, api_key),
+                enumerate(chunks),
+            )
+        )
+
+    combined = "\n\n".join(
+        f"--- חלק {i + 1} מתוך {len(summaries)} ---\n{s}"
+        for i, s in enumerate(summaries)
+        if s
+    )
+    return {"text": combined[:32000], "chunksUsed": len(chunks), "originalLength": len(raw_text)}
+
+
+def distill_transcript_with_gemini(condensed_text: str, week_num: int, course_name: str, api_key: str) -> Dict[str, Any]:
+    prompt = f"""אתה עוזר הוראה אקדמי בתוכנית התואר השני בחינוך (מכללת בית ברל).
+לפניך תמלול/מיצוי של שיעור {week_num} בקורס "{course_name}".
+תקן שגיאות שמיעה פונטיות, סנן דיבורי סרק, והחזר אך ורק אובייקט JSON תקני במבנה הבא:
+{{
+  "title": "כותרת אקדמית ברורה לשיעור",
+  "teaser": "משפט קצר ומזמין לבועית מה חדש",
+  "rules": ["סעיף נוהל/הגשה 1", "סעיף 2"],
+  "concepts": ["שם מושג: הסבר בהיר ודוגמה מהכיתה", "מושג 2: הסבר"],
+  "steps": [
+    {{"title": "שלב 1: ...", "question": "שאלה מנחה?", "desc": "הסבר קצר", "example": "דוגמה מהכיתה"}}
+  ],
+  "template": "תבנית טקסט מוכנה לסטודנטים להעתקה לתרגיל"
+}}
+
+התמלול:
+{condensed_text[:30000]}"""
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
+    resp = requests.post(
+        url,
+        json={
+            "contents": [{"parts": [{"text": prompt}]}],
+            "generationConfig": {"responseMimeType": "application/json", "temperature": 0.4},
+        },
+        timeout=90,
+    )
+    if resp.status_code != 200:
+        raise HTTPException(status_code=502, detail=f"Gemini distill error [{resp.status_code}]: {resp.text[:300]}")
+    data = resp.json()
+    text = data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "")
+    parsed = json.loads(text)
+    if not isinstance(parsed, dict):
+        raise HTTPException(status_code=502, detail="Gemini returned invalid distill JSON")
+    return parsed
 
 
 def sanitize_hebrew_for_speech(text: str) -> str:
@@ -133,26 +257,36 @@ def synthesize_turn(idx: int, speaker: str, text: str, api_key: str, tmp_dir: st
     voice_id = OFER_VOICE_ID if speaker.upper() == "OFER" else HOST_VOICE_ID
     out_path = os.path.join(tmp_dir, f"turn_{idx:02d}.mp3")
     url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
-    resp = requests.post(
-        url,
-        headers={"xi-api-key": api_key, "Content-Type": "application/json"},
-        json={
-            "text": sanitize_hebrew_for_speech(text),
-            "model_id": ELEVEN_MODEL_ID,
-            "voice_settings": {
-                "stability": 0.45,
-                "similarity_boost": 0.85,
-                "style": 0.05,
-                "use_speaker_boost": True,
-            },
+    payload = {
+        "text": sanitize_hebrew_for_speech(text),
+        "model_id": ELEVEN_MODEL_ID,
+        "voice_settings": {
+            "stability": 0.45,
+            "similarity_boost": 0.85,
+            "style": 0.05,
+            "use_speaker_boost": True,
         },
-        timeout=60,
-    )
-    if resp.status_code != 200:
-        raise RuntimeError(f"ElevenLabs turn {idx} error [{resp.status_code}]: {resp.text[:200]}")
-    with open(out_path, "wb") as f:
-        f.write(resp.content)
-    return out_path
+    }
+    last_err = None
+    for attempt in range(3):
+        try:
+            resp = requests.post(
+                url,
+                headers={"xi-api-key": api_key, "Content-Type": "application/json"},
+                json=payload,
+                timeout=60,
+            )
+            if resp.status_code == 200:
+                with open(out_path, "wb") as f:
+                    f.write(resp.content)
+                return out_path
+            last_err = f"HTTP {resp.status_code}: {resp.text[:200]}"
+            if resp.status_code not in (429, 500, 502, 503, 504):
+                break
+        except requests.RequestException as exc:
+            last_err = str(exc)
+        time.sleep(1.5 * (attempt + 1))
+    raise RuntimeError(f"ElevenLabs turn {idx} error: {last_err}")
 
 
 @app.get("/health")
@@ -161,8 +295,11 @@ def health():
 
 
 @app.get("/summaries")
-def get_summaries():
-    return {"summaries": read_overrides()}
+def get_summaries(includeDrafts: bool = False):
+    items = read_overrides()
+    if not includeDrafts:
+        items = [s for s in items if s.get("status") != "draft"]
+    return {"summaries": items}
 
 
 @app.get("/media/{filename}")
@@ -170,14 +307,42 @@ def stream_media(filename: str):
     if not re.match(r"^[A-Za-z0-9_.\-]+$", filename):
         raise HTTPException(status_code=400, detail="Invalid filename")
     bucket = get_bucket()
-    is_mp4 = filename.lower().endswith(".mp4")
-    prefix = "roshaket/videos/" if is_mp4 else "roshaket/podcasts/"
+    lower = filename.lower()
+    if lower.endswith(".mp4"):
+        prefix = "roshaket/videos/"
+        media_type = "video/mp4"
+    elif lower.endswith(".png"):
+        prefix = "roshaket/videos/slides/"
+        media_type = "image/png"
+    else:
+        prefix = "roshaket/podcasts/"
+        media_type = "audio/mpeg"
     blob = bucket.blob(f"{prefix}{filename}")
     if not blob.exists():
         raise HTTPException(status_code=404, detail="Media not found")
     data = blob.download_as_bytes()
-    media_type = "video/mp4" if is_mp4 else "audio/mpeg"
     return Response(content=data, media_type=media_type, headers={"Cache-Control": "public, max-age=86400"})
+
+
+@app.post("/distill-transcript")
+def distill_transcript(req: DistillRequest):
+    if req.adminEmail and req.adminEmail.lower() not in ADMIN_EMAILS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
+    raw_text = (req.rawText or "").strip()
+    if len(raw_text) < 20:
+        raise HTTPException(status_code=400, detail="Transcript text is too short")
+    gemini_key = (req.geminiKey or os.environ.get("GEMINI_API_KEY") or "").strip()
+    if not gemini_key:
+        raise HTTPException(status_code=500, detail="Missing GEMINI_API_KEY on server")
+
+    condensed = condense_long_transcript(raw_text, req.courseName, req.weekNum, gemini_key)
+    distilled = distill_transcript_with_gemini(condensed["text"], req.weekNum, req.courseName, gemini_key)
+    return {
+        "ok": True,
+        "distilled": distilled,
+        "chunksUsed": condensed["chunksUsed"],
+        "originalLength": condensed["originalLength"],
+    }
 
 
 @app.post("/save-summary")
@@ -209,7 +374,8 @@ def generate_podcast(req: GeneratePodcastRequest):
     if not req.rawText or len(req.rawText.strip()) < 40:
         raise HTTPException(status_code=400, detail="Transcript text is too short")
 
-    dialogue = generate_dialogue_with_gemini(req.rawText, req.weekNum, req.courseName, gemini_key)
+    condensed = condense_long_transcript(req.rawText, req.courseName, req.weekNum, gemini_key)
+    dialogue = generate_dialogue_with_gemini(condensed["text"], req.weekNum, req.courseName, gemini_key)
 
     with tempfile.TemporaryDirectory() as tmp_dir:
         silence_mp3 = os.path.join(tmp_dir, "silence_250ms.mp3")
@@ -383,27 +549,31 @@ def build_slide_html(
     margin-bottom: 28px;
   }}
   .main-title {{
-    font-size: 62px;
+    font-size: 60px;
     font-weight: 800;
     line-height: 1.22;
     color: #0f172a;
     margin-bottom: 14px;
+    unicode-bidi: plaintext;
+    overflow-wrap: break-word;
   }}
   .main-sub {{
-    font-size: 32px;
+    font-size: 31px;
     color: #475569;
     font-weight: 500;
-    padding-bottom: 28px;
+    padding-bottom: 24px;
     border-bottom: 2px solid #e2e8f0;
-    margin-bottom: 42px;
+    margin-bottom: 34px;
+    unicode-bidi: plaintext;
+    overflow-wrap: break-word;
   }}
-  .section {{ margin-bottom: 46px; }}
+  .section {{ margin-bottom: 36px; }}
   .sec-head {{
     display: flex;
     align-items: center;
     gap: 18px;
-    padding-bottom: 14px;
-    margin-bottom: 20px;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
   }}
   .sec1 .sec-head {{ border-bottom: 4px solid #0ea5e9; }}
   .sec2 .sec-head {{ border-bottom: 4px solid #10b981; }}
@@ -421,14 +591,16 @@ def build_slide_html(
   }}
   .sec1 .num {{ background: #0284c7; }}
   .sec2 .num {{ background: #059669; }}
-  .sec-title {{ font-size: 40px; font-weight: 800; }}
+  .sec-title {{ font-size: 38px; font-weight: 800; unicode-bidi: plaintext; overflow-wrap: break-word; }}
   .sec1 .sec-title {{ color: #0284c7; }}
   .sec2 .sec-title {{ color: #059669; }}
   .sec-body {{
-    font-size: 38px;
-    line-height: 1.55;
+    font-size: 36px;
+    line-height: 1.52;
     color: #1e293b;
     font-weight: 500;
+    unicode-bidi: plaintext;
+    overflow-wrap: break-word;
   }}
   .footer {{
     background: #ffffff;
@@ -495,6 +667,22 @@ def render_slides_with_chromium(
         for idx, slide in enumerate(slides):
             out_path = os.path.join(tmp_dir, f"slide_{idx:02d}.png")
             page.set_content(build_slide_html(idx, len(slides), slide, course_name, week_num), wait_until="load")
+            page.evaluate("() => document.fonts ? document.fonts.ready : Promise.resolve()")
+            # Auto-fit text if a slide's content overflows the card vertically
+            page.evaluate("""() => {
+                const card = document.querySelector('.card');
+                if (!card) return;
+                const bodies = document.querySelectorAll('.sec-body');
+                const title = document.querySelector('.main-title');
+                const sections = document.querySelectorAll('.section');
+                let step = 0;
+                while (card.scrollHeight > card.clientHeight + 4 && step < 4) {
+                    step++;
+                    bodies.forEach(b => { b.style.fontSize = (36 - step * 3) + 'px'; b.style.lineHeight = '1.42'; });
+                    if (title) title.style.fontSize = (60 - step * 4) + 'px';
+                    sections.forEach(s => { s.style.marginBottom = Math.max(18, 36 - step * 6) + 'px'; });
+                }
+            }""")
             page.screenshot(path=out_path)
             paths.append(out_path)
         browser.close()
@@ -543,22 +731,13 @@ def generate_video_slides_with_gemini(raw_text: str, week_num: int, course_name:
     return slides[:5]
 
 
-@app.post("/generate-video")
-def generate_video(req: GeneratePodcastRequest):
-    if req.adminEmail and req.adminEmail.lower() not in ADMIN_EMAILS:
-        raise HTTPException(status_code=403, detail="Unauthorized")
-
-    raw_text = (req.rawText or "").strip()
-    if len(raw_text) < 40:
-        raise HTTPException(status_code=400, detail="rawText is too short")
-
-    gemini_key = (req.geminiKey or os.environ.get("GEMINI_API_KEY") or "").strip()
-    eleven_key = os.environ.get("ELEVENLABS_API_KEY", "").strip()
-    if not gemini_key or not eleven_key:
-        raise HTTPException(status_code=500, detail="Missing GEMINI_API_KEY or ELEVENLABS_API_KEY on server")
-
-    slides = generate_video_slides_with_gemini(raw_text, req.weekNum, req.courseName, gemini_key)
-
+def _produce_video_from_slides(
+    slides: List[Dict[str, Any]],
+    week_num: int,
+    course_key: str,
+    course_name: str,
+    eleven_key: str,
+) -> Dict[str, Any]:
     with tempfile.TemporaryDirectory() as tmp_dir:
         with concurrent.futures.ThreadPoolExecutor(max_workers=6) as pool:
             audio_paths = list(
@@ -568,7 +747,7 @@ def generate_video(req: GeneratePodcastRequest):
                 )
             )
 
-        png_paths = render_slides_with_chromium(slides, req.courseName, req.weekNum, tmp_dir)
+        png_paths = render_slides_with_chromium(slides, course_name, week_num, tmp_dir)
         segment_paths = []
         for idx, (png_path, a_path) in enumerate(zip(png_paths, audio_paths)):
             seg_path = os.path.join(tmp_dir, f"seg_{idx:02d}.mp4")
@@ -629,7 +808,8 @@ def generate_video(req: GeneratePodcastRequest):
             final_mp4 = raw_mp4
 
         ts = int(time.time())
-        filename = f"lesson_w{req.weekNum}_{req.courseKey}_{ts}.mp4"
+        stem = f"lesson_w{week_num}_{course_key}_{ts}"
+        filename = f"{stem}.mp4"
         bucket = get_bucket()
         blob = bucket.blob(f"roshaket/videos/{filename}")
         blob.cache_control = "public, max-age=31536000"
@@ -643,9 +823,56 @@ def generate_video(req: GeneratePodcastRequest):
         except Exception:
             pass
 
+        slide_urls: List[str] = []
+        for idx, p_path in enumerate(png_paths):
+            s_name = f"{stem}_s{idx}.png"
+            s_blob = bucket.blob(f"roshaket/videos/slides/{s_name}")
+            s_blob.cache_control = "public, max-age=31536000"
+            s_blob.upload_from_filename(p_path, content_type="image/png")
+            s_url = f"{service_base}/media/{s_name}" if service_base else s_blob.public_url
+            try:
+                s_blob.make_public()
+                s_url = s_blob.public_url
+            except Exception:
+                pass
+            slide_urls.append(s_url)
+
     return {
         "ok": True,
         "videoUrl": video_url,
         "videoDuration": dur_label,
         "slidesCount": len(slides),
+        "slides": slides,
+        "slideImages": slide_urls,
     }
+
+
+@app.post("/generate-video")
+def generate_video(req: GeneratePodcastRequest):
+    if req.adminEmail and req.adminEmail.lower() not in ADMIN_EMAILS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
+
+    raw_text = (req.rawText or "").strip()
+    if len(raw_text) < 40:
+        raise HTTPException(status_code=400, detail="rawText is too short")
+
+    gemini_key = (req.geminiKey or os.environ.get("GEMINI_API_KEY") or "").strip()
+    eleven_key = os.environ.get("ELEVENLABS_API_KEY", "").strip()
+    if not gemini_key or not eleven_key:
+        raise HTTPException(status_code=500, detail="Missing GEMINI_API_KEY or ELEVENLABS_API_KEY on server")
+
+    condensed = condense_long_transcript(raw_text, req.courseName, req.weekNum, gemini_key)
+    slides = generate_video_slides_with_gemini(condensed["text"], req.weekNum, req.courseName, gemini_key)
+    return _produce_video_from_slides(slides, req.weekNum, req.courseKey, req.courseName, eleven_key)
+
+
+@app.post("/rerender-video")
+def rerender_video(req: RerenderVideoRequest):
+    if req.adminEmail and req.adminEmail.lower() not in ADMIN_EMAILS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
+    if not req.slides or len(req.slides) < 1:
+        raise HTTPException(status_code=400, detail="slides list cannot be empty")
+    eleven_key = os.environ.get("ELEVENLABS_API_KEY", "").strip()
+    if not eleven_key:
+        raise HTTPException(status_code=500, detail="Missing ELEVENLABS_API_KEY on server")
+    return _produce_video_from_slides(req.slides[:6], req.weekNum, req.courseKey, req.courseName, eleven_key)
