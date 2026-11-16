@@ -35,6 +35,103 @@ function doGet(e) {
       return createJsonResponse({ status: 'logged' });
     }
 
+    // שליחת פידבק או דיווח תקלה ממשתמשים
+    if (action === 'submit_feedback') {
+      let fbSheet = ss.getSheetByName('פידבק ותקלות');
+      if (!fbSheet) {
+        fbSheet = ss.insertSheet('פידבק ותקלות');
+        fbSheet.appendRow(['תאריך ושעה', 'שם', 'אימייל', 'סוג', 'תיאור', 'מכשיר וגרסה', 'סטטוס']);
+        fbSheet.getRange(1, 1, 1, 7).setFontWeight('bold').setBackground('#FCE7F3');
+        fbSheet.setFrozenRows(1);
+      }
+      const fbType = (params.type || 'פידבק').trim();
+      const fbMsg = (params.message || '').trim();
+      const fbMeta = (params.meta || '').trim();
+      const nowStr = Utilities.formatDate(new Date(), 'Asia/Jerusalem', 'yyyy-MM-dd HH:mm:ss');
+      fbSheet.appendRow([nowStr, name || 'אורח/ת', email || 'ללא מייל', fbType, fbMsg, fbMeta, 'חדש']);
+      return createJsonResponse({ status: 'ok', savedAt: nowStr });
+    }
+
+    // שליפת נתוני בקרה למנהל (עופר)
+    if (action === 'admin_insights') {
+      const admins = ['saritofer.k@gmail.com', 'ofer@ddialog.co.il'];
+      if (admins.indexOf(email) === -1) {
+        return createJsonResponse({ status: 'unauthorized' });
+      }
+      const logSheet = ss.getSheetByName('יומן פעילות');
+      const fbSheet = ss.getSheetByName('פידבק ותקלות');
+      let videoPlays = 0, videoCompletes = 0, podcastPlays = 0, guidePlays = 0, errorCount = 0;
+      const userMap = {};
+      const recentEvents = [];
+
+      if (logSheet && logSheet.getLastRow() > 1) {
+        const totalRows = logSheet.getLastRow();
+        const startRow = Math.max(2, totalRows - 299);
+        const rows = logSheet.getRange(startRow, 1, totalRows - startRow + 1, 6).getValues();
+        for (let i = rows.length - 1; i >= 0; i--) {
+          const r = rows[i];
+          const tStr = String(r[0] || '');
+          const uName = String(r[1] || 'אורח/ת');
+          const uEmail = String(r[2] || '').toLowerCase().trim();
+          const ev = String(r[3] || '');
+          const det = String(r[4] || '');
+          const plat = String(r[5] || '');
+
+          if (ev === 'lesson_video_play') videoPlays++;
+          else if (ev === 'lesson_video_complete') videoCompletes++;
+          else if (ev === 'podcast_play') podcastPlays++;
+          else if (ev === 'guide_video_play') guidePlays++;
+          else if (ev === 'client_error') errorCount++;
+
+          const uKey = (uEmail && uEmail !== 'ללא מייל') ? uEmail : uName;
+          if (!userMap[uKey]) {
+            userMap[uKey] = { name: uName, email: uEmail, lastSeen: tStr, platform: plat, eventCount: 0 };
+          }
+          userMap[uKey].eventCount++;
+
+          if (recentEvents.length < 40) {
+            recentEvents.push({ time: tStr, name: uName, email: uEmail, event: ev, details: det, platform: plat });
+          }
+        }
+      }
+
+      const feedbackList = [];
+      if (fbSheet && fbSheet.getLastRow() > 1) {
+        const fbTotal = fbSheet.getLastRow();
+        const fbStart = Math.max(2, fbTotal - 29);
+        const fbRows = fbSheet.getRange(fbStart, 1, fbTotal - fbStart + 1, 7).getValues();
+        for (let i = fbRows.length - 1; i >= 0; i--) {
+          const f = fbRows[i];
+          feedbackList.push({
+            time: String(f[0] || ''),
+            name: String(f[1] || ''),
+            email: String(f[2] || ''),
+            type: String(f[3] || ''),
+            message: String(f[4] || ''),
+            meta: String(f[5] || ''),
+            status: String(f[6] || '')
+          });
+        }
+      }
+
+      const recentUsers = Object.keys(userMap).map(function(k) { return userMap[k]; }).slice(0, 30);
+      return createJsonResponse({
+        status: 'ok',
+        summary: {
+          uniqueUsersCount: recentUsers.length,
+          videoPlays: videoPlays,
+          videoCompletes: videoCompletes,
+          podcastPlays: podcastPlays,
+          guidePlays: guidePlays,
+          errorCount: errorCount,
+          feedbackCount: feedbackList.length
+        },
+        recentUsers: recentUsers,
+        recentEvents: recentEvents,
+        feedbackList: feedbackList
+      });
+    }
+
     // שליפת מצב משתמשת לסנכרון בין מכשירים
     if (action === 'get_state') {
       if (!email) return createJsonResponse({ status: 'not_found' });

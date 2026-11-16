@@ -3592,7 +3592,7 @@ window.addEventListener('DOMContentLoaded', () => {
                         <div style="padding: 10px 14px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; font-size: 12px; color: #475569;">
                             <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
                                 <div style="font-weight: 800; color: #1e1b4b; font-size: 13.5px;" id="menuUserDisplayName">משתמש מחובר</div>
-                                <span style="font-size: 10.5px; font-weight: 700; color: #4338ca; background: #eef2ff; padding: 2px 7px; border-radius: 999px;">v96</span>
+                                <span style="font-size: 10.5px; font-weight: 700; color: #4338ca; background: #eef2ff; padding: 2px 7px; border-radius: 999px;">v97</span>
                             </div>
                             <div style="font-size: 11.5px; color: #64748b; direction: ltr; text-align: right; word-break: break-all;" id="menuUserEmail"></div>
                         </div>
@@ -3616,6 +3616,10 @@ window.addEventListener('DOMContentLoaded', () => {
                             <span>🎬</span>
                             <span>סרטון הדרכה קצר (דקה)</span>
                         </button>
+                        <button class="dropdown-item" onclick="openFeedbackModal(); closeOptionsMenu();" style="color: #0369a1; font-weight: 700;">
+                            <span>💬</span>
+                            <span>פידבק / דיווח על תקלה</span>
+                        </button>
                         <button class="dropdown-item" id="menuInstallAppItem" onclick="triggerPwaInstall(); closeOptionsMenu();" style="display: none; color: #4338ca; font-weight: 800; background: #eef2ff;">
                             <span>📲</span>
                             <span>התקן אפליקציה למכשיר</span>
@@ -3637,6 +3641,10 @@ window.addEventListener('DOMContentLoaded', () => {
                         <div id="adminMenuItems" style="display: none;">
                             <div class="dropdown-divider"></div>
                             <div style="padding: 6px 14px 2px; font-size: 11px; font-weight: 800; color: #701a75; text-transform: uppercase;">כלי מנהל (עופר)</div>
+                            <button class="dropdown-item" onclick="openAdminInsightsModal(); closeOptionsMenu();" style="color: #6d28d9; font-weight: 800;">
+                                <span>📊</span>
+                                <span>לוח בקרה, צפיות ופידבקים</span>
+                            </button>
                             <button class="dropdown-item" onclick="openCourseSettingsModal(); closeOptionsMenu();">
                                 <span>⚙️</span>
                                 <span>ניהול קורסים וסילבוס</span>
@@ -9855,6 +9863,57 @@ document.addEventListener('toggle', (e) => {
     </div>
 </div>
 
+<!-- User Feedback & Bug Report Modal -->
+<div class="modal-overlay" id="feedbackModal" onclick="if(event.target === this) closeFeedbackModal()" style="z-index: 10060;">
+    <div class="modal-card" style="max-width: 440px; width: 92vw; padding: 20px; border-radius: 20px; text-align: right;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">
+            <div style="font-size: 17px; font-weight: 800; color: #1e1b4b; display: flex; align-items: center; gap: 8px;">
+                <span>💬</span>
+                <span>פידבק / דיווח על תקלה</span>
+            </div>
+            <button type="button" onclick="closeFeedbackModal()" style="background: #f1f5f9; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 16px; color: #475569; cursor: pointer;">✕</button>
+        </div>
+        <div style="font-size: 13px; color: #475569; margin-bottom: 12px; line-height: 1.5;">
+            נתקלת בתקלה, משהו לא ברור או שיש לך רעיון לשיפור? כתוב/י לנו כאן — פרטי המכשיר מצורפים אוטומטית כדי שנוכל לטפל מהר.
+        </div>
+        <div class="alma-studio-field">
+            <label style="font-size: 12.5px; font-weight: 700; color: #334155;">סוג הפנייה:</label>
+            <select id="feedbackTypeSelect" class="alma-studio-select">
+                <option value="תקלה טכנית">🐞 תקלה טכנית / משהו לא עובד</option>
+                <option value="חוויית שימוש">✨ הצעה לשיפור חוויית השימוש</option>
+                <option value="פידבק על תוכן">🎬 פידבק על סיכום / סרטון / פודקאסט</option>
+            </select>
+        </div>
+        <div class="alma-studio-field">
+            <label style="font-size: 12.5px; font-weight: 700; color: #334155;">תיאור קצר:</label>
+            <textarea id="feedbackMessageInput" class="alma-studio-textarea" rows="4" placeholder="מה קרה או מה היית רוצה שנשפר?"></textarea>
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 12px;">
+            <button type="button" class="btn" onclick="closeFeedbackModal()">ביטול</button>
+            <button type="button" class="btn btn-primary" id="feedbackSubmitBtn" onclick="submitUserFeedback()">📤 שלח משוב</button>
+        </div>
+    </div>
+</div>
+
+<!-- Admin Insights & Telemetry Dashboard Modal (Ofer Only) -->
+<div class="modal-overlay" id="adminInsightsModal" onclick="if(event.target === this) closeAdminInsightsModal()" style="z-index: 10070;">
+    <div class="modal-card" style="max-width: 780px; width: 95vw; max-height: 88vh; display: flex; flex-direction: column; padding: 0; border-radius: 22px; overflow: hidden;">
+        <div style="padding: 16px 20px; background: linear-gradient(135deg, #312e81 0%, #5b21b6 100%); color: #ffffff; display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-size: 17px; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+                <span>📊</span>
+                <span>לוח בקרה, צפיות ופידבקים — ראשקט</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <button type="button" class="btn" onclick="loadAdminInsightsData()" style="padding: 5px 12px; font-size: 12px; background: rgba(255,255,255,0.18); color: #ffffff; border-color: rgba(255,255,255,0.3);">🔄 רענן</button>
+                <button type="button" onclick="closeAdminInsightsModal()" style="background: rgba(255,255,255,0.18); border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 16px; color: #ffffff; cursor: pointer;">✕</button>
+            </div>
+        </div>
+        <div id="adminInsightsBody" style="padding: 18px 20px; overflow-y: auto; text-align: right; background: #f8fafc; flex: 1;">
+            <div style="text-align: center; padding: 30px; color: #64748b;">טוען נתוני פעילות...</div>
+        </div>
+    </div>
+</div>
+
 <script>
 function openGuideVideoModal() {
     const modal = document.getElementById('guideVideoModal');
@@ -9882,8 +9941,195 @@ document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
         const gm = document.getElementById('guideVideoModal');
         if (gm && gm.classList.contains('open')) closeGuideVideoModal();
+        const fm = document.getElementById('feedbackModal');
+        if (fm && fm.classList.contains('open')) closeFeedbackModal();
+        const am = document.getElementById('adminInsightsModal');
+        if (am && am.classList.contains('open')) closeAdminInsightsModal();
     }
 });
+
+// ==========================================
+// PHASE 3: MEDIA TELEMETRY, ERRORS & FEEDBACK
+// ==========================================
+function resolveMediaAnalyticsContext(el) {
+    if (!el) return null;
+    if (el.id === 'guideVideoPlayer') {
+        return { prefix: 'guide_video', params: { title: 'מדריך מהיר לראשקט' } };
+    }
+    if (el.id === 'lessonSummaryVideoEl') {
+        const info = window._currentSummaryInfo || {};
+        return { prefix: 'lesson_video', params: { week: info.weekNum || '', course: info.courseKey || '', summaryId: info.summaryId || '' } };
+    }
+    if (el.tagName === 'AUDIO' && el.closest('#summaryModalBody')) {
+        const info = window._currentSummaryInfo || {};
+        return { prefix: 'podcast', params: { week: info.weekNum || '', course: info.courseKey || '', summaryId: info.summaryId || '' } };
+    }
+    return null;
+}
+
+document.addEventListener('play', (e) => {
+    const ctx = resolveMediaAnalyticsContext(e.target);
+    if (!ctx || typeof trackEvent !== 'function') return;
+    if (!e.target.dataset.trackedPlay) {
+        e.target.dataset.trackedPlay = '1';
+        trackEvent(`${ctx.prefix}_play`, ctx.params);
+    }
+}, true);
+
+document.addEventListener('timeupdate', (e) => {
+    const el = e.target;
+    if (!el || !el.duration || el.duration < 5) return;
+    const ctx = resolveMediaAnalyticsContext(el);
+    if (!ctx || typeof trackEvent !== 'function') return;
+    if (!el.dataset.trackedHalf && (el.currentTime / el.duration) >= 0.5) {
+        el.dataset.trackedHalf = '1';
+        trackEvent(`${ctx.prefix}_50pct`, ctx.params);
+    }
+}, true);
+
+document.addEventListener('ended', (e) => {
+    const ctx = resolveMediaAnalyticsContext(e.target);
+    if (!ctx || typeof trackEvent !== 'function') return;
+    if (!e.target.dataset.trackedComplete) {
+        e.target.dataset.trackedComplete = '1';
+        trackEvent(`${ctx.prefix}_complete`, ctx.params);
+    }
+}, true);
+
+// Throttled client-side error reporting (max 3 per session)
+let _roshaketClientErrorsSent = 0;
+function reportClientError(msg) {
+    if (_roshaketClientErrorsSent >= 3 || typeof trackEvent !== 'function') return;
+    _roshaketClientErrorsSent++;
+    trackEvent('client_error', { msg: String(msg || '').slice(0, 180), ver: 'v97' });
+}
+window.addEventListener('error', (e) => {
+    if (e && e.message) reportClientError(`${e.message} (${e.lineno || 0})`);
+});
+window.addEventListener('unhandledrejection', (e) => {
+    const reason = e && e.reason ? (e.reason.message || String(e.reason)) : 'Promise rejection';
+    reportClientError(reason);
+});
+
+function openFeedbackModal() {
+    const modal = document.getElementById('feedbackModal');
+    const inp = document.getElementById('feedbackMessageInput');
+    if (inp) inp.value = '';
+    if (modal) modal.classList.add('open');
+}
+
+function closeFeedbackModal() {
+    const modal = document.getElementById('feedbackModal');
+    if (modal) modal.classList.remove('open');
+}
+
+async function submitUserFeedback() {
+    const typeEl = document.getElementById('feedbackTypeSelect');
+    const msgEl = document.getElementById('feedbackMessageInput');
+    const btn = document.getElementById('feedbackSubmitBtn');
+    const msg = (msgEl ? msgEl.value : '').trim();
+    if (!msg) {
+        showToast('אנא כתוב/י כמה מילים לפני השליחה');
+        return;
+    }
+    const fbType = typeEl ? typeEl.value : 'פידבק';
+    const userDisplay = (typeof googleUserName !== 'undefined' && googleUserName) ? googleUserName : 'אורח/ת';
+    const userEmail = (typeof googleUserEmail !== 'undefined' && googleUserEmail) ? googleUserEmail : '';
+    const diagMeta = `v97 | ${isRunningStandalone() ? 'PWA' : 'Web'} | ${window.innerWidth}x${window.innerHeight} | ${navigator.userAgent.slice(0, 75)}`;
+
+    if (btn) { btn.disabled = true; btn.innerText = '⏳ שולח...'; }
+    try {
+        const url = `${ACCESS_CONTROL_SCRIPT_URL}?action=submit_feedback&name=${encodeURIComponent(userDisplay)}&email=${encodeURIComponent(userEmail)}&type=${encodeURIComponent(fbType)}&message=${encodeURIComponent(msg)}&meta=${encodeURIComponent(diagMeta)}`;
+        await fetch(url, { mode: 'no-cors' });
+        if (typeof trackEvent === 'function') trackEvent('user_feedback_sent', { type: fbType });
+        closeFeedbackModal();
+        showToast('🙏 תודה! הפנייה נשלחה לעופר ותטופל בהקדם.');
+    } catch (e) {
+        console.error('Feedback error:', e);
+        showToast('❌ שגיאה בשליחת המשוב, נסה שוב');
+    } finally {
+        if (btn) { btn.disabled = false; btn.innerText = '📤 שלח משוב'; }
+    }
+}
+
+function openAdminInsightsModal() {
+    if (typeof isOferAdmin !== 'function' || !isOferAdmin()) return;
+    const modal = document.getElementById('adminInsightsModal');
+    if (modal) modal.classList.add('open');
+    loadAdminInsightsData();
+}
+
+function closeAdminInsightsModal() {
+    const modal = document.getElementById('adminInsightsModal');
+    if (modal) modal.classList.remove('open');
+}
+
+async function loadAdminInsightsData() {
+    const body = document.getElementById('adminInsightsBody');
+    if (!body) return;
+    body.innerHTML = '<div style="text-align: center; padding: 30px; color: #64748b;">⏳ טוען נתוני צפייה, פעילות ופידבקים מגיליון הבקרה...</div>';
+    try {
+        const adminEmail = (typeof googleUserEmail !== 'undefined' && googleUserEmail) ? googleUserEmail : 'saritofer.k@gmail.com';
+        const resp = await fetch(`${ACCESS_CONTROL_SCRIPT_URL}?action=admin_insights&email=${encodeURIComponent(adminEmail)}&t=${Date.now()}`, { cache: 'no-store' });
+        const data = await resp.json();
+        if (!data || data.status !== 'ok') {
+            body.innerHTML = '<div style="color: #dc2626; padding: 20px;">לא ניתן לטעון נתונים (וודא שהרצת פריסה ל-GAS).</div>';
+            return;
+        }
+        const s = data.summary || {};
+        const kpis = [
+            { label: 'משתמשים פעילים', val: s.uniqueUsersCount || 0, color: '#4338ca', bg: '#eef2ff' },
+            { label: 'צפיות בסרטוני שיעור', val: s.videoPlays || 0, color: '#6d28d9', bg: '#f5f3ff' },
+            { label: 'סיימו סרטון (100%)', val: s.videoCompletes || 0, color: '#059669', bg: '#ecfdf5' },
+            { label: 'האזנות לפודקאסט', val: s.podcastPlays || 0, color: '#0284c7', bg: '#e0f2fe' },
+            { label: 'צפיות במדריך', val: s.guidePlays || 0, color: '#7c3aed', bg: '#faf5ff' },
+            { label: 'פידבקים / שגיאות', val: `${s.feedbackCount || 0} / ${s.errorCount || 0}`, color: '#be123c', bg: '#fff1f2' }
+        ];
+        let html = `<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(115px, 1fr)); gap: 10px; margin-bottom: 18px;">
+            ${kpis.map(k => `<div style="background: ${k.bg}; border-radius: 12px; padding: 12px; text-align: center;">
+                <div style="font-size: 20px; font-weight: 800; color: ${k.color};">${k.val}</div>
+                <div style="font-size: 11.5px; font-weight: 700; color: #334155; margin-top: 2px;">${k.label}</div>
+            </div>`).join('')}
+        </div>`;
+
+        html += `<h4 style="font-size: 14px; font-weight: 800; color: #1e1b4b; margin: 14px 0 8px;">💬 פידבקים ודיווחי תקלות (${(data.feedbackList || []).length})</h4>`;
+        if (!data.feedbackList || data.feedbackList.length === 0) {
+            html += `<div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; font-size: 13px; color: #64748b;">אין עדיין פידבקים או תקלות מדווחות.</div>`;
+        } else {
+            html += `<div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;">
+                ${data.feedbackList.map(f => `<div style="background: #ffffff; border: 1px solid #fbcfe8; border-radius: 10px; padding: 10px 12px; font-size: 12.5px;">
+                    <div style="display: flex; justify-content: space-between; font-weight: 800; color: #831843;">
+                        <span>${escapeHtml(f.name)} • ${escapeHtml(f.type)}</span>
+                        <span style="font-weight: 600; color: #64748b;">${escapeHtml(f.time)}</span>
+                    </div>
+                    <div style="margin: 4px 0; color: #0f172a;">${escapeHtml(f.message)}</div>
+                    <div style="font-size: 11px; color: #64748b; direction: ltr; text-align: left;">${escapeHtml(f.meta)}</div>
+                </div>`).join('')}
+            </div>`;
+        }
+
+        html += `<h4 style="font-size: 14px; font-weight: 800; color: #1e1b4b; margin: 14px 0 8px;">👥 משתתפים פעילים לאחרונה</h4>
+        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; margin-bottom: 16px;">
+            ${(data.recentUsers || []).slice(0, 15).map(u => `<div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; border-bottom: 1px solid #f1f5f9; font-size: 12.5px;">
+                <div><strong>${escapeHtml(u.name)}</strong> <span style="color: #64748b;">(${escapeHtml(u.email || 'אורח')})</span></div>
+                <div style="color: #475569; font-size: 11.5px;">${escapeHtml(u.platform)} • ${u.eventCount} פעולות • ${escapeHtml(u.lastSeen)}</div>
+            </div>`).join('')}
+        </div>`;
+
+        html += `<h4 style="font-size: 14px; font-weight: 800; color: #1e1b4b; margin: 14px 0 8px;">⚡ פעילות אחרונה בזמן אמת</h4>
+        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
+            ${(data.recentEvents || []).slice(0, 20).map(ev => `<div style="display: flex; justify-content: space-between; gap: 8px; padding: 7px 12px; border-bottom: 1px solid #f1f5f9; font-size: 12px;">
+                <div><span style="font-weight: 800; color: #4338ca;">${escapeHtml(ev.event)}</span> — ${escapeHtml(ev.name)} <span style="color: #64748b;">${escapeHtml(ev.details).slice(0, 70)}</span></div>
+                <div style="color: #64748b; white-space: nowrap;">${escapeHtml(ev.time.slice(11, 16))}</div>
+            </div>`).join('')}
+        </div>`;
+
+        body.innerHTML = html;
+    } catch (e) {
+        console.error('Admin insights load error:', e);
+        body.innerHTML = `<div style="color: #dc2626; padding: 20px;">שגיאה בטעינת הנתונים: ${escapeHtml(e.message)}</div>`;
+    }
+}
 </script>
 
 </body>
